@@ -19,7 +19,7 @@
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/kaaba.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap" rel="stylesheet"> 
-    <style> 
+    <style id="theme-style"> 
         :root { --primary: #1a5d4a; --accent: #c9a227; --bg: #f4f7f6; --white: #ffffff; --wa: #25d366; --share: #3498db; --danger: #e74c3c; } 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; } 
@@ -32,10 +32,13 @@
         .back-btn { font-size: 1.5rem; cursor: pointer; width: 40px; } 
         
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; max-width: 600px; margin: 0 auto; } 
-        .menu-card { background: var(--white); border-radius: 15px; padding: 20px 10px; text-align: center; border: 1.5px solid var(--primary); box-shadow: 0 4px 8px rgba(0,0,0,0.05); cursor: pointer; display: none; } 
+        .menu-card { background: var(--white); border-radius: 15px; padding: 20px 10px; text-align: center; border: 1.5px solid var(--primary); box-shadow: 0 4px 8px rgba(0,0,0,0.05); cursor: pointer; display: none; position: relative; } 
         .menu-card div { font-size: 30px; margin-bottom: 5px; } 
-        .menu-card span { font-weight: bold; color: var(--primary); font-size: 0.7rem; display: block; text-transform: uppercase; } 
-
+        .menu-card span { font-weight: bold; color: var(--primary); font-size: 0.7rem; display: block; text-transform: uppercase; }
+        .edit-badge { position: absolute; top: 5px; right: 5px; background: var(--accent); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; display: none; }
+        .admin-mode .edit-badge { display: block; }
+        .admin-mode .menu-card { border: 2px dashed var(--accent); }
+        
         .card-info { background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid var(--accent); font-size: 0.85rem; }
         .setting-box { background: white; padding: 10px 20px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 20px; }
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
@@ -103,6 +106,62 @@
         .panduan-content h3 { color: var(--primary); margin-bottom: 10px; }
         .panduan-content p { margin-bottom: 10px; }
         .panduan-content ul { margin-left: 20px; margin-bottom: 10px; }
+        
+        /* Modal Editor */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 20000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-content h3 { color: var(--primary); margin-bottom: 15px; }
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+        }
+        .color-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .color-opt {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color-opt.active { border-color: white; box-shadow: 0 0 0 2px #333; }
     </style>
 </head> 
 
@@ -122,6 +181,16 @@
         <button class="btn-close" onclick="closeInstallBanner()">&times;</button>
     </div>
     <div id="toast" class="toast"></div>
+    
+    <!-- Modal Editor -->
+    <div id="editorModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Edit Konten</h3>
+            <textarea id="editorText" rows="15" style="font-family:monospace;"></textarea>
+            <button class="btn-action" style="background:var(--primary); margin-top:10px;" onclick="saveEditedContent()">💾 SIMPAN</button>
+            <button class="btn-action" style="background:var(--danger); margin-top:5px;" onclick="closeEditor()">BATAL</button>
+        </div>
+    </div>
 
     <!-- HOME PAGE -->
     <div id="home" class="page active"> 
@@ -131,17 +200,17 @@
             <p style="color:var(--accent); font-weight: bold; font-size: 0.75rem;">KBIH AMANATUL UMMAH</p> 
         </div> 
         <div class="menu-grid" id="menuGrid"> 
-            <div id="m-haji" class="menu-card" onclick="openPanduan('haji')"><div>🕋</div><span>Haji</span></div> 
-            <div id="m-umroh" class="menu-card" onclick="openPanduan('umroh')"><div>🕌</div><span>Umroh</span></div> 
-            <div id="m-doa" class="menu-card" onclick="openList('doa')"><div>🌀</div><span>Titipan Doa</span></div> 
-            <div id="m-catatan" class="menu-card" onclick="openList('catatan')"><div>📝</div><span>Catatan</span></div> 
-            <div id="m-ziarah" class="menu-card" onclick="openZiarah()"><div>🚌</div><span>Rute Ziarah</span></div> 
+            <div id="m-haji" class="menu-card" onclick="openPanduan('haji')"><div>🕋</div><span>Haji</span><span class="edit-badge">✏️</span></div> 
+            <div id="m-umroh" class="menu-card" onclick="openPanduan('umroh')"><div>🕌</div><span>Umroh</span><span class="edit-badge">✏️</span></div> 
+            <div id="m-doa" class="menu-card" onclick="openList('doa')"><div>🌀</div><span>Titipan Doa</span><span class="edit-badge">✏️</span></div> 
+            <div id="m-catatan" class="menu-card" onclick="openList('catatan')"><div>📝</div><span>Catatan</span><span class="edit-badge">✏️</span></div> 
+            <div id="m-ziarah" class="menu-card" onclick="openZiarah()"><div>🚌</div><span>Rute Ziarah</span><span class="edit-badge">✏️</span></div> 
             <div id="m-jamaah" class="menu-card" onclick="openJamaah()"><div>👥</div><span>Data Jamaah</span></div> 
             <div id="m-kas" class="menu-card" onclick="openKas()"><div>💰</div><span>Uang Kas</span></div> 
-            <div id="m-lokasi" class="menu-card" onclick="openLokasi()"><div>📍</div><span>Titik Kumpul</span></div>
-            <div id="m-tahlil" class="menu-card" onclick="openTahlil()"><div>📖</div><span>Tahlil</span></div> 
+            <div id="m-lokasi" class="menu-card" onclick="openLokasi()"><div>📍</div><span>Titik Kumpul</span><span class="edit-badge">✏️</span></div>
+            <div id="m-tahlil" class="menu-card" onclick="openTahlil()"><div>📖</div><span>Tahlil</span><span class="edit-badge">✏️</span></div> 
             <div id="m-dzikir" class="menu-card" onclick="openTasbih()"><div>📿</div><span>Tasbih</span></div> 
-            <div id="m-atribut" class="menu-card" onclick="openAtribut()"><div>🖼️</div><span>Atribut</span></div>
+            <div id="m-atribut" class="menu-card" onclick="openAtribut()"><div>🖼️</div><span>Atribut</span><span class="edit-badge">✏️</span></div>
             <div id="m-siaran" class="menu-card" onclick="openSiaran()"><div>📢</div><span>Siaran WA</span></div>
         </div> 
     </div> 
@@ -168,7 +237,7 @@
             <div style="background:var(--primary); color:white; padding:20px; border-radius:15px; text-align:center; margin-bottom:15px;"><small>Saldo Kas</small><h2 id="total-kas">Rp 0</h2></div>
             <div class="setting-box" style="padding:15px;">
                 <input type="number" id="k-jumlah" placeholder="Nominal" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ddd;">
-                <input type="text" id="k-ket" placeholder="Keterangan (contoh: iuran, beli makan, dll)" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ddd;">
+                <input type="text" id="k-ket" placeholder="Keterangan" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ddd;">
                 <div style="display:flex;gap:10px;">
                     <button onclick="addKas('masuk')" style="flex:1;background:#27ae60;color:white;border:none;padding:12px;border-radius:8px;">💰 + PEMASUKAN</button>
                     <button onclick="addKas('keluar')" style="flex:1;background:var(--danger);color:white;border:none;padding:12px;border-radius:8px;">💸 - PENGELUARAN</button>
@@ -182,13 +251,13 @@
 
     <!-- PAGE PANDUAN (Haji/Umroh) -->
     <div id="page-panduan" class="page">
-        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span id="panduan-title" style="font-weight:bold">PANDUAN</span><span class="back-btn" onclick="sharePanduan()">📤</span></div>
+        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span id="panduan-title" style="font-weight:bold">PANDUAN</span><span id="panduan-edit-btn" class="back-btn" style="display:none" onclick="editPanduan()">✏️</span><span class="back-btn" onclick="sharePanduan()">📤</span></div>
         <div class="container" id="panduan-content"></div>
     </div>
 
     <!-- PAGE ZIARAH -->
     <div id="page-ziarah" class="page">
-        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">RUTE ZIARAH</span><span class="back-btn" onclick="shareZiarah()">📤</span></div>
+        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">RUTE ZIARAH</span><span id="ziarah-edit-btn" class="back-btn" style="display:none" onclick="editZiarah()">✏️</span><span class="back-btn" onclick="shareZiarah()">📤</span></div>
         <div class="container" id="ziarah-content"></div>
     </div>
 
@@ -200,13 +269,13 @@
 
     <!-- PAGE TAHLIL -->
     <div id="page-tahlil" class="page">
-        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">TAHLIL & YASIN</span><span class="back-btn" onclick="shareTahlil()">📤</span></div>
+        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">TAHLIL & YASIN</span><span id="tahlil-edit-btn" class="back-btn" style="display:none" onclick="editTahlil()">✏️</span><span class="back-btn" onclick="shareTahlil()">📤</span></div>
         <div class="container" id="tahlil-content"></div>
     </div>
 
     <!-- PAGE ATRIBUT -->
     <div id="page-atribut" class="page">
-        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">ATRIBUT & PERLENGKAPAN</span><span class="back-btn" onclick="shareAtribut()">📤</span></div>
+        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">ATRIBUT & PERLENGKAPAN</span><span id="atribut-edit-btn" class="back-btn" style="display:none" onclick="editAtribut()">✏️</span><span class="back-btn" onclick="shareAtribut()">📤</span></div>
         <div class="container" id="atribut-content"></div>
     </div>
 
@@ -214,10 +283,27 @@
     <div id="page-settings" class="page">
         <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">PENGATURAN</span></div>
         <div class="container">
-            <div class="card-info">⚙️ Matikan menu yang tidak Anda butuhkan agar aplikasi lebih fokus.</div>
+            <div class="card-info">⚙️ Pengaturan Aplikasi</div>
+            <div class="setting-box">
+                <div class="setting-row">
+                    <span>🔧 Mode Admin (Edit Konten)</span>
+                    <label class="switch"><input type="checkbox" id="adminMode" onchange="toggleAdminMode()"><span class="slider"></span></label>
+                </div>
+            </div>
+            <div class="setting-box">
+                <h4 style="margin-bottom:10px">🎨 Warna Tema</h4>
+                <div class="color-options" id="colorOptions">
+                    <div class="color-opt" style="background:#1a5d4a" onclick="setTheme('#1a5d4a', '#c9a227')"></div>
+                    <div class="color-opt" style="background:#2c3e50" onclick="setTheme('#2c3e50', '#f1c40f')"></div>
+                    <div class="color-opt" style="background:#8e44ad" onclick="setTheme('#8e44ad', '#f39c12')"></div>
+                    <div class="color-opt" style="background:#16a085" onclick="setTheme('#16a085', '#e67e22')"></div>
+                    <div class="color-opt" style="background:#2980b9" onclick="setTheme('#2980b9', '#e67e22')"></div>
+                    <div class="color-opt" style="background:#e67e22" onclick="setTheme('#e67e22', '#f1c40f')"></div>
+                </div>
+            </div>
             <div id="setting-switches" class="setting-box"></div>
             <button class="btn-action" style="background:var(--share);" onclick="mainShare()">🔗 BAGIKAN APLIKASI</button>
-            <button class="btn-action" style="background:var(--primary); margin-top:10px;" onclick="resetAllData()">🔄 RESET SEMUA DATA</button>
+            <button class="btn-action" style="background:var(--danger); margin-top:10px;" onclick="resetAllData()">🔄 RESET SEMUA DATA</button>
         </div>
     </div>
 
@@ -259,7 +345,7 @@
 
 <script>
     // ==================== SERVICE WORKER & PWA ====================
-    const SW_CODE = `const CACHE_NAME='auva-mobile-v2';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(STATIC_ASSETS)));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(n=>Promise.all(n.filter(n=>n!==CACHE_NAME).map(n=>caches.delete(n)))));self.clients.claim();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(!r||r.status!==200||r.type!=='basic')return r;const c=r.clone();caches.open(CACHE_NAME).then(cache=>{cache.put(e.request,c);});return r;}).catch(()=>new Response('Offline mode'))));});`;
+    const SW_CODE = `const CACHE_NAME='auva-mobile-v3';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(STATIC_ASSETS)));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(n=>Promise.all(n.filter(n=>n!==CACHE_NAME).map(n=>caches.delete(n)))));self.clients.claim();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(!r||r.status!==200||r.type!=='basic')return r;const c=r.clone();caches.open(CACHE_NAME).then(cache=>{cache.put(e.request,c);});return r;}).catch(()=>new Response('Offline mode'))));});`;
     
     if ('serviceWorker' in navigator) {
         const blob = new Blob([SW_CODE], { type: 'application/javascript' });
@@ -284,14 +370,313 @@
     function showPageList() { showPage('page-list'); }
     function mainShare() { if(navigator.share) navigator.share({title:'Auva Mobile',text:'KBIH Amanatul Ummah',url:window.location.href}); else showToast('Klik ⋮ lalu pilih "Tambahkan ke layar utama"'); }
     
-    // ==================== SETTINGS MENU ====================
-    const menus = ['haji','umroh','ziarah','jamaah','kas','lokasi','tahlil','dzikir','atribut','siaran','doa','catatan'];
-    function initSettings() {
-        let h=''; menus.forEach(m=>{h+=`<div class="setting-row"><span>Menu ${m.toUpperCase()}</span><label class="switch"><input type="checkbox" id="sw-${m}" checked onchange="saveCfg()"><span class="slider"></span></label></div>`;});
-        document.getElementById('setting-switches').innerHTML=h; loadCfg();
+    // ==================== ADMIN MODE ====================
+    let isAdminMode = false;
+    function toggleAdminMode() {
+        isAdminMode = document.getElementById('adminMode').checked;
+        localStorage.setItem('auva_admin_mode', isAdminMode);
+        if(isAdminMode) {
+            document.body.classList.add('admin-mode');
+            showToast('Mode Admin Aktif - Klik ✏️ untuk edit konten');
+            // Tampilkan tombol edit di halaman konten
+            document.querySelectorAll('[id$="-edit-btn"]').forEach(btn => btn.style.display = 'block');
+        } else {
+            document.body.classList.remove('admin-mode');
+            document.querySelectorAll('[id$="-edit-btn"]').forEach(btn => btn.style.display = 'none');
+            showToast('Mode Admin Nonaktif');
+        }
     }
-    function saveCfg() { menus.forEach(m=>{const val=document.getElementById('sw-'+m).checked; document.getElementById('m-'+m).style.display=val?'block':'none'; localStorage.setItem('cfg_'+m,val);}); }
-    function loadCfg() { menus.forEach(m=>{const saved=localStorage.getItem('cfg_'+m); const vis=saved===null?true:saved==='true'; document.getElementById('sw-'+m).checked=vis; document.getElementById('m-'+m).style.display=vis?'block':'none';}); }
+    
+    // ==================== Warna Tema ====================
+    function setTheme(primary, accent) {
+        document.documentElement.style.setProperty('--primary', primary);
+        document.documentElement.style.setProperty('--accent', accent);
+        localStorage.setItem('auva_theme_primary', primary);
+        localStorage.setItem('auva_theme_accent', accent);
+        showToast('Warna tema berhasil diubah');
+    }
+    
+    function loadTheme() {
+        const primary = localStorage.getItem('auva_theme_primary');
+        const accent = localStorage.getItem('auva_theme_accent');
+        if(primary) document.documentElement.style.setProperty('--primary', primary);
+        if(accent) document.documentElement.style.setProperty('--accent', accent);
+    }
+    
+    // ==================== KONTEN YANG BISA DIEDIT ====================
+    // Default konten (akan disimpan ke localStorage jika belum ada)
+    const defaultContents = {
+        haji: `🕋 *PANDUAN HAJI*
+━━━━━━━━━━━━━━━━━━
+
+📌 *Rukun Haji*
+1. Ihram (niat haji)
+2. Wukuf di Arafah
+3. Tawaf Ifadah
+4. Sa'i
+5. Tahallul (cukur rambut)
+6. Tertib
+
+📌 *Wajib Haji*
+1. Ihram dari miqat
+2. Mabit di Muzdalifah
+3. Mabit di Mina
+4. Melontar jumrah
+5. Tawaf wada'
+
+📌 *Sunnah Haji*
+• Mandi sebelum ihram
+• Memakai wewangian
+• Doa tawaf
+• Memperbanyak talbiyah
+• Sholat sunnah 2 rakaat setelah tawaf
+
+📌 *Doa Talbiyah*
+لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لَا شَرِيكَ لَكَ
+
+#AuvaMobile`,
+
+        umroh: `🕌 *PANDUAN UMROH*
+━━━━━━━━━━━━━━━━━━
+
+📌 *Rukun Umroh*
+1. Ihram
+2. Tawaf
+3. Sa'i
+4. Tahallul
+
+📌 *Tata Cara Umroh*
+1. Mandi dan berihram dari miqat
+2. Masuk Masjidil Haram dengan kaki kanan
+3. Tawaf 7 putaran (dimulai dari Hajar Aswad)
+4. Sholat sunnah 2 rakaat di Maqam Ibrahim
+5. Sa'i 7 kali dari Shafa ke Marwah
+6. Cukur rambut (tahallul)
+
+📌 *Doa Tawaf*
+سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ
+
+📌 *Doa Sa'i*
+رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
+
+#AuvaMobile`,
+
+        ziarah: `🏛️ *RUTE ZIARAH MADINAH*
+━━━━━━━━━━━━━━━━━━
+📍 Masjid Nabawi
+📍 Jabal Uhud
+📍 Masjid Quba
+📍 Masjid Qiblatain
+📍 Pemakaman Baqi
+
+🏛️ *RUTE ZIARAH MAKKAH*
+━━━━━━━━━━━━━━━━━━
+📍 Masjidil Haram
+📍 Jabal Nur (Gua Hira)
+📍 Jabal Tsur
+📍 Mina
+📍 Arafah
+📍 Muzdalifah
+
+⏰ *Waktu Ziarah*
+• Pagi: 08.00-11.00
+• Sore: 15.00-17.00
+
+#AuvaMobile`,
+
+        tahlil: `*TAHLIL ARWAH*
+━━━━━━━━━━━━━━━━━━
+بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ
+
+اَللّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ
+
+سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ
+
+أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ (3x)
+
+لَا إِلَهَ إِلَّا اللَّهُ (3x)
+
+اَللَّهُمَّ اغْفِرْ لِلْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ وَالْمُسْلِمِينَ وَالْمُسْلِمَاتِ
+
+*YASIN* (dibaca lengkap)
+
+*DOA ARWAH*
+اَللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ
+
+*TAHLIL*
+لَا إِلَهَ إِلَّا اللَّهُ (10x)
+
+ثُمَّ التَّحِيَّةُ لِرَسُولِ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ
+
+*DOA PENUTUP*
+اَللَّهُمَّ اجْعَلْ مَا قَرَأْنَاهُ وَمَا أَهْدَيْنَاهُ وَصَلَ وَسَلَّمَ عَلَى سَيِّدِنَا مُحَمَّدٍ
+
+#AuvaMobile`,
+
+        atribut: `🎒 *PERLENGKAPAN HAJI/UMROH*
+━━━━━━━━━━━━━━━━━━
+
+📌 *Pakaian & Perlengkapan Ibadah*
+✓ Ihram (2 kain putih) + ikat pinggang
+✓ Pakaian dalam yang nyaman (minimal 7 set)
+✓ Kaus kaki (minimal 7 pasang)
+✓ Sandal yang nyaman untuk jalan jauh
+✓ Peci/songkok
+✓ Sarung untuk sholat
+✓ Alquran dan buku panduan
+
+📌 *Perlengkapan Mandi & Kesehatan*
+✓ Handuk (2 buah)
+✓ Sabun, sampo, sikat gigi
+✓ Parfum non-alkohol
+✓ Obat pribadi (minimal 14 hari)
+✓ Vitamin dan suplemen
+✓ Masker (minimal 30 buah)
+✓ Hand sanitizer
+✓ Plester dan obat luka
+
+📌 *Perlengkapan Penting Lainnya*
+✓ Tas selempang/fanny pack
+✓ Botol minum (zamzam)
+✓ Payung lipat
+✓ KTP dan paspor (fotokopi)
+✓ Uang tunai (SAR & IDR)
+✓ Kartu kredit/debit
+✓ Power bank & kabel charger
+✓ Adaptor colokan (standar Eropa)
+✓ Bantal leher untuk perjalanan
+
+📌 *Tips Tambahan*
+✓ Bawa tas koper yang ringan
+✓ Labeli semua barang dengan nama
+✓ Jangan membawa perhiasan berlebihan
+✓ Bawa obat antinyeri dan diare
+✓ Siapkan mental dan fisik
+
+#AuvaMobile`
+    };
+    
+    // Ambil konten dari localStorage atau default
+    function getContent(key) {
+        let content = localStorage.getItem('auva_content_' + key);
+        if(!content) {
+            content = defaultContents[key];
+            localStorage.setItem('auva_content_' + key, content);
+        }
+        return content;
+    }
+    
+    function saveContent(key, content) {
+        localStorage.setItem('auva_content_' + key, content);
+        showToast('Konten berhasil disimpan!');
+    }
+    
+    // ==================== PANDUAN HAJI & UMROH ====================
+    let currentPanduanType = '';
+    function openPanduan(jenis) {
+        currentPanduanType = jenis;
+        const content = getContent(jenis);
+        document.getElementById('panduan-title').innerText = jenis.toUpperCase();
+        document.getElementById('panduan-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap">${content}</div>`;
+        if(isAdminMode) document.getElementById('panduan-edit-btn').style.display = 'block';
+        else document.getElementById('panduan-edit-btn').style.display = 'none';
+        showPage('page-panduan');
+    }
+    function editPanduan() {
+        const content = getContent(currentPanduanType);
+        document.getElementById('modalTitle').innerText = `Edit ${currentPanduanType.toUpperCase()}`;
+        document.getElementById('editorText').value = content;
+        window.editingKey = currentPanduanType;
+        document.getElementById('editorModal').classList.add('show');
+    }
+    
+    // ==================== ZIARAH ====================
+    function openZiarah() {
+        const content = getContent('ziarah');
+        document.getElementById('ziarah-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap">${content}</div>`;
+        if(isAdminMode) document.getElementById('ziarah-edit-btn').style.display = 'block';
+        else document.getElementById('ziarah-edit-btn').style.display = 'none';
+        showPage('page-ziarah');
+    }
+    function editZiarah() {
+        document.getElementById('modalTitle').innerText = 'Edit Rute Ziarah';
+        document.getElementById('editorText').value = getContent('ziarah');
+        window.editingKey = 'ziarah';
+        document.getElementById('editorModal').classList.add('show');
+    }
+    
+    // ==================== TAHLIL ====================
+    function openTahlil() {
+        const content = getContent('tahlil');
+        document.getElementById('tahlil-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap; font-family:'Amiri',serif; direction:rtl; text-align:right;">${content}</div>`;
+        if(isAdminMode) document.getElementById('tahlil-edit-btn').style.display = 'block';
+        else document.getElementById('tahlil-edit-btn').style.display = 'none';
+        showPage('page-tahlil');
+    }
+    function editTahlil() {
+        document.getElementById('modalTitle').innerText = 'Edit Teks Tahlil';
+        document.getElementById('editorText').value = getContent('tahlil');
+        window.editingKey = 'tahlil';
+        document.getElementById('editorModal').classList.add('show');
+    }
+    
+    // ==================== ATRIBUT ====================
+    function openAtribut() {
+        const content = getContent('atribut');
+        document.getElementById('atribut-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap">${content}</div>`;
+        if(isAdminMode) document.getElementById('atribut-edit-btn').style.display = 'block';
+        else document.getElementById('atribut-edit-btn').style.display = 'none';
+        showPage('page-atribut');
+    }
+    function editAtribut() {
+        document.getElementById('modalTitle').innerText = 'Edit Atribut & Perlengkapan';
+        document.getElementById('editorText').value = getContent('atribut');
+        window.editingKey = 'atribut';
+        document.getElementById('editorModal').classList.add('show');
+    }
+    
+    // ==================== LOKASI (edit langsung di halaman) ====================
+    function openLokasi() {
+        let lokasi = JSON.parse(localStorage.getItem('auva_lokasi'));
+        if(!lokasi) lokasi = { titik: ['Masjidil Haram - Pintu 79', 'Hotel Safwah - Lobi Utama', 'Makkah Tower - Depan Foodcourt'], info: 'Setiap sholat berjamaah berkumpul di pintu keluar hotel masing-masing.' };
+        let html = `<div class="panduan-content"><h3>📍 TITIK KUMPUL</h3><div id="titik-list">`;
+        lokasi.titik.forEach((t,i)=>{ html+=`<div class="list-item" style="margin-bottom:8px"><span>${i+1}. ${t}</span><button onclick="editTitik(${i})" style="background:none;border:none;color:var(--primary)">✏️</button></div>`; });
+        html+=`</div><button class="btn-action" style="background:var(--primary);margin-top:10px" onclick="tambahTitik()">+ Tambah Titik</button><h3>📌 Informasi</h3><textarea id="info-lokasi" rows="3" style="width:100%;padding:10px;border-radius:8px">${lokasi.info}</textarea><button class="btn-action" style="background:var(--primary);margin-top:10px" onclick="simpanLokasi()">💾 Simpan</button></div>`;
+        document.getElementById('lokasi-content').innerHTML = html;
+        window.currentLokasi = lokasi;
+        showPage('page-lokasi');
+    }
+    function tambahTitik() { let t = prompt('Nama titik kumpul:'); if(t){ window.currentLokasi.titik.push(t); simpanLokasi(); openLokasi(); } }
+    function editTitik(i) { let t = prompt('Edit titik kumpul:', window.currentLokasi.titik[i]); if(t){ window.currentLokasi.titik[i]=t; simpanLokasi(); openLokasi(); } }
+    function simpanLokasi() { window.currentLokasi.info = document.getElementById('info-lokasi').value; localStorage.setItem('auva_lokasi', JSON.stringify(window.currentLokasi)); showToast('Lokasi tersimpan'); }
+    function shareLokasi() { 
+        let lokasi = JSON.parse(localStorage.getItem('auva_lokasi')) || { titik: [], info: '' };
+        let teks='*TITIK KUMPUL*\n━━━━━━━━━━━━━━━━━━\n'; 
+        lokasi.titik.forEach((t,i)=>{ teks+=`${i+1}. ${t}\n`; }); 
+        teks+=`\n📌 *Informasi:*\n${lokasi.info}\n\n#AuvaMobile`; 
+        window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`);
+    }
+    
+    // ==================== SHARE FUNCTIONS ====================
+    function sharePanduan() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent(currentPanduanType))}`); }
+    function shareZiarah() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('ziarah'))}`); }
+    function shareTahlil() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('tahlil'))}`); }
+    function shareAtribut() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('atribut'))}`); }
+    
+    // ==================== EDITOR MODAL ====================
+    function closeEditor() { document.getElementById('editorModal').classList.remove('show'); }
+    function saveEditedContent() {
+        const newContent = document.getElementById('editorText').value;
+        if(window.editingKey) {
+            saveContent(window.editingKey, newContent);
+            closeEditor();
+            // Refresh halaman yang sedang dibuka
+            if(window.editingKey === 'haji' || window.editingKey === 'umroh') openPanduan(window.editingKey);
+            else if(window.editingKey === 'ziarah') openZiarah();
+            else if(window.editingKey === 'tahlil') openTahlil();
+            else if(window.editingKey === 'atribut') openAtribut();
+        }
+    }
     
     // ==================== TASBIH ====================
     let count=0;
@@ -351,64 +736,21 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`);
     }
     
-    // ==================== PANDUAN HAJI & UMROH ====================
-    function openPanduan(jenis) {
-        const panduan = {
-            haji: { title:'PANDUAN HAJI', content:`<div class="panduan-content"><h3>🕋 Rukun Haji</h3><p>1. Ihram<br>2. Wukuf di Arafah<br>3. Tawaf Ifadah<br>4. Sa'i<br>5. Tahallul<br>6. Tertib</p><h3>📌 Wajib Haji</h3><p>1. Ihram dari miqat<br>2. Mabit di Muzdalifah<br>3. Mabit di Mina<br>4. Melontar jumrah<br>5. Tawaf wada'</p><h3>✨ Sunnah Haji</h3><p>• Mandi sebelum ihram<br>• Memakai wewangian<br>• Doa tawaf<br>• Memperbanyak talbiyah</p></div>` },
-            umroh: { title:'PANDUAN UMROH', content:`<div class="panduan-content"><h3>🕌 Rukun Umroh</h3><p>1. Ihram<br>2. Tawaf<br>3. Sa'i<br>4. Tahallul</p><h3>📌 Tata Cara</h3><p>1. Mandi dan berihram dari miqat<br>2. Masuk Masjidil Haram dengan kaki kanan<br>3. Tawaf 7 putaran<br>4. Sholat sunnah 2 rakaat di Maqam Ibrahim<br>5. Sa'i 7 kali dari Shafa ke Marwah<br>6. Cukur rambut (tahallul)</p><h3>✨ Doa Umroh</h3><p>Labbai kallohumma labbaik, labbaika la syarika laka labbaik, innal hamda wan ni'mata laka wal mulk, la syarika lak.</p></div>` }
-        };
-        const p = panduan[jenis];
-        document.getElementById('panduan-title').innerText = p.title;
-        document.getElementById('panduan-content').innerHTML = p.content;
-        window.currentPanduan = { jenis, title: p.title, content: p.content };
-        showPage('page-panduan');
+    // ==================== SETTINGS MENU ====================
+    const menus = ['haji','umroh','ziarah','jamaah','kas','lokasi','tahlil','dzikir','atribut','siaran','doa','catatan'];
+    function initSettings() {
+        let h=''; menus.forEach(m=>{h+=`<div class="setting-row"><span>Menu ${m.toUpperCase()}</span><label class="switch"><input type="checkbox" id="sw-${m}" checked onchange="saveCfg()"><span class="slider"></span></label></div>`;});
+        document.getElementById('setting-switches').innerHTML=h; loadCfg();
+        // Load admin mode
+        const adminMode = localStorage.getItem('auva_admin_mode') === 'true';
+        document.getElementById('adminMode').checked = adminMode;
+        if(adminMode) toggleAdminMode();
+        loadTheme();
     }
-    function sharePanduan() { if(window.currentPanduan) window.open(`https://wa.me/?text=${encodeURIComponent(`*${window.currentPanduan.title}*\n\n${window.currentPanduan.content.replace(/<[^>]*>/g, '')}\n\n#AuvaMobile`)}`); }
+    function saveCfg() { menus.forEach(m=>{const val=document.getElementById('sw-'+m).checked; document.getElementById('m-'+m).style.display=val?'block':'none'; localStorage.setItem('cfg_'+m,val);}); }
+    function loadCfg() { menus.forEach(m=>{const saved=localStorage.getItem('cfg_'+m); const vis=saved===null?true:saved==='true'; document.getElementById('sw-'+m).checked=vis; document.getElementById('m-'+m).style.display=vis?'block':'none';}); }
     
-    // ==================== ZIARAH ====================
-    function openZiarah() {
-        const ziarah = `🏛️ *RUTE ZIARAH MADINAH*\n━━━━━━━━━━━━━━━━━━\n📍 Masjid Nabawi\n📍 Jabal Uhud\n📍 Masjid Quba\n📍 Masjid Qiblatain\n📍 Pemakaman Baqi\n\n🏛️ *RUTE ZIARAH MAKKAH*\n━━━━━━━━━━━━━━━━━━\n📍 Masjidil Haram\n📍 Jabal Nur (Gua Hira)\n📍 Jabal Tsur\n📍 Mina\n📍 Arafah\n📍 Muzdalifah\n\n⏰ *Waktu Ziarah*\n• Pagi: 08.00-11.00\n• Sore: 15.00-17.00`;
-        document.getElementById('ziarah-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap">${ziarah}</div>`;
-        window.currentZiarah = ziarah;
-        showPage('page-ziarah');
-    }
-    function shareZiarah() { window.open(`https://wa.me/?text=${encodeURIComponent(window.currentZiarah+'\n\n#AuvaMobile')}`); }
-    
-    // ==================== LOKASI ====================
-    function openLokasi() {
-        let lokasi = JSON.parse(localStorage.getItem('auva_lokasi'));
-        if(!lokasi) lokasi = { titik: ['Masjidil Haram - Pintu 79', 'Hotel Safwah - Lobi Utama', 'Makkah Tower - Depan Foodcourt'], info: 'Setiap sholat berjamaah berkumpul di pintu keluar hotel masing-masing.' };
-        let html = `<div class="panduan-content"><h3>📍 TITIK KUMPUL</h3><div id="titik-list">`;
-        lokasi.titik.forEach((t,i)=>{ html+=`<div class="list-item" style="margin-bottom:8px"><span>${i+1}. ${t}</span><button onclick="editTitik(${i})" style="background:none;border:none;color:var(--primary)">✏️</button></div>`; });
-        html+=`</div><button class="btn-action" style="background:var(--primary);margin-top:10px" onclick="tambahTitik()">+ Tambah Titik</button><h3>📌 Informasi</h3><textarea id="info-lokasi" rows="3" style="width:100%;padding:10px;border-radius:8px">${lokasi.info}</textarea><button class="btn-action" style="background:var(--primary);margin-top:10px" onclick="simpanLokasi()">💾 Simpan</button></div>`;
-        document.getElementById('lokasi-content').innerHTML = html;
-        window.currentLokasi = lokasi;
-        showPage('page-lokasi');
-    }
-    function tambahTitik() { let t = prompt('Nama titik kumpul:'); if(t){ window.currentLokasi.titik.push(t); simpanLokasi(); openLokasi(); } }
-    function editTitik(i) { let t = prompt('Edit titik kumpul:', window.currentLokasi.titik[i]); if(t){ window.currentLokasi.titik[i]=t; simpanLokasi(); openLokasi(); } }
-    function simpanLokasi() { window.currentLokasi.info = document.getElementById('info-lokasi').value; localStorage.setItem('auva_lokasi', JSON.stringify(window.currentLokasi)); showToast('Lokasi tersimpan'); }
-    function shareLokasi() { let teks='*TITIK KUMPUL*\n━━━━━━━━━━━━━━━━━━\n'; window.currentLokasi.titik.forEach((t,i)=>{ teks+=`${i+1}. ${t}\n`; }); teks+=`\n📌 *Informasi:*\n${window.currentLokasi.info}\n\n#AuvaMobile`; window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`); }
-    
-    // ==================== TAHLIL ====================
-    function openTahlil() {
-        const tahlil = `*TAHLIL ARWAH*\n━━━━━━━━━━━━━━━━━━\nبِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ\n\nاَللّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ\n\nسُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ\n\nأَسْتَغْفِرُ اللَّهَ الْعَظِيمَ ٣×\n\nلَا إِلَهَ إِلَّا اللَّهُ ٣×\n\nاَللَّهُمَّ اغْفِرْ لِلْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ وَالْمُسْلِمِينَ وَالْمُسْلِمَاتِ\n\n*YASIN* (dibaca lengkap)\n\n*DOA ARWAH*\nاَللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ\n\n*TAHLIL*\nلَا إِلَهَ إِلَّا اللَّهُ ١٠×\n\nثُمَّ التَّحِيَّةُ لِرَسُولِ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ\n\n*DOA PENUTUP*\nاَللَّهُمَّ اجْعَلْ مَا قَرَأْنَاهُ وَمَا أَهْدَيْنَاهُ وَصَلَ وَسَلَّمَ عَلَى سَيِّدِنَا مُحَمَّدٍ\n\n#AuvaMobile`;
-        document.getElementById('tahlil-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap; font-family:'Amiri',serif; direction:rtl; text-align:right;">${tahlil}</div>`;
-        window.currentTahlil = tahlil;
-        showPage('page-tahlil');
-    }
-    function shareTahlil() { window.open(`https://wa.me/?text=${encodeURIComponent(window.currentTahlil)}`); }
-    
-    // ==================== ATRIBUT ====================
-    function openAtribut() {
-        const atribut = `🎒 *PERLENGKAPAN HAJI/UMROH*\n━━━━━━━━━━━━━━━━━━\n\n📌 *Pakaian & Perlengkapan Ibadah*\n✓ Ihram (2 kain putih) + ikat pinggang\n✓ Pakaian dalam yang nyaman (minimal 7 set)\n✓ Kaus kaki (minimal 7 pasang)\n✓ Sandal yang nyaman untuk jalan jauh\n✓ Peci/songkok\n✓ Sarung untuk sholat\n✓ Alquran dan buku panduan\n\n📌 *Perlengkapan Mandi & Kesehatan*\n✓ Handuk (2 buah)\n✓ Sabun, sampo, sikat gigi\n✓ Parfum non-alkohol\n✓ Obat pribadi (minimal 14 hari)\n✓ Vitamin dan suplemen\n✓ Masker (minimal 30 buah)\n✓ Hand sanitizer\n✓ Plester dan obat luka\n\n📌 *Perlengkapan Penting Lainnya*\n✓ Tas selempang/fanny pack\n✓ Botol minum (zamzam)\n✓ Payung lipat\n✓ KTP dan paspor (fotokopi)\n✓ Uang tunai (SAR & IDR)\n✓ Kartu kredit/debit\n✓ Power bank & kabel charger\n✓ Adaptor colokan (standar Eropa)\n✓ Bantal leher untuk perjalanan\n\n📌 *Tips Tambahan*\n✓ Bawa tas koper yang ringan\n✓ Labeli semua barang dengan nama\n✓ Jangan membawa perhiasan berlebihan\n✓ Bawa obat antinyeri dan diare\n✓ Siapkan mental dan fisik`;
-        document.getElementById('atribut-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap">${atribut}</div>`;
-        window.currentAtribut = atribut;
-        showPage('page-atribut');
-    }
-    function shareAtribut() { window.open(`https://wa.me/?text=${encodeURIComponent(window.currentAtribut+'\n\n#AuvaMobile')}`); }
-    
-    // ==================== CATATAN & DOA (dengan fitur kirim WA) ====================
+    // ==================== CATATAN & DOA ====================
     let currentMode = '', currentIdx = -1;
     function openList(m) { currentMode = m; document.getElementById('l-title').innerText = m.toUpperCase(); document.getElementById('btn-plus').style.display='block'; renderList(); showPage('page-list'); }
     function renderList() { 
@@ -442,15 +784,16 @@
             <button class="btn-action" style="background:#25d366" onclick="shareZiarah()">🚌 Share Rute Ziarah</button>
             <button class="btn-action" style="background:#25d366" onclick="shareLokasi()">📍 Share Titik Kumpul</button>
             <button class="btn-action" style="background:#25d366" onclick="shareAtribut()">🎒 Share Perlengkapan</button>
+            <button class="btn-action" style="background:#25d366" onclick="shareTahlil()">📖 Share Tahlil</button>
         `;
         document.getElementById('l-title').innerText = "SIARAN WA"; document.getElementById('btn-plus').style.display='none'; showPage('page-list');
     }
-    function sharePanduanHaji() { window.open(`https://wa.me/?text=${encodeURIComponent(`*PANDUAN HAJI*\n\n1. Ihram\n2. Wukuf di Arafah\n3. Tawaf Ifadah\n4. Sa'i\n5. Tahallul\n6. Tertib\n\n#AuvaMobile`)}`); }
-    function sharePanduanUmroh() { window.open(`https://wa.me/?text=${encodeURIComponent(`*PANDUAN UMROH*\n\n1. Ihram\n2. Tawaf\n3. Sa'i\n4. Tahallul\n\n#AuvaMobile`)}`); }
+    function sharePanduanHaji() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('haji'))}`); }
+    function sharePanduanUmroh() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('umroh'))}`); }
     
     // ==================== RESET DATA ====================
     function resetAllData() {
-        if(confirm('⚠️ PERINGATAN: Semua data (jamaah, kas, catatan, doa, lokasi) akan dihapus permanen!\n\nLanjutkan?')) {
+        if(confirm('⚠️ PERINGATAN: Semua data (jamaah, kas, catatan, doa, lokasi, dan konten yang diedit) akan dihapus permanen!\n\nLanjutkan?')) {
             localStorage.clear();
             showToast('Semua data telah direset');
             setTimeout(()=>location.reload(), 1500);
@@ -473,4 +816,4 @@
     window.onload = () => { initSettings(); renderKas(); renderJamaah(); };
 </script> 
 </body> 
-                                                                                                                                   </html>
+                </html>
