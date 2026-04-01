@@ -1,344 +1,1223 @@
-<!DOCTYPE html> 
-<html lang="id"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
-    <title>Auva Mobile - KBIH Amanatul Ummah</title> 
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap" rel="stylesheet"> 
-    <style> 
-        :root {  
-            --primary: #1a5d4a;  
-            --accent: #c9a227;  
-            --bg: #f4f7f6;  
-            --white: #ffffff;  
-            --wa: #25d366;  
-            --danger: #e74c3c;  
-            --text-dark: #333;  
-            --text-light: #fff; 
-        } 
-        body.dark-mode { 
-            --bg: #121212; 
-            --text-dark: #eee; 
-            --white: #222; 
-        } 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text-dark); transition: 0.3s; padding-bottom: 80px; } 
-         
-        .page { display: none; min-height: 100vh; animation: fadeIn 0.3s; } 
-        .page.active { display: block; } 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a5d4a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Auva">
+    
+    <title>Auva Kbihu AU</title>
 
-        .header-main { background: var(--primary); color: var(--text-light); padding: 40px 20px; text-align: center; border-bottom: 4px solid var(--accent); border-radius: 0 0 30px 30px; position: relative; } 
-        .page-header { background: var(--primary); color: var(--text-light); padding: 15px 20px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 100; } 
+    <!-- MANIFEST INLINE -->
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Auva%20Kbihu%20AU%22,%22short_name%22:%22Auva%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%231a5d4a%22,%22theme_color%22:%22%231a5d4a%22,%22icons%22:[{%22src%22:%22https://img.icons8.com/color/192/kaaba.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22},{%22src%22:%22https://img.icons8.com/color/512/kaaba.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    
+    <!-- Icons -->
+    <link rel="icon" href="https://img.icons8.com/color/96/kaaba.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/kaaba.png">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- SheetJS untuk Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- jsPDF untuk PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        :root { 
+            --primary: #1a5d4a; 
+            --accent: #c9a227; 
+            --bg: #f4f7f6; 
+            --white: #ffffff; 
+            --red: #e74c3c; 
+            --green: #2ecc71; 
+            --dark: #2c3e50;
+            --blue: #3498db;
+            --orange: #e67e22;
+            --purple: #9b59b6;
+        }
         
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px; max-width: 600px; margin: 0 auto; } 
-        .menu-card { background: var(--white); border-radius: 15px; padding: 20px 10px; text-align: center; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; display: none; } 
-        .menu-card.visible { display: block; }
-        .menu-card div { font-size: 35px; margin-bottom: 8px; } 
-        .menu-card span { font-weight: bold; color: var(--primary); font-size: 0.75rem; display: block; text-transform: uppercase; } 
-
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; } 
-        .list-item { background: var(--white); padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; border: 1px solid #eee; } 
-        .item-num { background: var(--primary); color: var(--text-light); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; margin-right: 15px; flex-shrink: 0; } 
-
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; background: var(--white); color: var(--text-dark); }
-        .btn-action { color: var(--text-light); border: none; padding: 14px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; } 
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         
-        .setting-row { background: var(--white); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid #eee; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(24px); }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); 
+            padding: 10px; 
+            margin: 0; 
+            color: #333; 
+            overscroll-behavior: none;
+        }
+        
+        /* Splash Screen */
+        #splashScreen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, #0d3328 100%);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        #splashScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .splash-logo img {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .splash-text {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .splash-sub {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+        
+        .splash-loader {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin-top: 40px;
+            overflow: hidden;
+        }
+        
+        .splash-loader-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 2px;
+            animation: loading 2s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        /* Install Banner */
+        .install-banner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            z-index: 10000;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .install-banner.show { display: flex; }
+        
+        .install-banner .text { flex: 1; }
+        .install-banner h4 { margin: 0 0 5px 0; }
+        .install-banner p { margin: 0; font-size: 12px; opacity: 0.9; }
+        
+        .install-banner .btn-install {
+            background: var(--accent);
+            color: #1a5d4a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .install-banner .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        /* Offline Indicator */
+        .offline-indicator {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #e74c3c;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            z-index: 9999;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .offline-indicator.show { display: block; }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .tab-menu { 
+            display: flex; 
+            max-width: 500px; 
+            margin: 0 auto 15px; 
+            background: #ddd; 
+            border-radius: 10px; 
+            overflow: hidden; 
+        }
+        
+        .tab-btn { 
+            flex: 1; 
+            padding: 15px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            background: #ddd; 
+            color: #666; 
+            font-size: 14px; 
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active { 
+            background: var(--primary); 
+            color: white; 
+        }
+        
+        .card { 
+            background: var(--white); 
+            border-radius: 15px; 
+            padding: 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            max-width: 500px; 
+            margin: auto; 
+            border-top: 5px solid var(--primary); 
+            box-sizing: border-box; 
+        }
+        
+        .logo-box { text-align: center; margin-bottom: 10px; }
+        
+        h2 { 
+            color: var(--primary); 
+            text-align: center; 
+            margin: 0; 
+            font-size: 1.4rem; 
+        }
+        
+        p.subtitle { 
+            text-align: center; 
+            color: #666; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            font-weight: bold; 
+        }
+        
+        .section-title { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            color: var(--accent); 
+            margin-top: 15px; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 3px; 
+        }
+        
+        .input-group { margin-bottom: 12px; }
+        
+        label { 
+            display: block; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            margin-bottom: 4px; 
+            color: #555; 
+        }
+        
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            box-sizing: border-box; 
+            background: #fafafa; 
+            -webkit-appearance: none;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+        
+        .row { display: flex; gap: 10px; margin-bottom: 5px; }
+        .row > div { flex: 1; }
+        
+        .btn { 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin-top: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .btn-blue { background: var(--blue) !important; }
+        .btn-orange { background: var(--orange) !important; }
+        .btn-purple { background: var(--purple) !important; }
+        .btn-small { font-size: 13px; padding: 12px; }
+        
+        .res-card { 
+            background: var(--primary); 
+            color: white; 
+            padding: 20px; 
+            border-radius: 15px; 
+            display: none; 
+            margin: 15px auto; 
+            max-width: 500px; 
+            box-sizing: border-box; 
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .res-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 10px 0; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            font-size: 0.9rem; 
+        }
+        
+        .highlight { 
+            color: var(--accent); 
+            font-weight: bold; 
+            font-size: 1.4rem; 
+        }
+        
+        .summary-real { 
+            background: var(--dark); 
+            color: white; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-top: 15px; 
+        }
+        
+        .table-container { 
+            overflow-x: auto; 
+            margin-top: 20px; 
+            background: white; 
+            border-radius: 10px; 
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 12px; 
+        }
+        
+        th { 
+            background: #eee; 
+            padding: 10px; 
+            text-align: left; 
+            position: sticky;
+            top: 0;
+        }
+        
+        td { 
+            padding: 10px; 
+            border-bottom: 1px solid #eee; 
+        }
+        
+        .txt-in { color: var(--green); font-weight: bold; }
+        .txt-out { color: var(--red); font-weight: bold; }
+        
+        .btn-del { 
+            color: var(--red); 
+            border: none; 
+            background: none; 
+            font-weight: bold; 
+            font-size: 18px; 
+            cursor: pointer; 
+            width: 30px; 
+            height: 30px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 5px; 
+            transition: background 0.2s; 
+        }
+        
+        .btn-del:hover { background: rgba(231, 76, 60, 0.1); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        footer { 
+            text-align: center; 
+            font-size: 0.7rem; 
+            color: #999; 
+            margin-top: 20px; 
+            padding-bottom: 100px; 
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 10003;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .copy-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 10004;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .copy-overlay.show { display: flex; }
+        
+        .copy-box {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .copy-box h3 {
+            margin-top: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .copy-box textarea {
+            width: 100%;
+            height: 250px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 14px;
+            resize: none;
+            margin: 15px 0;
+        }
+        
+        .copy-instruction {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .btn-close-overlay {
+            background: var(--red);
+            color: white;
+            width: 100%;
+        }
+        
+        .backup-info {
+            background: #e3f2fd;
+            border-left: 4px solid var(--blue);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 12px;
+            color: #1565c0;
+        }
+        
+        .backup-info i {
+            margin-right: 5px;
+        }
+        
+        .sync-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--green);
+            margin-left: 10px;
+        }
+        
+        .sync-status.offline {
+            color: var(--red);
+        }
+    </style>
+</head>
 
-        .tasbih-box { text-align: center; padding: 30px 20px; background: var(--white); border-radius: 20px; border: 2px solid #eee; margin-top: 20px; }
-        .tasbih-num { font-size: 100px; font-weight: bold; color: var(--primary); margin: 10px 0; font-family: 'Amiri', serif; }
-        .tasbih-btn { width: 180px; height: 180px; background: var(--primary); border-radius: 50%; color: white; font-size: 1.5rem; font-weight: bold; border: 8px solid var(--accent); cursor: pointer; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .tasbih-btn:active { transform: scale(0.92); }
-
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--white); display: flex; border-top: 1px solid #eee; padding: 10px 0; z-index: 1000; } 
-        .nav-item { flex: 1; text-align: center; color: #888; font-size: 0.7rem; cursor: pointer; } 
-        .nav-active { color: var(--primary); font-weight: bold; } 
-
-        #notif { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; display: none; z-index: 2000; }
-        #log-error { position: fixed; bottom: 10px; right: 10px; background: rgba(231, 76, 60, 0.9); color: white; font-size: 0.6rem; padding: 5px 10px; border-radius: 5px; display: none; z-index: 3000; pointer-events: none; }
-    </style> 
-</head> 
-<body> 
-
-<div id="notif">Pesan tersimpan</div>
-<div id="log-error">Error: <span id="err-txt"></span></div>
-
-<div id="home" class="page active"> 
-    <div class="header-main"> 
-        <div style="font-size: 60px;">🕋</div> 
-        <h2 style="letter-spacing: 2px;">AUVA MOBILE</h2> 
-        <p style="color:var(--accent); font-weight: bold; font-size: 0.8rem;">KBIH AMANATUL UMMAH</p> 
-        <button onclick="toggleTheme()" style="position:absolute; top:15px; right:15px; background:rgba(255,255,255,0.2); border:none; color:white; padding:5px 12px; border-radius:15px; font-size:0.7rem;">🌓 Mode</button>
-    </div> 
-     
-    <div class="menu-grid" id="main-menu-grid"> 
-        <div class="menu-card" id="m-haji" onclick="alert('Fitur Haji')"><div>🕋</div><span>Haji</span></div> 
-        <div class="menu-card" id="m-umroh" onclick="alert('Fitur Umroh')"><div>🕌</div><span>Umroh</span></div> 
-        <div class="menu-card" id="m-doa" onclick="openList('doa')"><div>🤲</div><span>Titipan Doa</span></div> 
-        <div class="menu-card" id="m-catatan" onclick="openList('catatan')"><div>📝</div><span>Catatan</span></div> 
-        <div class="menu-card" id="m-jamaah" onclick="openJamaah()"><div>👥</div><span>Jamaah</span></div> 
-        <div class="menu-card" id="m-kas" onclick="openKas()"><div>💰</div><span>Uang Kas</span></div> 
-        <div class="menu-card" id="m-tasbih" onclick="openTasbih()"><div>📿</div><span>Tasbih</span></div> 
-        <div class="menu-card" id="m-siaran" onclick="openSiaran()"><div>📢</div><span>Siaran WA</span></div> 
-    </div> 
-</div> 
-
-<div id="page-list" class="page"> 
-    <div class="page-header"> 
-        <span onclick="goHome()" style="cursor:pointer; font-size:1.5rem">←</span> 
-        <span id="l-title" style="flex:1; font-weight:bold">DAFTAR</span> 
-        <button onclick="openEntry()" style="background:var(--accent); border:none; width:35px; height:35px; border-radius:50%; color:white; font-weight:bold">+</button> 
-    </div> 
-    <div class="container">
-        <input type="text" id="src" placeholder="Cari data..." onkeyup="renderList()">
-        <div id="l-cont"></div>
-    </div> 
-</div> 
-
-<div id="page-detail" class="page"> 
-    <div class="page-header"> 
-        <span onclick="show('page-list')" style="cursor:pointer; font-size:1.5rem">←</span> 
-        <span style="flex:1; font-weight:bold">DETAIL</span> 
-        <span onclick="deleteData()" style="cursor:pointer">🗑️</span> 
-    </div> 
-    <div class="container"> 
-        <div style="background:var(--white); padding:20px; border-radius:12px; border:1px solid #eee;"> 
-            <h3 id="v-judul" style="color:var(--primary)"></h3> 
-            <div id="v-isi" style="margin:20px 0; white-space:pre-wrap; line-height:1.6"></div> 
-            <button class="btn-action" style="background:var(--wa);" onclick="sendWA()">💬 WhatsApp</button> 
-            <button class="btn-action" style="background:#666;" onclick="editCurrent()">✏️ Edit Data</button> 
-        </div> 
-    </div> 
-</div> 
-
-<div id="page-entry" class="page"> 
-    <div class="page-header"> 
-        <span onclick="show('page-list')" style="cursor:pointer; font-size:1.5rem">←</span> 
-        <span id="e-title" style="font-weight:bold">TAMBAH</span> 
-    </div> 
-    <div class="container"> 
-        <input type="text" id="i-judul" placeholder="Judul / Nama"> 
-        <textarea id="i-isi" rows="10" placeholder="Ketik rincian..."></textarea> 
-        <button class="btn-action" style="background:var(--primary)" onclick="saveData()">Simpan Data</button> 
-    </div> 
-</div> 
-
-<div id="page-settings" class="page">
-    <div class="page-header">
-        <span onclick="goHome()" style="cursor:pointer; font-size:1.5rem">←</span>
-        <span style="font-weight:bold;">PENGATURAN MENU</span>
-    </div>
-    <div class="container">
-        <p style="margin-bottom:15px; font-weight:bold; font-size:0.9rem;">Aktifkan Menu Utama:</p>
-        <div id="toggle-list"></div>
-        <button class="btn-action" style="background:#888; margin-top:30px" onclick="if(confirm('Hapus semua data?')){localStorage.clear(); location.reload();}">RESET SEMUA DATA</button>
-    </div>
-</div>
-
-<div id="page-jamaah" class="page">
-    <div class="page-header">
-        <span onclick="goHome()" style="cursor:pointer; font-size:1.5rem">←</span>
-        <span style="flex:1; font-weight:bold">DATA JAMAAH</span>
-    </div>
-    <div class="container">
-        <div style="background:var(--white);padding:15px;border-radius:12px;margin-bottom:15px; border:1px solid #ddd;">
-            <input type="text" id="j-nama" placeholder="Nama Jamaah">
-            <input type="text" id="j-bus" placeholder="Nomor Bus">
-            <button class="btn-action" style="background:var(--primary)" onclick="addJamaah()">+ Simpan Jamaah</button>
+<body onload="initApp()">
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+        <div class="splash-logo">
+            <img src="https://img.icons8.com/color/96/kaaba.png" alt="Auva">
         </div>
-        <input type="text" id="j-search" placeholder="Cari nama jamaah..." onkeyup="renderJamaah()" style="border: 2px solid var(--accent);">
-        <div id="jamaah-list-cont"></div>
-    </div>
-</div>
-
-<div id="page-tasbih" class="page">
-    <div class="page-header">
-        <span onclick="goHome()" style="cursor:pointer; font-size:1.5rem">←</span>
-        <span style="flex:1; font-weight:bold">TASBIH DIGITAL</span>
-        <span onclick="resetTasbih()" style="cursor:pointer; font-size:0.8rem">RESET</span>
-    </div>
-    <div class="container">
-        <div class="tasbih-box">
-            <div id="tasbih-display" class="tasbih-num">0</div>
-            <div class="tasbih-btn" onclick="countTasbih()">TAP</div>
+        <div class="splash-text">Auva</div>
+        <div class="splash-sub">Kbihu AU</div>
+        <div class="splash-loader">
+            <div class="splash-loader-bar"></div>
         </div>
     </div>
-</div>
 
-<div id="page-kas" class="page">
-    <div class="page-header">
-        <span onclick="goHome()" style="cursor:pointer; font-size:1.5rem">←</span>
-        <span style="flex:1; font-weight:bold">LAPORAN KAS</span>
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        <i class="fas fa-wifi-slash"></i> Anda sedang offline. Data tetap tersimpan lokal.
     </div>
-    <div class="container">
-        <div style="background:var(--white); padding:15px; border-radius:15px; border:1px solid #ddd; margin-bottom:15px;">
-            <div style="background:var(--primary); color:white; padding:15px; border-radius:10px; text-align:center; margin-bottom:15px;">
-                <small>Total Saldo saat ini:</small>
-                <h2 id="total-kas" style="margin:0">Rp 0</h2>
+
+    <!-- Install Banner -->
+    <div id="installBanner" class="install-banner">
+        <div class="text">
+            <h4><i class="fas fa-kaaba"></i> Install Auva</h4>
+            <p>Tambahkan ke layar utama untuk akses cepat</p>
+        </div>
+        <button class="btn-install" onclick="installApp()">Install</button>
+        <button class="btn-close" onclick="closeInstallBanner()">&times;</button>
+    </div>
+
+    <!-- Manual Copy Overlay -->
+    <div id="copyOverlay" class="copy-overlay">
+        <div class="copy-box">
+            <h3><i class="fas fa-copy"></i> Salin Ringkasan</h3>
+            <div class="copy-instruction">
+                <i class="fas fa-info-circle"></i> 
+                Tekan dan tahan text di bawah, lalu pilih "Salin"
+            </div>
+            <textarea id="manualCopyText" readonly></textarea>
+            <button class="btn btn-close-overlay" onclick="closeCopyOverlay()">
+                <i class="fas fa-check"></i> Selesai
+            </button>
+        </div>
+    </div>
+
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="openTab('estimasi', this)">ESTIMASI</button>
+        <button class="tab-btn" onclick="openTab('real', this)">KAS REAL</button>
+    </div>
+
+    <div id="estimasi" class="tab-content active">
+        <div class="card">
+            <div class="logo-box"><img src="https://img.icons8.com/color/96/kaaba.png" style="width:80px;"></div>
+            <h2>Estimasi Biaya Umroh</h2>
+            <p class="subtitle">Auva Kbihu AU</p>
+            
+            <div class="section-title">Data Rombongan</div>
+            <div class="input-group">
+                <label>Nama Paket / Lokasi</label>
+                <input type="text" id="lokasiPaket" value="Umroh Syawal - Auva Kbihu AU">
+            </div>
+            <div class="row">
+                <div class="input-group"><label>Total Pax</label><input type="number" id="totJam" value="35"></div>
+                <div class="input-group"><label>Gratis</label><input type="number" id="jamGratis" value="1"></div>
+                <div class="input-group"><label>Jumlah TL</label><input type="number" id="numTL" value="1"></div>
+            </div>
+
+            <div class="section-title">Komponen Biaya</div>
+            <div class="row">
+                <div class="input-group"><label>Tiket</label><input type="number" id="cTiket" value="15450000"></div>
+                <div class="input-group"><label>LA / Hotel</label><input type="number" id="cLA" value="14450000"></div>
+            </div>
+            <div class="row">
+                <div class="input-group"><label>Asuransi</label><input type="number" id="cAsuransi" value="60000"></div>
+                <div class="input-group"><label>Handling</label><input type="number" id="cHandling" value="100000"></div>
+            </div>
+            <div class="row">
+                <div class="input-group"><label>Perlengkapan</label><input type="number" id="cAlat" value="1000000"></div>
+                <div class="input-group"><label>Aplikasi</label><input type="number" id="cAplikasi" value="60000"></div>
+            </div>
+            <div class="row">
+                <div class="input-group"><label>Diskon/PIC</label><input type="number" id="cPIC" value="0"></div>
+                <div class="input-group"><label>Lain-lain</label><input type="number" id="cLain" value="0"></div>
+            </div>
+
+            <div class="section-title">Margin</div>
+            <div class="input-group"><label>Profit (%)</label><input type="number" id="profitPct" value="0"></div>
+            <button class="btn" onclick="hitungUmroh()">
+                <i class="fas fa-calculator"></i> HITUNG ESTIMASI
+            </button>
+        </div>
+        <div id="hasil" class="res-card"></div>
+    </div>
+
+    <div id="real" class="tab-content">
+        <div class="card">
+            <h2>Pencatatan REAL 
+                <span id="syncStatus" class="sync-status">
+                    <i class="fas fa-check-circle"></i> Online
+                </span>
+            </h2>
+            <div class="section-title">Input Transaksi</div>
+            <input id="ketReal" placeholder="Keterangan" style="margin-bottom:10px;">
+            <div class="row">
+                <div style="flex:2"><input id="nomReal" type="number" placeholder="Nominal Rp"></div>
+                <div style="flex:1"><select id="tipeReal"><option value="masuk">In</option><option value="keluar">Out</option></select></div>
+            </div>
+            <button class="btn" onclick="tambah()" style="background:var(--accent)">
+                <i class="fas fa-plus-circle"></i> TAMBAH TRANSAKSI
+            </button>
+            <div class="summary-real" id="summary"></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Tgl</th><th>Ket</th><th>Nom</th><th></th></tr>
+                    </thead>
+                    <tbody id="bodyKas"></tbody>
+                </table>
             </div>
             
-            <input type="hidden" id="k-index" value="-1"> 
-            <input type="number" id="k-jumlah" placeholder="Nominal Angka (Rp)">
-            <input type="text" id="k-ket" placeholder="Keterangan Transaksi">
-            
-            <div style="display:flex; gap:10px;" id="kas-btn-group">
-                <button onclick="addKas('masuk')" style="flex:1; background:#27ae60; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">+ MASUK</button>
-                <button onclick="addKas('keluar')" style="flex:1; background:var(--danger); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">- KELUAR</button>
+            <!-- BACKUP & RESTORE SECTION -->
+            <div class="section-title">Backup & Restore Data</div>
+            <div class="backup-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Backup:</strong> Simpan semua data kas ke file.<br>
+                <i class="fas fa-info-circle" style="visibility:hidden"></i>
+                <strong>Restore:</strong> Pulihkan data dari file backup.
             </div>
-            <button id="btn-update-kas" onclick="updateKasData()" style="display:none; width:100%; background:var(--accent); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">SIMPAN PERUBAHAN</button>
-            <button id="btn-batal-kas" onclick="resetKasForm()" style="display:none; width:100%; background:#888; color:white; border:none; padding:8px; border-radius:8px; margin-top:5px; font-size:0.8rem;">Batal Edit</button>
+            <div class="row">
+                <button class="btn btn-blue btn-small" onclick="backupData()" style="flex:1; margin-top:0;">
+                    <i class="fas fa-download"></i> BACKUP
+                </button>
+                <button class="btn btn-orange btn-small" onclick="document.getElementById('restoreFile').click()" style="flex:1; margin-top:0;">
+                    <i class="fas fa-upload"></i> RESTORE
+                </button>
+            </div>
+            <input type="file" id="restoreFile" accept=".auvabackup,.json" style="display:none" onchange="restoreData(this)">
+            
+            <!-- EXPORT SECTION -->
+            <div class="section-title">Export Laporan</div>
+            <div class="row">
+                <button class="btn btn-purple btn-small" onclick="exportPDF()" style="flex:1; margin-top:0;">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn btn-small" onclick="downloadExcel()" style="flex:1; margin-top:0; background:#27ae60;">
+                    <i class="fas fa-file-excel"></i> EXCEL
+                </button>
+            </div>
+            
+            <button class="btn" onclick="resetData()" style="background:var(--red); font-size:12px; margin-top:20px;">
+                <i class="fas fa-trash-alt"></i> KOSONGKAN BUKU KAS (PINDAH ROMBONGAN)
+            </button>
         </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 5px;">
-            <b>Riwayat:</b>
-            <small style="color:#888;">Klik teks untuk Edit</small>
-        </div>
-        <div id="kas-histori"></div>
     </div>
-</div>
 
-<div class="bottom-nav"> 
-    <div class="nav-item" onclick="goHome()">🏠<br>Home</div> 
-    <div class="nav-item" onclick="openList('doa')">🤲<br>Doa</div> 
-    <div class="nav-item" onclick="openList('catatan')">📝<br>Catatan</div> 
-    <div class="nav-item" onclick="show('page-settings')">⚙️<br>Setting</div> 
-</div> 
+    <footer>&copy; 2026 Auva Kbihu AU</footer>
+    
+    <div id="toast" class="toast"></div>
 
-<script> 
-    window.onerror = function(msg, url, line) {
-        let errDiv = document.getElementById('log-error');
-        document.getElementById('err-txt').innerText = msg.split(':')[0] + " di baris " + line;
-        errDiv.style.display = 'block';
-        setTimeout(() => errDiv.style.display = 'none', 5000);
-        return false;
+<script>
+// ==================== SERVICE WORKER ====================
+const SW_CODE = `
+const CACHE_NAME = 'auva-v1';
+const STATIC_ASSETS = [
+    '/',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js',
+    'https://img.icons8.com/color/96/kaaba.png'
+];
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(STATIC_ASSETS);
+        })
+    );
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            );
+        })
+    );
+    self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+    // Skip non-GET requests
+    if (event.request.method !== 'GET') return;
+    
+    // Skip chrome-extension requests
+    if (event.request.url.startsWith('chrome-extension://')) return;
+    
+    event.respondWith(
+        caches.match(event.request).then((cached) => {
+            if (cached) {
+                return cached;
+            }
+            return fetch(event.request)
+                .then((response) => {
+                    // Don't cache if not valid response
+                    if (!response || response.status !== 200 || response.type !== 'basic') {
+                        return response;
+                    }
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                    return response;
+                })
+                .catch(() => {
+                    // Return offline fallback if available
+                    return new Response('Offline mode - Data tersimpan lokal');
+                });
+        })
+    );
+});
+`;
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    const blob = new Blob([SW_CODE], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    
+    navigator.serviceWorker.register(swUrl)
+        .then((registration) => {
+            console.log('SW registered:', registration);
+        })
+        .catch((error) => {
+            console.log('SW registration failed:', error);
+        });
+}
+
+// ==================== APP LOGIC ====================
+let dataKas=[];
+let deferredPrompt = null;
+let lastCalculatedText = '';
+
+// PWA - Install Prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallBanner();
+});
+
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    hideInstallBanner();
+    showToast('Auva berhasil di-install!');
+});
+
+// Online/Offline Detection
+window.addEventListener('online', () => {
+    document.getElementById('offlineIndicator').classList.remove('show');
+    updateSyncStatus(true);
+    showToast('🌐 Kembali online!');
+});
+
+window.addEventListener('offline', () => {
+    document.getElementById('offlineIndicator').classList.add('show');
+    updateSyncStatus(false);
+    showToast('📴 Mode offline - data tetap tersimpan');
+});
+
+function updateSyncStatus(isOnline) {
+    const status = document.getElementById('syncStatus');
+    if (isOnline) {
+        status.innerHTML = '<i class="fas fa-check-circle"></i> Online';
+        status.classList.remove('offline');
+    } else {
+        status.innerHTML = '<i class="fas fa-wifi-slash"></i> Offline';
+        status.classList.add('offline');
+    }
+}
+
+function showInstallBanner() {
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+        document.getElementById('installBanner').classList.add('show');
+    }
+}
+
+function hideInstallBanner() {
+    document.getElementById('installBanner').classList.remove('show');
+}
+
+function closeInstallBanner() {
+    hideInstallBanner();
+    localStorage.setItem('auva_install_dismissed', Date.now());
+}
+
+async function installApp() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Init App
+function initApp(){
+    // Hide splash screen after 2 seconds
+    setTimeout(() => {
+        document.getElementById('splashScreen').classList.add('hidden');
+    }, 2000);
+    
+    // Check online status
+    if (!navigator.onLine) {
+        document.getElementById('offlineIndicator').classList.add('show');
+        updateSyncStatus(false);
+    }
+    
+    // Load data
+    let d=localStorage.getItem('auva_kas_data');
+    if(d) dataKas=JSON.parse(d);
+    render();
+    
+    // Check install banner dismissed
+    const dismissed = localStorage.getItem('auva_install_dismissed');
+    if (dismissed && (Date.now() - dismissed) < 7 * 24 * 60 * 60 * 1000) {
+        // Don't show for 7 days
+    }
+}
+
+// ==================== BACKUP & RESTORE ====================
+
+function backupData() {
+    if (dataKas.length === 0) {
+        alert("Tidak ada data untuk di-backup!");
+        return;
+    }
+    
+    const backupObj = {
+        app: "Auva Kbihu AU",
+        version: "1.0",
+        created: new Date().toISOString(),
+        data: dataKas
     };
+    
+    const jsonStr = JSON.stringify(backupObj, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Auva_Backup_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.auvabackup`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast(`✅ Backup berhasil! ${dataKas.length} transaksi tersimpan`);
+}
 
-    let currentMode = ''; let currentIdx = -1; let tasbihCount = 0;
-    const menus = [
-        {id: 'm-haji', name: 'Haji'}, {id: 'm-umroh', name: 'Umroh'}, 
-        {id: 'm-doa', name: 'Titipan Doa'}, {id: 'm-catatan', name: 'Catatan'},
-        {id: 'm-jamaah', name: 'Jamaah'}, {id: 'm-kas', name: 'Uang Kas'},
-        {id: 'm-tasbih', name: 'Tasbih'}, {id: 'm-siaran', name: 'Siaran WA'}
-    ];
+function restoreData(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    input.value = '';
+    
+    if (!confirm("⚠️ PERINGATAN: Data saat ini akan ditimpa dengan data backup!\n\nLanjutkan restore?")) {
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const backup = JSON.parse(e.target.result);
+            
+            if (!backup.app || !backup.data || !Array.isArray(backup.data)) {
+                throw new Error("Format file tidak valid!");
+            }
+            
+            if (backup.app !== "Auva Kbihu AU") {
+                throw new Error("File bukan backup Auva yang valid!");
+            }
+            
+            const jumlahTransaksi = backup.data.length;
+            if (!confirm(`Restore ${jumlahTransaksi} transaksi dari backup?\nTanggal backup: ${new Date(backup.created).toLocaleString('id-ID')}`)) {
+                return;
+            }
+            
+            dataKas = backup.data;
+            save();
+            
+            showToast(`✅ Restore berhasil! ${jumlahTransaksi} transaksi dipulihkan`);
+            
+        } catch (err) {
+            alert("❌ Gagal restore: " + err.message);
+        }
+    };
+    
+    reader.onerror = function() {
+        alert("❌ Gagal membaca file!");
+    };
+    
+    reader.readAsText(file);
+}
 
-    function show(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
-    }
-    function goHome() { show('home'); }
-    function toggleTheme() { document.body.classList.toggle('dark-mode'); }
-    function showNotif(m) { const el = document.getElementById('notif'); el.innerText = m; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2000); }
-    function getDB(k) { return JSON.parse(localStorage.getItem('auva_'+k) || '[]'); }
-    function setDB(k, v) { localStorage.setItem('auva_'+k, JSON.stringify(v)); }
+// ==================== EXPORT PDF ====================
 
-    function initMenuSettings() {
-        const saved = JSON.parse(localStorage.getItem('auva_menu_status') || '{}');
-        let html = '';
-        menus.forEach(m => {
-            const isVisible = saved[m.id] !== undefined ? saved[m.id] : true;
-            html += `<div class="setting-row"><span>${m.name}</span><label class="switch"><input type="checkbox" class="menu-chk" data-id="${m.id}" ${isVisible?'checked':''} onchange="saveMenuStatus()"><span class="slider"></span></label></div>`;
-            document.getElementById(m.id).style.display = isVisible ? 'block' : 'none';
-        });
-        document.getElementById('toggle-list').innerHTML = html;
+function exportPDF() {
+    if (dataKas.length === 0) {
+        alert("Tidak ada data untuk di-export!");
+        return;
     }
-    function saveMenuStatus() {
-        let status = {};
-        document.querySelectorAll('.menu-chk').forEach(chk => {
-            status[chk.dataset.id] = chk.checked;
-            document.getElementById(chk.dataset.id).style.display = chk.checked ? 'block' : 'none';
-        });
-        localStorage.setItem('auva_menu_status', JSON.stringify(status));
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Header
+    doc.setFillColor(26, 93, 74);
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    // Logo text
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AUVA', 105, 20, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Kbihu AU - Laporan Keuangan', 105, 30, { align: 'center' });
+    
+    // Info rombongan
+    const namaGrup = prompt("Nama Rombongan untuk laporan:", "Rombongan Umroh");
+    if (!namaGrup) return;
+    
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Rombongan: ${namaGrup}`, 14, 50);
+    doc.text(`Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 58);
+    
+    // Hitung total
+    let masuk = 0, keluar = 0;
+    dataKas.forEach(i => {
+        if (i.tipe === 'masuk') masuk += i.nom;
+        else keluar += i.nom;
+    });
+    
+    // Summary box
+    doc.setFillColor(240, 240, 240);
+    doc.roundedRect(14, 65, 182, 25, 3, 3, 'F');
+    
+    doc.setFontSize(10);
+    doc.setTextColor(46, 204, 113);
+    doc.text(`Total Pemasukan: Rp ${masuk.toLocaleString('id-ID')}`, 20, 75);
+    doc.setTextColor(231, 76, 60);
+    doc.text(`Total Pengeluaran: Rp ${keluar.toLocaleString('id-ID')}`, 20, 82);
+    doc.setTextColor(26, 93, 74);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`SALDO AKHIR: Rp ${(masuk - keluar).toLocaleString('id-ID')}`, 110, 78);
+    
+    // Table
+    const tableData = dataKas.map(i => [
+        i.tgl,
+        i.ket,
+        i.tipe === 'masuk' ? 'MASUK' : 'KELUAR',
+        `Rp ${i.nom.toLocaleString('id-ID')}`
+    ]);
+    
+    doc.autoTable({
+        startY: 95,
+        head: [['Tanggal', 'Keterangan', 'Tipe', 'Nominal']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: {
+            fillColor: [26, 93, 74],
+            textColor: 255,
+            fontStyle: 'bold'
+        },
+        styles: {
+            fontSize: 9,
+            cellPadding: 3
+        },
+        columnStyles: {
+            0: { cellWidth: 30 },
+            1: { cellWidth: 'auto' },
+            2: { cellWidth: 25, halign: 'center' },
+            3: { cellWidth: 40, halign: 'right' }
+        }
+    });
+    
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(128, 128, 128);
+        doc.text(`Halaman ${i} dari ${pageCount} - Auva Kbihu AU © 2026`, 105, 290, { align: 'center' });
+    }
+    
+    // Save
+    doc.save(`Laporan_${namaGrup.replace(/\s+/g, '_')}.pdf`);
+    showToast('✅ PDF berhasil di-export!');
+}
+
+// ==========================================================
+
+function openTab(t, el){
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+    el.classList.add('active');
+}
+
+function hitungUmroh(){
+    const nJam=parseInt(document.getElementById('totJam').value)||0;
+    if(nJam<=0)return alert("Isi jamaah!");
+    const ids=['cTiket','cLA','cAsuransi','cHandling','cPIC','cAlat','cAplikasi','cLain'];
+    const sub = ids.map(id=>parseFloat(document.getElementById(id).value)||0).reduce((a,b)=>a+b,0);
+    const nFoc=parseInt(document.getElementById('jamGratis').value)||0;
+    const nTL=parseInt(document.getElementById('numTL').value)||0;
+    const pPct=(parseFloat(document.getElementById('profitPct').value)||0)/100;
+          
+    const profitKotor = (sub * nJam) * pPct;
+    const biayaTL = sub * nTL;
+    const bersih = profitKotor - biayaTL;
+    const profitPerPax = bersih / (nJam - nFoc);
+    const jual = ((sub * nJam) + profitKotor) / (nJam - nFoc);
+    const totalOmzet = jual * (nJam - nFoc);
+          
+    const f=n=>"Rp "+Math.round(n).toLocaleString('id-ID');
+
+    const lokasi = document.getElementById('lokasiPaket').value;
+    const garis = "━━━━━━━━━━━━━━━━━━";
+    lastCalculatedText = 
+`🧾 *Ringkasan Estimasi Paket*
+${garis}
+📍 *${lokasi}*
+👥 *Total Jamaah:* ${nJam}
+💰 *Harga per Pax:* *${f(jual)}*
+${garis}
+📞 *Silakan hubungi admin untuk detail.*`;
+
+    let hasil = document.getElementById('hasil');
+    hasil.innerHTML=`
+        <div class="res-item"><span>Modal Pokok / Pax</span><b>${f(sub)}</b></div>
+        <div class="res-item"><span>Total Omzet Grup</span><b>${f(totalOmzet)}</b></div>
+        <div class="res-item"><span>Profit Kotor Grup</span><span>${f(profitKotor)}</span></div>
+        <div class="res-item"><span>Biaya TL</span><span>${f(biayaTL)}</span></div>
+        <div class="res-item"><span>Profit Per Pax</span><span>${f(profitPerPax)}</span></div>
+        <div class="res-item" style="color:#2ecc71"><span>PROFIT BERSIH</span><b>${f(bersih)}</b></div>
+        <div class="res-item" style="border-top:2px solid var(--accent); margin-top:10px; padding-top:10px; flex-direction: column; align-items: center;">
+            <span style="font-weight:bold">HARGA BROSUR</span><span class="highlight">${f(jual)}</span>
+            <p style="font-size: 10px; color: #bdc3c7; text-align: center; margin-top: 5px; margin-bottom: 0;">
+                *Berdasarkan ${nJam - nFoc} jamaah bayar dan ${nFoc} gratis
+            </p>
+        </div>
+        <button class="btn" onclick="salinRingkasan()" style="background:#34495e; margin-top:15px; font-size:14px;">
+            <i class="fas fa-clipboard"></i> SALIN RINGKASAN HARGA
+        </button>`;
+    hasil.style.display='block';
+    hasil.scrollIntoView({behavior: "smooth"});
+}
+
+function salinRingkasan() {
+    if (!lastCalculatedText) {
+        showToast('Silakan hitung estimasi dulu!');
+        return;
     }
 
-    function openList(m) { currentMode = m; document.getElementById('l-title').innerText = m.toUpperCase(); renderList(); show('page-list'); }
-    function renderList() {
-        let list = getDB(currentMode); let key = document.getElementById('src').value.toLowerCase();
-        let h = list.map((it, i) => it.judul.toLowerCase().includes(key) ? `<div class="list-item" onclick="viewDetail(${i})"><div class="item-num">${i+1}</div><b>${it.judul}</b></div>` : '').join('');
-        document.getElementById('l-cont').innerHTML = h || '<p style="text-align:center;padding:20px;">Kosong</p>';
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(lastCalculatedText)
+            .then(() => showToast("✅ Ringkasan disalin!"))
+            .catch(() => fallbackCopy(lastCalculatedText));
+    } else {
+        fallbackCopy(lastCalculatedText);
     }
-    function openEntry() { currentIdx = -1; document.getElementById('i-judul').value = ''; document.getElementById('i-isi').value = ''; show('page-entry'); }
-    function saveData() {
-        const judul = document.getElementById('i-judul').value; const isi = document.getElementById('i-isi').value; if(!judul) return;
-        let list = getDB(currentMode); if(currentIdx > -1) list[currentIdx] = {judul, isi}; else list.push({judul, isi});
-        setDB(currentMode, list); openList(currentMode);
-    }
-    function viewDetail(i) { currentIdx = i; let item = getDB(currentMode)[i]; document.getElementById('v-judul').innerText = item.judul; document.getElementById('v-isi').innerText = item.isi; show('page-detail'); }
-    function editCurrent() { let item = getDB(currentMode)[currentIdx]; document.getElementById('i-judul').value = item.judul; document.getElementById('i-isi').value = item.isi; show('page-entry'); }
-    function deleteData() { if(confirm("Hapus?")) { let list = getDB(currentMode); list.splice(currentIdx, 1); setDB(currentMode, list); openList(currentMode); } }
-    function sendWA() { let item = getDB(currentMode)[currentIdx]; window.open(`https://wa.me/?text=${encodeURIComponent('*'+item.judul+'*\n\n'+item.isi)}`); }
+}
 
-    function openJamaah() { renderJamaah(); show('page-jamaah'); }
-    function addJamaah() {
-        let n = document.getElementById('j-nama').value; let b = document.getElementById('j-bus').value; if(!n) return;
-        let list = getDB('jamaah'); list.push({nama: n, bus: b}); setDB('jamaah', list);
-        document.getElementById('j-nama').value = ''; document.getElementById('j-bus').value = '';
-        renderJamaah(); showNotif("Jamaah disimpan");
+function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (successful) {
+            showToast("✅ Ringkasan disalin!");
+        } else {
+            showManualCopy(text);
+        }
+    } catch (err) {
+        document.body.removeChild(textarea);
+        showManualCopy(text);
     }
-    function renderJamaah() {
-        let list = getDB('jamaah'); let key = document.getElementById('j-search').value.toLowerCase();
-        let h = list.map((it, i) => it.nama.toLowerCase().includes(key) ? `<div class="list-item"><div class="item-num">${i+1}</div><div style="flex:1"><b>${it.nama}</b><br><small>Bus: ${it.bus}</small></div><span onclick="delJamaah(${i})" style="color:red; font-size:1.2rem">×</span></div>` : '').join('');
-        document.getElementById('jamaah-list-cont').innerHTML = h || '<p style="text-align:center">Data tidak ditemukan</p>';
-    }
-    function delJamaah(i) { if(confirm("Hapus?")) { let list = getDB('jamaah'); list.splice(i,1); setDB('jamaah', list); renderJamaah(); } }
+}
 
-    function openTasbih() { tasbihCount = parseInt(localStorage.getItem('auva_tasbih_val') || '0'); updateTasbihUI(); show('page-tasbih'); }
-    function countTasbih() { tasbihCount++; localStorage.setItem('auva_tasbih_val', tasbihCount); updateTasbihUI(); if(navigator.vibrate) navigator.vibrate(50); }
-    function resetTasbih() { if(confirm("Reset?")) { tasbihCount = 0; localStorage.setItem('auva_tasbih_val', '0'); updateTasbihUI(); } }
-    function updateTasbihUI() { document.getElementById('tasbih-display').innerText = tasbihCount; }
+function showManualCopy(text) {
+    document.getElementById('manualCopyText').value = text;
+    document.getElementById('copyOverlay').classList.add('show');
+    setTimeout(() => {
+        const textarea = document.getElementById('manualCopyText');
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+    }, 100);
+}
 
-    function openKas() { resetKasForm(); renderKas(); show('page-kas'); }
-    function addKas(t) { 
-        let jml = parseFloat(document.getElementById('k-jumlah').value); let ket = document.getElementById('k-ket').value; if(!jml || !ket) return;
-        let list = getDB('kas'); list.unshift({tgl: new Date().toLocaleDateString('id-ID'), ket: ket, jml: t==='keluar'?-Math.abs(jml):Math.abs(jml)});
-        setDB('kas', list); resetKasForm(); renderKas(); 
-    }
-    function renderKas() {
-        let tot = 0; let list = getDB('kas');
-        let h = list.map((it, i) => {
-            tot += it.jml;
-            return `<div class="list-item" style="justify-content:space-between">
-                <div onclick="editKas(${i})" style="flex:1"><b>${it.ket}</b><br><small>${it.tgl}</small></div>
-                <div style="text-align:right"><b style="color:${it.jml>0?'#27ae60':'red'}">${it.jml.toLocaleString('id-ID')}</b>
-                <span onclick="delKas(${i})" style="color:#ccc; padding-left:10px">×</span></div></div>`
-        }).join('');
-        document.getElementById('total-kas').innerText = 'Rp ' + tot.toLocaleString('id-ID'); document.getElementById('kas-histori').innerHTML = h;
-    }
-    function delKas(i) { if(confirm("Hapus?")) { let list = getDB('kas'); list.splice(i, 1); setDB('kas', list); renderKas(); } }
-    function editKas(i) {
-        let it = getDB('kas')[i]; document.getElementById('k-index').value = i; document.getElementById('k-jumlah').value = Math.abs(it.jml); document.getElementById('k-ket').value = it.ket;
-        document.getElementById('kas-btn-group').style.display = 'none'; document.getElementById('btn-update-kas').style.display = 'block'; document.getElementById('btn-batal-kas').style.display = 'block';
-    }
-    function updateKasData() {
-        let i = document.getElementById('k-index').value; let list = getDB('kas');
-        let tipe = list[i].jml < 0 ? -1 : 1;
-        list[i].ket = document.getElementById('k-ket').value; list[i].jml = Math.abs(document.getElementById('k-jumlah').value) * tipe;
-        setDB('kas', list); resetKasForm(); renderKas();
-    }
-    function resetKasForm() {
-        document.getElementById('k-index').value = "-1"; document.getElementById('k-jumlah').value = ""; document.getElementById('k-ket').value = "";
-        document.getElementById('kas-btn-group').style.display = 'flex'; document.getElementById('btn-update-kas').style.display = 'none'; document.getElementById('btn-batal-kas').style.display = 'none';
-    }
+function closeCopyOverlay() {
+    document.getElementById('copyOverlay').classList.remove('show');
+}
 
-    function openSiaran() {
-        document.getElementById('l-title').innerText = "SIARAN WA";
-        document.getElementById('l-cont').innerHTML = `<div style="padding:20px"><button class="btn-action" style="background:#25d366" onclick="share('kas')">Share Laporan Kas</button><button class="btn-action" style="background:#25d366" onclick="share('jamaah')">Share Daftar Jamaah</button></div>`;
-        show('page-list');
-    }
-    function share(t) { 
-        let txt = `*LAPORAN ${t.toUpperCase()}*\n`; 
-        getDB(t).forEach(it=>txt+=`- ${it.nama||it.ket} ${it.jml?'(Rp '+it.jml+')':''} ${it.bus?'(Bus '+it.bus+')':''}\n`); 
-        window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`); 
-    }
+function tambah(){
+    let k=document.getElementById('ketReal').value;
+    let n=parseInt(document.getElementById('nomReal').value)||0;
+    let t=document.getElementById('tipeReal').value;
+    if(!k || n<=0) return alert("Isi data!");
+    
+    dataKas.push({
+        id:Date.now(), 
+        tgl:new Date().toLocaleDateString('id-ID'), 
+        ket:k, 
+        nom:n, 
+        tipe:t
+    });
+    save();
+    document.getElementById('ketReal').value=""; 
+    document.getElementById('nomReal').value="";
+    showToast('Transaksi berhasil ditambahkan!');
+}
 
-    window.onload = initMenuSettings;
-</script> 
-</body> 
+function save(){
+    localStorage.setItem('auva_kas_data', JSON.stringify(dataKas));
+    render();
+}
+
+function render(){
+    let body=document.getElementById('bodyKas');
+    body.innerHTML="";
+    let masuk=0, keluar=0;
+    dataKas.forEach(i=>{
+        if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom;
+        body.innerHTML+=`<tr>
+            <td>${i.tgl}</td>
+            <td>${i.ket}</td>
+            <td class="${i.tipe==='masuk'?'txt-in':'txt-out'}">${i.nom.toLocaleString('id-ID')}</td>
+            <td><button class="btn-del" onclick="hapus(${i.id})"><i class="fas fa-trash"></i></button></td>
+        </tr>`;
+    });
+    document.getElementById('summary').innerHTML=`<b>Saldo Akhir: Rp ${(masuk-keluar).toLocaleString('id-ID')}</b>`;
+}
+
+function hapus(id){
+    if(confirm("Hapus baris?")) { 
+        dataKas=dataKas.filter(x=>x.id!==id); 
+        save(); 
+        showToast('Transaksi dihapus');
+    }
+}
+
+function resetData() {
+    if(confirm("Sudah download Excel/PDF? Klik OK untuk mengosongkan buku kas.")) {
+        dataKas = [];
+        save();
+        showToast('Buku kas dikosongkan');
+    }
+}
+
+function downloadExcel() {
+    if(dataKas.length === 0) return alert("Data kosong!");
+    let namaGrup = prompt("Nama Rombongan:", "Laporan_Auva");
+    if(!namaGrup) return;
+
+    const wb = XLSX.utils.book_new();
+    const ws1Data = dataKas.map(i => ({ 
+        Tanggal: i.tgl, 
+        Keterangan: i.ket, 
+        Tipe: i.tipe.toUpperCase(), 
+        Nominal: i.nom 
+    }));
+    const ws1 = XLSX.utils.json_to_sheet(ws1Data);
+    XLSX.utils.book_append_sheet(wb, ws1, "Detail Transaksi");
+
+    let inTotal = dataKas.filter(i=>i.tipe==='masuk').reduce((a,b)=>a+b.nom,0);
+    let outTotal = dataKas.filter(i=>i.tipe==='keluar').reduce((a,b)=>a+b.nom,0);
+    const ws2Data = [{ Pemasukan: inTotal, Pengeluaran: outTotal, Saldo: inTotal-outTotal }];
+    const ws2 = XLSX.utils.json_to_sheet(ws2Data);
+    XLSX.utils.book_append_sheet(wb, ws2, "Rekapan");
+
+    XLSX.writeFile(wb, namaGrup + ".xlsx");
+    showToast('Excel berhasil di-download!');
+}
+</script>
+</body>
 </html>
