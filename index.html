@@ -11,10 +11,8 @@
     
     <title>Auva Mobile - KBIH Amanatul Ummah</title> 
     
-    <!-- MANIFEST INLINE -->
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Auva%20Mobile%20-%20KBIH%20Amanatul%20Ummah%22,%22short_name%22:%22Auva%20Mobile%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%231a5d4a%22,%22theme_color%22:%22%231a5d4a%22,%22icons%22:[{%22src%22:%22https://img.icons8.com/color/192/kaaba.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22},{%22src%22:%22https://img.icons8.com/color/512/kaaba.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
     
-    <!-- Icons -->
     <link rel="icon" href="https://img.icons8.com/color/96/kaaba.png">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/kaaba.png">
     
@@ -32,9 +30,11 @@
         .back-btn { font-size: 1.5rem; cursor: pointer; width: 40px; } 
         
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; max-width: 600px; margin: 0 auto; } 
-        .menu-card { background: var(--white); border-radius: 15px; padding: 20px 10px; text-align: center; border: 1.5px solid var(--primary); box-shadow: 0 4px 8px rgba(0,0,0,0.05); cursor: pointer; display: none; position: relative; } 
+        .menu-card { background: var(--white); border-radius: 15px; padding: 20px 10px; text-align: center; border: 1.5px solid var(--primary); box-shadow: 0 4px 8px rgba(0,0,0,0.05); cursor: pointer; position: relative; transition: all 0.3s; } 
         .menu-card div { font-size: 30px; margin-bottom: 5px; } 
         .menu-card span { font-weight: bold; color: var(--primary); font-size: 0.7rem; display: block; text-transform: uppercase; }
+        .menu-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        
         .edit-badge { position: absolute; top: 5px; right: 5px; background: var(--accent); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; display: none; }
         .admin-mode .edit-badge { display: block; }
         .admin-mode .menu-card { border: 2px dashed var(--accent); }
@@ -51,33 +51,21 @@
         input:checked + .slider:before { transform: translateX(22px); }
 
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
-        .list-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #eee; } 
+        .list-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #eee; cursor: pointer; transition: all 0.3s; } 
+        .list-item:hover { background: #f8f9fa; transform: translateX(5px); }
         .item-num { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; margin-right: 15px; flex-shrink: 0; }
         .item-left { display: flex; align-items: center; flex: 1; }
         .item-actions { display: flex; gap: 10px; }
-        .item-actions button { background: none; border: none; font-size: 18px; cursor: pointer; padding: 5px; }
-        .btn-action { color: white; border: none; padding: 14px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; } 
+        .item-actions button { background: none; border: none; font-size: 18px; cursor: pointer; padding: 5px; z-index: 10; }
+        .btn-action { color: white; border: none; padding: 14px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; } 
+        .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-small-action { background: var(--wa); padding: 8px 12px; border-radius: 20px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; color: white; text-decoration: none; }
         
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; padding: 10px 0; z-index: 1000; } 
-        .nav-item { flex: 1; text-align: center; color: #888; font-size: 0.7rem; cursor: pointer; } 
+        .nav-item { flex: 1; text-align: center; color: #888; font-size: 0.7rem; cursor: pointer; transition: all 0.3s; } 
         .nav-active { color: var(--primary); font-weight: bold; } 
         
-        /* Install Banner */
-        .install-banner {
-            display: none;
-            position: fixed;
-            bottom: 70px;
-            left: 0;
-            right: 0;
-            background: var(--primary);
-            color: white;
-            padding: 15px 20px;
-            z-index: 10000;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
-        }
+        .install-banner { display: none; position: fixed; bottom: 70px; left: 0; right: 0; background: var(--primary); color: white; padding: 15px 20px; z-index: 10000; align-items: center; justify-content: space-between; box-shadow: 0 -4px 12px rgba(0,0,0,0.2); }
         .install-banner.show { display: flex; }
         .install-banner .text { flex: 1; }
         .install-banner h4 { margin: 0 0 5px 0; font-size: 14px; }
@@ -107,66 +95,49 @@
         .panduan-content p { margin-bottom: 10px; }
         .panduan-content ul { margin-left: 20px; margin-bottom: 10px; }
         
-        /* Modal Editor */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 20000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 20000; justify-content: center; align-items: center; padding: 20px; }
         .modal.show { display: flex; }
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 20px;
-        }
+        .modal-content { background: white; border-radius: 20px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; padding: 20px; }
         .modal-content h3 { color: var(--primary); margin-bottom: 15px; }
-        .modal-content textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        .color-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-            cursor: pointer;
-        }
-        .color-options {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-        .color-opt {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .color-opt.active { border-color: white; box-shadow: 0 0 0 2px #333; }
+        .modal-content textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: monospace; font-size: 14px; margin-bottom: 15px; }
+        .color-preview { width: 40px; height: 40px; border-radius: 8px; border: 2px solid #ddd; cursor: pointer; }
+        .color-options { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .color-opt { width: 40px; height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; }
+        .color-opt:hover { transform: scale(1.1); }
+        
+        .field-item { background: #f8f9fa; padding: 12px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); }
+        .dynamic-field { margin-bottom: 15px; }
+        .dynamic-field label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); font-size: 0.9rem; }
+        .dynamic-field input, .dynamic-field select, .dynamic-field textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
+        .dynamic-field input:focus, .dynamic-field select:focus, .dynamic-field textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,93,74,0.1); }
+        
+        .form-container { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .form-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--accent); }
+        
+        .required-star { color: red; margin-left: 3px; }
+        .error-message { color: var(--danger); font-size: 0.8rem; margin-top: 5px; display: none; }
+        .dynamic-field.error input { border-color: var(--danger); }
+        .dynamic-field.error .error-message { display: block; }
+        
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 1rem; margin-top: 10px; transition: all 0.3s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .btn-danger-small { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
+        .btn-danger-small:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary-small { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 5px; transition: all 0.3s; }
+        .btn-primary-small:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .admin-panel { background: linear-gradient(135deg, var(--primary) 0%, #0d3328 100%); border-radius: 15px; padding: 20px; margin-bottom: 20px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .admin-panel h3 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .admin-panel .btn-admin { background: white; color: var(--primary); border: none; padding: 12px; border-radius: 10px; margin-bottom: 10px; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%; text-align: center; }
+        .admin-panel .btn-admin:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .admin-panel .btn-admin-warning { background: var(--accent); color: #1a5d4a; }
+        
+        .hidden { display: none; }
     </style>
 </head> 
 
 <body>
-    <!-- Splash Screen -->
     <div id="splashScreen">
         <div class="splash-logo"><div>🕋</div></div>
         <div class="splash-text">Auva Mobile</div>
@@ -182,7 +153,6 @@
     </div>
     <div id="toast" class="toast"></div>
     
-    <!-- Modal Editor -->
     <div id="editorModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle">Edit Konten</h3>
@@ -192,41 +162,105 @@
         </div>
     </div>
 
-    <!-- HOME PAGE -->
+    <!-- HOME PAGE - Bersih hanya menu -->
     <div id="home" class="page active"> 
         <div class="header-main"> 
             <div style="font-size: 50px;">🕋</div> 
             <h2 style="margin:0;">AUVA MOBILE</h2> 
             <p style="color:var(--accent); font-weight: bold; font-size: 0.75rem;">KBIH AMANATUL UMMAH</p> 
-        </div> 
+        </div>
+        
+        <!-- MENU GRID - Hanya menu saja -->
         <div class="menu-grid" id="menuGrid"> 
             <div id="m-haji" class="menu-card" onclick="openPanduan('haji')"><div>🕋</div><span>Haji</span><span class="edit-badge">✏️</span></div> 
             <div id="m-umroh" class="menu-card" onclick="openPanduan('umroh')"><div>🕌</div><span>Umroh</span><span class="edit-badge">✏️</span></div> 
             <div id="m-doa" class="menu-card" onclick="openList('doa')"><div>🌀</div><span>Titipan Doa</span><span class="edit-badge">✏️</span></div> 
             <div id="m-catatan" class="menu-card" onclick="openList('catatan')"><div>📝</div><span>Catatan</span><span class="edit-badge">✏️</span></div> 
             <div id="m-ziarah" class="menu-card" onclick="openZiarah()"><div>🚌</div><span>Rute Ziarah</span><span class="edit-badge">✏️</span></div> 
-            <div id="m-jamaah" class="menu-card" onclick="openJamaah()"><div>👥</div><span>Data Jamaah</span></div> 
+            <div id="m-jamaah" class="menu-card" onclick="openJamaahPage()"><div>👥</div><span>Data Jamaah</span></div> 
             <div id="m-kas" class="menu-card" onclick="openKas()"><div>💰</div><span>Uang Kas</span></div> 
             <div id="m-lokasi" class="menu-card" onclick="openLokasi()"><div>📍</div><span>Titik Kumpul</span><span class="edit-badge">✏️</span></div>
             <div id="m-tahlil" class="menu-card" onclick="openTahlil()"><div>📖</div><span>Tahlil</span><span class="edit-badge">✏️</span></div> 
             <div id="m-dzikir" class="menu-card" onclick="openTasbih()"><div>📿</div><span>Tasbih</span></div> 
             <div id="m-atribut" class="menu-card" onclick="openAtribut()"><div>🖼️</div><span>Atribut</span><span class="edit-badge">✏️</span></div>
             <div id="m-siaran" class="menu-card" onclick="openSiaran()"><div>📢</div><span>Siaran WA</span></div>
-        </div> 
+        </div>
     </div> 
-
-    <!-- PAGE JAMAAH -->
+    
+    <!-- PAGE JAMAAH - Tempat semua data jamaah dan panel admin -->
     <div id="page-jamaah" class="page">
-        <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span style="font-weight:bold">JAMAAH</span><span class="back-btn" onclick="exportCSV('jamaah')">📤</span></div>
+        <div class="page-header">
+            <span class="back-btn" onclick="goHome()">←</span>
+            <span style="font-weight:bold">📊 DATA JAMAAH</span>
+            <span class="back-btn" onclick="exportJamaahCSV()">📤</span>
+        </div>
         <div class="container">
-            <div class="setting-box" style="padding:15px;">
-                <input type="text" id="j-nama" placeholder="Nama Lengkap" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ddd;">
-                <input type="text" id="j-bus" placeholder="Bus / Kamar / Kursi" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ddd;">
-                <input type="text" id="j-no" placeholder="No. WhatsApp (opsional)" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ddd;">
-                <button onclick="addJamaah()" style="width:100%;background:var(--primary);color:white;border:none;padding:12px;border-radius:8px;font-weight:bold;">+ TAMBAH JAMAAH</button>
+            <!-- ADMIN PANEL - Hanya muncul saat mode admin ON -->
+            <div id="adminPanelJamaah" class="admin-panel hidden">
+                <h3>🔧 Panel Admin Jamaah</h3>
+                <button class="btn-admin" onclick="openInputFormModal()">📝 + Tambah Data Jamaah</button>
+                <button class="btn-admin" onclick="openManageFields()">⚙️ Kelola Field Dinamis</button>
+                <button class="btn-admin btn-admin-warning" onclick="exportJamaahCSV()">📊 Export ke Excel</button>
             </div>
-            <div id="jamaah-list-cont"></div>
+            
+            <!-- DAFTAR JAMAAH -->
+            <div class="form-container">
+                <div class="form-title">📋 DAFTAR JAMAAH</div>
+                <div id="jamaah-full-list"></div>
+            </div>
+            
             <button class="btn-action" style="background:var(--wa); margin-top:15px;" onclick="shareAllJamaah()">📢 SHARE SEMUA JAMAAH KE WA</button>
+        </div>
+    </div>
+    
+    <!-- MODAL INPUT FORM JAMAAH -->
+    <div id="inputFormModal" class="modal">
+        <div class="modal-content">
+            <h3>📝 Tambah Data Jamaah</h3>
+            <div id="modal-dynamic-form"></div>
+            <button class="btn-submit" onclick="saveJamaahFromModal()">💾 SIMPAN DATA</button>
+            <button class="btn-action" style="background:var(--danger); margin-top:10px;" onclick="closeInputFormModal()">BATAL</button>
+        </div>
+    </div>
+
+    <!-- PAGE MANAGE FIELDS -->
+    <div id="page-manage-fields" class="page">
+        <div class="page-header">
+            <span class="back-btn" onclick="goBackToJamaah()">←</span>
+            <span style="font-weight:bold">⚙️ KELOLA FIELD DINAMIS</span>
+        </div>
+        <div class="container">
+            <div class="card-info">
+                📌 <strong>Panduan:</strong> Tambahkan field sesuai kebutuhan. Field akan otomatis muncul di form input.
+            </div>
+            
+            <div class="setting-box" style="padding:15px;">
+                <h4 style="margin-bottom:15px; color:var(--primary)">➕ TAMBAH FIELD BARU</h4>
+                <div class="dynamic-field">
+                    <label>Nama Field <span class="required-star">*</span></label>
+                    <input type="text" id="new-field-name" placeholder="Contoh: nomor_porsi, alamat_rumah, no_hp" onkeyup="validateFieldName()">
+                    <div class="error-message" id="field-name-error">Nama field tidak boleh kosong dan hanya boleh berisi huruf kecil, angka, dan underscore (_)</div>
+                </div>
+                <div class="dynamic-field">
+                    <label>Label Field <span class="required-star">*</span></label>
+                    <input type="text" id="new-field-label" placeholder="Contoh: Nomor Porsi, Alamat Rumah, No HP">
+                </div>
+                <div class="dynamic-field">
+                    <label>Tipe Field</label>
+                    <select id="new-field-type">
+                        <option value="text">Text</option>
+                        <option value="number">Number</option>
+                        <option value="tel">Telepon</option>
+                        <option value="email">Email</option>
+                        <option value="date">Tanggal</option>
+                        <option value="textarea">Text Area</option>
+                    </select>
+                </div>
+                <button onclick="addDynamicField()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; margin-top:10px;">➕ TAMBAH FIELD</button>
+            </div>
+            
+            <h4 style="margin:20px 0 10px;">📋 DAFTAR FIELD AKTIF</h4>
+            <div id="fields-list"></div>
         </div>
     </div>
 
@@ -307,7 +341,7 @@
         </div>
     </div>
 
-    <!-- PAGE LIST (Doa & Catatan) -->
+    <!-- PAGE LIST (Doa & Catatan) dengan fitur Edit -->
     <div id="page-list" class="page">
         <div class="page-header"><span class="back-btn" onclick="goHome()">←</span><span id="l-title" style="flex:1;font-weight:bold">Daftar</span><span id="btn-plus" class="back-btn" onclick="openEntry()">+</span></div>
         <div class="container"><div id="l-cont"></div></div>
@@ -315,7 +349,7 @@
     
     <!-- PAGE DETAIL -->
     <div id="page-detail" class="page">
-        <div class="page-header"><span class="back-btn" onclick="showPageList()">←</span><span style="flex:1;font-weight:bold">Detail</span><span class="back-btn" onclick="deleteData()">🗑️</span></div>
+        <div class="page-header"><span class="back-btn" onclick="showPageList()">←</span><span style="flex:1;font-weight:bold">Detail</span><span class="back-btn" onclick="deleteData()">🗑️</span><span class="back-btn" onclick="openEditEntry()">✏️</span></div>
         <div class="container">
             <div style="background:white; padding:20px; border-radius:15px; border:1px solid #eee;">
                 <h3 id="v-judul"></h3>
@@ -325,9 +359,9 @@
         </div>
     </div>
     
-    <!-- PAGE ENTRY -->
+    <!-- PAGE ENTRY (Tambah/Edit) -->
     <div id="page-entry" class="page">
-        <div class="page-header"><span class="back-btn" onclick="showPageList()">←</span><span style="font-weight:bold">TAMBAH</span></div>
+        <div class="page-header"><span class="back-btn" onclick="showPageList()">←</span><span id="entry-title" style="font-weight:bold">TAMBAH</span></div>
         <div class="container">
             <input type="text" id="i-judul" placeholder="Judul" style="width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid #ddd">
             <textarea id="i-isi" rows="10" placeholder="Isi..." style="width:100%;padding:12px;border-radius:10px;border:1px solid #ddd"></textarea>
@@ -345,7 +379,7 @@
 
 <script>
     // ==================== SERVICE WORKER & PWA ====================
-    const SW_CODE = `const CACHE_NAME='auva-mobile-v3';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(STATIC_ASSETS)));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(n=>Promise.all(n.filter(n=>n!==CACHE_NAME).map(n=>caches.delete(n)))));self.clients.claim();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(!r||r.status!==200||r.type!=='basic')return r;const c=r.clone();caches.open(CACHE_NAME).then(cache=>{cache.put(e.request,c);});return r;}).catch(()=>new Response('Offline mode'))));});`;
+    const SW_CODE = `const CACHE_NAME='auva-mobile-v6';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(STATIC_ASSETS)));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(n=>Promise.all(n.filter(n=>n!==CACHE_NAME).map(n=>caches.delete(n)))));self.clients.claim();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(!r||r.status!==200||r.type!=='basic')return r;const c=r.clone();caches.open(CACHE_NAME).then(cache=>{cache.put(e.request,c);});return r;}).catch(()=>new Response('Offline mode'))));});`;
     
     if ('serviceWorker' in navigator) {
         const blob = new Blob([SW_CODE], { type: 'application/javascript' });
@@ -364,10 +398,10 @@
     window.addEventListener('online', () => { document.getElementById('offlineIndicator').classList.remove('show'); showToast('🌐 Kembali online!'); });
     window.addEventListener('offline', () => { document.getElementById('offlineIndicator').classList.add('show'); showToast('📴 Mode offline'); });
     
-    // ==================== HELPER FUNCTIONS ====================
     function showPage(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
     function goHome() { showPage('home'); }
     function showPageList() { showPage('page-list'); }
+    function goBackToJamaah() { showPage('page-jamaah'); renderJamaahFullList(); }
     function mainShare() { if(navigator.share) navigator.share({title:'Auva Mobile',text:'KBIH Amanatul Ummah',url:window.location.href}); else showToast('Klik ⋮ lalu pilih "Tambahkan ke layar utama"'); }
     
     // ==================== ADMIN MODE ====================
@@ -375,19 +409,25 @@
     function toggleAdminMode() {
         isAdminMode = document.getElementById('adminMode').checked;
         localStorage.setItem('auva_admin_mode', isAdminMode);
+        
         if(isAdminMode) {
             document.body.classList.add('admin-mode');
-            showToast('Mode Admin Aktif - Klik ✏️ untuk edit konten');
-            // Tampilkan tombol edit di halaman konten
+            // Tampilkan panel admin di halaman jamaah
+            const adminPanel = document.getElementById('adminPanelJamaah');
+            if(adminPanel) adminPanel.classList.remove('hidden');
+            showToast('Mode Admin Aktif - Panel Admin muncul di halaman Data Jamaah');
             document.querySelectorAll('[id$="-edit-btn"]').forEach(btn => btn.style.display = 'block');
         } else {
             document.body.classList.remove('admin-mode');
-            document.querySelectorAll('[id$="-edit-btn"]').forEach(btn => btn.style.display = 'none');
+            // Sembunyikan panel admin di halaman jamaah
+            const adminPanel = document.getElementById('adminPanelJamaah');
+            if(adminPanel) adminPanel.classList.add('hidden');
             showToast('Mode Admin Nonaktif');
+            document.querySelectorAll('[id$="-edit-btn"]').forEach(btn => btn.style.display = 'none');
+            closeInputFormModal();
         }
     }
     
-    // ==================== Warna Tema ====================
     function setTheme(primary, accent) {
         document.documentElement.style.setProperty('--primary', primary);
         document.documentElement.style.setProperty('--accent', accent);
@@ -403,160 +443,476 @@
         if(accent) document.documentElement.style.setProperty('--accent', accent);
     }
     
-    // ==================== KONTEN YANG BISA DIEDIT ====================
-    // Default konten (akan disimpan ke localStorage jika belum ada)
+    // ==================== MODAL INPUT FORM ====================
+    function openInputFormModal() {
+        if(!isAdminMode) {
+            showToast('Aktifkan Mode Admin terlebih dahulu!');
+            return;
+        }
+        renderModalForm();
+        document.getElementById('inputFormModal').classList.add('show');
+    }
+    
+    function closeInputFormModal() {
+        document.getElementById('inputFormModal').classList.remove('show');
+    }
+    
+    function renderModalForm() {
+        const container = document.getElementById('modal-dynamic-form');
+        if(!container) return;
+        
+        let html = `
+            <div class="dynamic-field">
+                <label>Nama Lengkap <span class="required-star">*</span></label>
+                <input type="text" id="modal-nama-utama" placeholder="Masukkan nama lengkap jamaah" required>
+            </div>
+        `;
+        
+        dynamicFields.forEach(field => {
+            html += `<div class="dynamic-field" id="field-${field.name}">
+                        <label>${field.label}</label>`;
+            if(field.type === 'textarea') {
+                html += `<textarea id="modal-${field.name}" rows="3" placeholder="Masukkan ${field.label.toLowerCase()}"></textarea>`;
+            } else {
+                html += `<input type="${field.type}" id="modal-${field.name}" placeholder="Masukkan ${field.label.toLowerCase()}">`;
+            }
+            html += `</div>`;
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    function saveJamaahFromModal() {
+        const namaUtama = document.getElementById('modal-nama-utama').value.trim();
+        if(!namaUtama) {
+            showToast('Nama lengkap wajib diisi!');
+            document.getElementById('modal-nama-utama').focus();
+            return;
+        }
+        
+        const additionalFields = {};
+        dynamicFields.forEach(field => {
+            const element = document.getElementById(`modal-${field.name}`);
+            if(element) {
+                additionalFields[field.name] = element.value.trim();
+            }
+        });
+        
+        let list = JSON.parse(localStorage.getItem('auva_jamaah') || '[]');
+        list.push({
+            id: Date.now(),
+            nama_utama: namaUtama,
+            additional_fields: additionalFields,
+            created_at: new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID')
+        });
+        
+        localStorage.setItem('auva_jamaah', JSON.stringify(list));
+        
+        document.getElementById('modal-nama-utama').value = '';
+        dynamicFields.forEach(field => {
+            const element = document.getElementById(`modal-${field.name}`);
+            if(element) element.value = '';
+        });
+        
+        renderJamaahFullList();
+        closeInputFormModal();
+        showToast('Data jamaah berhasil disimpan!');
+    }
+    
+    // ==================== DYNAMIC FIELDS SYSTEM ====================
+    let dynamicFields = [];
+    
+    function loadDynamicFields() {
+        const saved = localStorage.getItem('auva_dynamic_fields');
+        if(saved) {
+            dynamicFields = JSON.parse(saved);
+        } else {
+            dynamicFields = [
+                { name: 'nomor_porsi', label: 'Nomor Porsi', type: 'text', order: 1 },
+                { name: 'no_hp', label: 'No. WhatsApp', type: 'tel', order: 2 },
+                { name: 'alamat', label: 'Alamat', type: 'textarea', order: 3 },
+                { name: 'ktp', label: 'No. KTP', type: 'text', order: 4 }
+            ];
+            saveDynamicFields();
+        }
+        dynamicFields.sort((a,b) => (a.order || 999) - (b.order || 999));
+        renderFieldsList();
+    }
+    
+    function saveDynamicFields() {
+        localStorage.setItem('auva_dynamic_fields', JSON.stringify(dynamicFields));
+        renderFieldsList();
+    }
+    
+    function validateFieldName(name) {
+        if(!name) return false;
+        const pattern = /^[a-z0-9_]+$/;
+        return pattern.test(name);
+    }
+    
+    function addDynamicField() {
+        const nameInput = document.getElementById('new-field-name');
+        const name = nameInput.value.trim().toLowerCase();
+        const label = document.getElementById('new-field-label').value.trim();
+        const type = document.getElementById('new-field-type').value;
+        
+        if(!validateFieldName(name)) {
+            showToast('Nama field harus berisi huruf kecil, angka, dan underscore (_) saja!');
+            nameInput.focus();
+            return;
+        }
+        
+        if(!label) {
+            showToast('Label field tidak boleh kosong!');
+            document.getElementById('new-field-label').focus();
+            return;
+        }
+        
+        if(dynamicFields.some(f => f.name === name)) {
+            showToast('Field dengan nama ini sudah ada!');
+            return;
+        }
+        
+        const maxOrder = Math.max(...dynamicFields.map(f => f.order || 0), 0);
+        dynamicFields.push({ 
+            name, 
+            label, 
+            type, 
+            order: maxOrder + 1 
+        });
+        saveDynamicFields();
+        
+        nameInput.value = '';
+        document.getElementById('new-field-label').value = '';
+        
+        showToast('Field berhasil ditambahkan!');
+        renderFieldsList();
+    }
+    
+    function deleteDynamicField(index) {
+        if(confirm(`Hapus field "${dynamicFields[index].label}"?`)) {
+            dynamicFields.splice(index, 1);
+            dynamicFields.forEach((field, idx) => { field.order = idx + 1; });
+            saveDynamicFields();
+            renderFieldsList();
+            showToast('Field berhasil dihapus!');
+        }
+    }
+    
+    function moveFieldUp(index) {
+        if(index > 0) {
+            [dynamicFields[index-1], dynamicFields[index]] = [dynamicFields[index], dynamicFields[index-1]];
+            dynamicFields.forEach((field, idx) => { field.order = idx + 1; });
+            saveDynamicFields();
+            renderFieldsList();
+        }
+    }
+    
+    function moveFieldDown(index) {
+        if(index < dynamicFields.length - 1) {
+            [dynamicFields[index], dynamicFields[index+1]] = [dynamicFields[index+1], dynamicFields[index]];
+            dynamicFields.forEach((field, idx) => { field.order = idx + 1; });
+            saveDynamicFields();
+            renderFieldsList();
+        }
+    }
+    
+    function renderFieldsList() {
+        const container = document.getElementById('fields-list');
+        if(!container) return;
+        
+        if(dynamicFields.length === 0) {
+            container.innerHTML = '<p style="text-align:center; padding:20px; color:#999;">Belum ada field tambahan. Tambahkan field baru di atas.</p>';
+            return;
+        }
+        
+        let html = '';
+        dynamicFields.forEach((field, index) => {
+            html += `<div class="field-item">
+                        <div style="flex:1">
+                            <strong>${field.label}</strong><br>
+                            <small style="color:#666;">Nama: ${field.name} | Tipe: ${field.type}</small>
+                        </div>
+                        <div>
+                            ${index > 0 ? `<button class="btn-primary-small" onclick="moveFieldUp(${index})">⬆️</button>` : ''}
+                            ${index < dynamicFields.length - 1 ? `<button class="btn-primary-small" onclick="moveFieldDown(${index})">⬇️</button>` : ''}
+                            <button class="btn-danger-small" onclick="deleteDynamicField(${index})">Hapus</button>
+                        </div>
+                    </div>`;
+        });
+        container.innerHTML = html;
+    }
+    
+    // ==================== RENDER JAMAAH LIST ====================
+    function renderJamaahFullList() {
+        const container = document.getElementById('jamaah-full-list');
+        const list = JSON.parse(localStorage.getItem('auva_jamaah') || '[]');
+        
+        if(list.length === 0) {
+            container.innerHTML = '<p style="text-align:center; padding:20px;">Belum ada data jamaah</p>';
+            return;
+        }
+        
+        let html = '';
+        list.slice().reverse().forEach((item, idx) => {
+            const originalIndex = list.length - 1 - idx;
+            html += `<div class="list-item" style="flex-direction:column; align-items:flex-start; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
+                            <div>
+                                <b style="font-size:1rem;">${item.nama_utama}</b>
+                                <br><small style="color:#888;">${item.created_at}</small>
+                            </div>
+                            <div>
+                                <button onclick="shareSingleJamaah(${originalIndex})" style="background:#25d366; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; margin-right:5px;">💬</button>
+                                ${isAdminMode ? `<button onclick="deleteJamaahItem(${originalIndex})" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">🗑️</button>` : ''}
+                            </div>
+                        </div>`;
+            
+            if(item.additional_fields && Object.keys(item.additional_fields).length > 0) {
+                html += `<div style="background:#f8f9fa; padding:10px; border-radius:8px; width:100%; margin-top:5px;">`;
+                for(const [key, value] of Object.entries(item.additional_fields)) {
+                    const fieldLabel = dynamicFields.find(f => f.name === key)?.label || key;
+                    if(value) {
+                        html += `<div style="margin-bottom:5px;"><span style="font-weight:bold; color:var(--primary);">${fieldLabel}:</span> ${value}</div>`;
+                    }
+                }
+                html += `</div>`;
+            }
+            
+            html += `</div>`;
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    function openJamaahPage() {
+        renderJamaahFullList();
+        // Update panel admin berdasarkan mode admin
+        const adminPanel = document.getElementById('adminPanelJamaah');
+        if(adminPanel) {
+            if(isAdminMode) adminPanel.classList.remove('hidden');
+            else adminPanel.classList.add('hidden');
+        }
+        showPage('page-jamaah');
+    }
+    
+    function deleteJamaahItem(index) {
+        if(confirm('Hapus data jamaah ini?')) {
+            let list = JSON.parse(localStorage.getItem('auva_jamaah') || '[]');
+            list.splice(index, 1);
+            localStorage.setItem('auva_jamaah', JSON.stringify(list));
+            renderJamaahFullList();
+            showToast('Data jamaah dihapus');
+        }
+    }
+    
+    function shareSingleJamaah(index) {
+        const list = JSON.parse(localStorage.getItem('auva_jamaah') || '[]');
+        const item = list[index];
+        
+        let text = `*DATA JAMAAH*\n━━━━━━━━━━━━━━━━━━\n`;
+        text += `*Nama:* ${item.nama_utama}\n`;
+        
+        if(item.additional_fields) {
+            for(const [key, value] of Object.entries(item.additional_fields)) {
+                const fieldLabel = dynamicFields.find(f => f.name === key)?.label || key;
+                if(value) {
+                    text += `*${fieldLabel}:* ${value}\n`;
+                }
+            }
+        }
+        
+        text += `\n*Tanggal Input:* ${item.created_at}\n`;
+        text += `\n#AuvaMobile`;
+        
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+    }
+    
+    function shareAllJamaah() {
+        const list = JSON.parse(localStorage.getItem('auva_jamaah') || '[]');
+        if(list.length === 0) {
+            showToast('Data jamaah kosong!');
+            return;
+        }
+        
+        let text = `*DAFTAR JAMAAH*\n━━━━━━━━━━━━━━━━━━\n`;
+        
+        list.forEach((item, index) => {
+            text += `\n${index+1}. *${item.nama_utama}*`;
+            if(item.additional_fields) {
+                for(const [key, value] of Object.entries(item.additional_fields)) {
+                    const fieldLabel = dynamicFields.find(f => f.name === key)?.label || key;
+                    if(value) {
+                        text += `\n   ${fieldLabel}: ${value}`;
+                    }
+                }
+            }
+        });
+        
+        text += `\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${list.length} Jamaah*\n\n#AuvaMobile`;
+        
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+    }
+    
+    function exportJamaahCSV() {
+        const list = JSON.parse(localStorage.getItem('auva_jamaah') || '[]');
+        if(list.length === 0) {
+            showToast('Data kosong!');
+            return;
+        }
+        
+        let headers = ['No', 'Nama Utama', 'Tanggal Input'];
+        dynamicFields.forEach(field => {
+            headers.push(field.label);
+        });
+        
+        let csv = headers.map(h => `"${h}"`).join(',') + '\n';
+        
+        list.forEach((item, index) => {
+            let row = [index+1, `"${item.nama_utama}"`, `"${item.created_at}"`];
+            dynamicFields.forEach(field => {
+                const value = item.additional_fields?.[field.name] || '';
+                row.push(`"${value.replace(/"/g, '""')}"`);
+            });
+            csv += row.join(',') + '\n';
+        });
+        
+        const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Auva_Jamaah_${new Date().toLocaleDateString()}.csv`;
+        a.click();
+        showToast('CSV berhasil diexport');
+    }
+    
+    function openManageFields() {
+        if(!isAdminMode) {
+            showToast('Aktifkan Mode Admin terlebih dahulu!');
+            return;
+        }
+        renderFieldsList();
+        showPage('page-manage-fields');
+    }
+    
+    // ==================== CATATAN & DOA dengan FITUR EDIT ====================
+    let currentMode = '', currentIdx = -1;
+    let editMode = false;
+    
+    function openList(m) { 
+        currentMode = m; 
+        document.getElementById('l-title').innerText = m.toUpperCase(); 
+        document.getElementById('btn-plus').style.display='block'; 
+        renderList(); 
+        showPage('page-list'); 
+    }
+    
+    function renderList() { 
+        const list = JSON.parse(localStorage.getItem('auva_'+currentMode) || '[]');
+        let h = ''; 
+        list.forEach((it, i) => { 
+            h += `<div class="list-item" onclick="viewDetail(${i})">
+                    <div class="item-left">
+                        <div class="item-num">${i+1}</div>
+                        <b>${it.judul}</b>
+                    </div>
+                    <div class="item-actions" onclick="event.stopPropagation()">
+                        <button onclick="viewDetail(${i})" style="color:var(--primary)">👁️</button>
+                        <button onclick="shareListItem(${i})" style="color:#25d366">💬</button>
+                        <button onclick="deleteListItem(${i})" style="color:red">🗑️</button>
+                    </div>
+                </div>`; 
+        });
+        document.getElementById('l-cont').innerHTML = h || '<p style="text-align:center;padding:20px;">Kosong</p>';
+    }
+    
+    function viewDetail(i) { 
+        currentIdx = i; 
+        const list = JSON.parse(localStorage.getItem('auva_'+currentMode)); 
+        document.getElementById('v-judul').innerText = list[i].judul; 
+        document.getElementById('v-isi').innerText = list[i].isi; 
+        showPage('page-detail'); 
+    }
+    
+    function openEntry() { 
+        editMode = false;
+        currentIdx = -1;
+        document.getElementById('entry-title').innerText = "TAMBAH";
+        document.getElementById('i-judul').value=''; 
+        document.getElementById('i-isi').value=''; 
+        showPage('page-entry'); 
+    }
+    
+    function openEditEntry() {
+        editMode = true;
+        const list = JSON.parse(localStorage.getItem('auva_'+currentMode));
+        const item = list[currentIdx];
+        document.getElementById('entry-title').innerText = "EDIT";
+        document.getElementById('i-judul').value = item.judul;
+        document.getElementById('i-isi').value = item.isi;
+        showPage('page-entry');
+    }
+    
+    function saveData() { 
+        const j = document.getElementById('i-judul').value.trim();
+        const s = document.getElementById('i-isi').value.trim();
+        if(!j || !s) return showToast('Isi judul dan isi!');
+        
+        let list = JSON.parse(localStorage.getItem('auva_'+currentMode) || '[]');
+        
+        if(editMode && currentIdx >= 0) {
+            // Update existing
+            list[currentIdx] = { judul: j, isi: s };
+            showToast('Data berhasil diupdate!');
+        } else {
+            // Add new
+            list.push({ judul: j, isi: s });
+            showToast('Data tersimpan');
+        }
+        
+        localStorage.setItem('auva_'+currentMode, JSON.stringify(list));
+        openList(currentMode);
+    }
+    
+    function sendDetailWA() { 
+        const list = JSON.parse(localStorage.getItem('auva_'+currentMode)); 
+        window.open('https://wa.me/?text='+encodeURIComponent(`*${list[currentIdx].judul}*\n\n${list[currentIdx].isi}\n\n#AuvaMobile`)); 
+    }
+    
+    function shareListItem(i) { 
+        const list = JSON.parse(localStorage.getItem('auva_'+currentMode)); 
+        window.open(`https://wa.me/?text=${encodeURIComponent(`*${list[i].judul}*\n\n${list[i].isi}\n\n#AuvaMobile`)}`); 
+    }
+    
+    function deleteListItem(i) { 
+        if(confirm('Hapus item ini?')){ 
+            let list = JSON.parse(localStorage.getItem('auva_'+currentMode)); 
+            list.splice(i,1); 
+            localStorage.setItem('auva_'+currentMode, JSON.stringify(list)); 
+            renderList(); 
+            showToast('Data dihapus'); 
+        } 
+    }
+    
+    function deleteData() { 
+        if(confirm('Hapus item ini?')){ 
+            let list = JSON.parse(localStorage.getItem('auva_'+currentMode)); 
+            list.splice(currentIdx,1); 
+            localStorage.setItem('auva_'+currentMode, JSON.stringify(list)); 
+            openList(currentMode); 
+            showToast('Data dihapus'); 
+        } 
+    }
+    
+    // ==================== KONTEN LAINNYA ====================
     const defaultContents = {
-        haji: `🕋 *PANDUAN HAJI*
-━━━━━━━━━━━━━━━━━━
-
-📌 *Rukun Haji*
-1. Ihram (niat haji)
-2. Wukuf di Arafah
-3. Tawaf Ifadah
-4. Sa'i
-5. Tahallul (cukur rambut)
-6. Tertib
-
-📌 *Wajib Haji*
-1. Ihram dari miqat
-2. Mabit di Muzdalifah
-3. Mabit di Mina
-4. Melontar jumrah
-5. Tawaf wada'
-
-📌 *Sunnah Haji*
-• Mandi sebelum ihram
-• Memakai wewangian
-• Doa tawaf
-• Memperbanyak talbiyah
-• Sholat sunnah 2 rakaat setelah tawaf
-
-📌 *Doa Talbiyah*
-لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لَا شَرِيكَ لَكَ
-
-#AuvaMobile`,
-
-        umroh: `🕌 *PANDUAN UMROH*
-━━━━━━━━━━━━━━━━━━
-
-📌 *Rukun Umroh*
-1. Ihram
-2. Tawaf
-3. Sa'i
-4. Tahallul
-
-📌 *Tata Cara Umroh*
-1. Mandi dan berihram dari miqat
-2. Masuk Masjidil Haram dengan kaki kanan
-3. Tawaf 7 putaran (dimulai dari Hajar Aswad)
-4. Sholat sunnah 2 rakaat di Maqam Ibrahim
-5. Sa'i 7 kali dari Shafa ke Marwah
-6. Cukur rambut (tahallul)
-
-📌 *Doa Tawaf*
-سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ
-
-📌 *Doa Sa'i*
-رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
-
-#AuvaMobile`,
-
-        ziarah: `🏛️ *RUTE ZIARAH MADINAH*
-━━━━━━━━━━━━━━━━━━
-📍 Masjid Nabawi
-📍 Jabal Uhud
-📍 Masjid Quba
-📍 Masjid Qiblatain
-📍 Pemakaman Baqi
-
-🏛️ *RUTE ZIARAH MAKKAH*
-━━━━━━━━━━━━━━━━━━
-📍 Masjidil Haram
-📍 Jabal Nur (Gua Hira)
-📍 Jabal Tsur
-📍 Mina
-📍 Arafah
-📍 Muzdalifah
-
-⏰ *Waktu Ziarah*
-• Pagi: 08.00-11.00
-• Sore: 15.00-17.00
-
-#AuvaMobile`,
-
-        tahlil: `*TAHLIL ARWAH*
-━━━━━━━━━━━━━━━━━━
-بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ
-
-اَللّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ
-
-سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ
-
-أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ (3x)
-
-لَا إِلَهَ إِلَّا اللَّهُ (3x)
-
-اَللَّهُمَّ اغْفِرْ لِلْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ وَالْمُسْلِمِينَ وَالْمُسْلِمَاتِ
-
-*YASIN* (dibaca lengkap)
-
-*DOA ARWAH*
-اَللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ
-
-*TAHLIL*
-لَا إِلَهَ إِلَّا اللَّهُ (10x)
-
-ثُمَّ التَّحِيَّةُ لِرَسُولِ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ
-
-*DOA PENUTUP*
-اَللَّهُمَّ اجْعَلْ مَا قَرَأْنَاهُ وَمَا أَهْدَيْنَاهُ وَصَلَ وَسَلَّمَ عَلَى سَيِّدِنَا مُحَمَّدٍ
-
-#AuvaMobile`,
-
-        atribut: `🎒 *PERLENGKAPAN HAJI/UMROH*
-━━━━━━━━━━━━━━━━━━
-
-📌 *Pakaian & Perlengkapan Ibadah*
-✓ Ihram (2 kain putih) + ikat pinggang
-✓ Pakaian dalam yang nyaman (minimal 7 set)
-✓ Kaus kaki (minimal 7 pasang)
-✓ Sandal yang nyaman untuk jalan jauh
-✓ Peci/songkok
-✓ Sarung untuk sholat
-✓ Alquran dan buku panduan
-
-📌 *Perlengkapan Mandi & Kesehatan*
-✓ Handuk (2 buah)
-✓ Sabun, sampo, sikat gigi
-✓ Parfum non-alkohol
-✓ Obat pribadi (minimal 14 hari)
-✓ Vitamin dan suplemen
-✓ Masker (minimal 30 buah)
-✓ Hand sanitizer
-✓ Plester dan obat luka
-
-📌 *Perlengkapan Penting Lainnya*
-✓ Tas selempang/fanny pack
-✓ Botol minum (zamzam)
-✓ Payung lipat
-✓ KTP dan paspor (fotokopi)
-✓ Uang tunai (SAR & IDR)
-✓ Kartu kredit/debit
-✓ Power bank & kabel charger
-✓ Adaptor colokan (standar Eropa)
-✓ Bantal leher untuk perjalanan
-
-📌 *Tips Tambahan*
-✓ Bawa tas koper yang ringan
-✓ Labeli semua barang dengan nama
-✓ Jangan membawa perhiasan berlebihan
-✓ Bawa obat antinyeri dan diare
-✓ Siapkan mental dan fisik
-
-#AuvaMobile`
+        haji: `🕋 *PANDUAN HAJI*\n━━━━━━━━━━━━━━━━━━\n\n📌 *Rukun Haji*\n1. Ihram (niat haji)\n2. Wukuf di Arafah\n3. Tawaf Ifadah\n4. Sa'i\n5. Tahallul (cukur rambut)\n6. Tertib\n\n📌 *Wajib Haji*\n1. Ihram dari miqat\n2. Mabit di Muzdalifah\n3. Mabit di Mina\n4. Melontar jumrah\n5. Tawaf wada'\n\n📌 *Sunnah Haji*\n• Mandi sebelum ihram\n• Memakai wewangian\n• Doa tawaf\n• Memperbanyak talbiyah\n• Sholat sunnah 2 rakaat setelah tawaf\n\n📌 *Doa Talbiyah*\nلَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لَا شَرِيكَ لَكَ\n\n#AuvaMobile`,
+        umroh: `🕌 *PANDUAN UMROH*\n━━━━━━━━━━━━━━━━━━\n\n📌 *Rukun Umroh*\n1. Ihram\n2. Tawaf\n3. Sa'i\n4. Tahallul\n\n📌 *Tata Cara Umroh*\n1. Mandi dan berihram dari miqat\n2. Masuk Masjidil Haram dengan kaki kanan\n3. Tawaf 7 putaran (dimulai dari Hajar Aswad)\n4. Sholat sunnah 2 rakaat di Maqam Ibrahim\n5. Sa'i 7 kali dari Shafa ke Marwah\n6. Cukur rambut (tahallul)\n\n📌 *Doa Tawaf*\nسُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ\n\n📌 *Doa Sa'i*\nرَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ\n\n#AuvaMobile`,
+        ziarah: `🏛️ *RUTE ZIARAH MADINAH*\n━━━━━━━━━━━━━━━━━━\n📍 Masjid Nabawi\n📍 Jabal Uhud\n📍 Masjid Quba\n📍 Masjid Qiblatain\n📍 Pemakaman Baqi\n\n🏛️ *RUTE ZIARAH MAKKAH*\n━━━━━━━━━━━━━━━━━━\n📍 Masjidil Haram\n📍 Jabal Nur (Gua Hira)\n📍 Jabal Tsur\n📍 Mina\n📍 Arafah\n📍 Muzdalifah\n\n⏰ *Waktu Ziarah*\n• Pagi: 08.00-11.00\n• Sore: 15.00-17.00\n\n#AuvaMobile`,
+        tahlil: `*TAHLIL ARWAH*\n━━━━━━━━━━━━━━━━━━\nبِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ\n\nاَللّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ\n\nسُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ\n\nأَسْتَغْفِرُ اللَّهَ الْعَظِيمَ (3x)\n\nلَا إِلَهَ إِلَّا اللَّهُ (3x)\n\nاَللَّهُمَّ اغْفِرْ لِلْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ وَالْمُسْلِمِينَ وَالْمُسْلِمَاتِ\n\n*YASIN* (dibaca lengkap)\n\n*DOA ARWAH*\nاَللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ\n\n*TAHLIL*\nلَا إِلَهَ إِلَّا اللَّهُ (10x)\n\nثُمَّ التَّحِيَّةُ لِرَسُولِ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ\n\n*DOA PENUTUP*\nاَللَّهُمَّ اجْعَلْ مَا قَرَأْنَاهُ وَمَا أَهْدَيْنَاهُ وَصَلَ وَسَلَّمَ عَلَى سَيِّدِنَا مُحَمَّدٍ\n\n#AuvaMobile`,
+        atribut: `🎒 *PERLENGKAPAN HAJI/UMROH*\n━━━━━━━━━━━━━━━━━━\n\n📌 *Pakaian & Perlengkapan Ibadah*\n✓ Ihram (2 kain putih) + ikat pinggang\n✓ Pakaian dalam yang nyaman (minimal 7 set)\n✓ Kaus kaki (minimal 7 pasang)\n✓ Sandal yang nyaman untuk jalan jauh\n✓ Peci/songkok\n✓ Sarung untuk sholat\n✓ Alquran dan buku panduan\n\n📌 *Perlengkapan Mandi & Kesehatan*\n✓ Handuk (2 buah)\n✓ Sabun, sampo, sikat gigi\n✓ Parfum non-alkohol\n✓ Obat pribadi (minimal 14 hari)\n✓ Vitamin dan suplemen\n✓ Masker (minimal 30 buah)\n✓ Hand sanitizer\n✓ Plester dan obat luka\n\n📌 *Perlengkapan Penting Lainnya*\n✓ Tas selempang/fanny pack\n✓ Botol minum (zamzam)\n✓ Payung lipat\n✓ KTP dan paspor (fotokopi)\n✓ Uang tunai (SAR & IDR)\n✓ Kartu kredit/debit\n✓ Power bank & kabel charger\n✓ Adaptor colokan (standar Eropa)\n✓ Bantal leher untuk perjalanan\n\n📌 *Tips Tambahan*\n✓ Bawa tas koper yang ringan\n✓ Labeli semua barang dengan nama\n✓ Jangan membawa perhiasan berlebihan\n✓ Bawa obat antinyeri dan diare\n✓ Siapkan mental dan fisik\n\n#AuvaMobile`
     };
     
-    // Ambil konten dari localStorage atau default
     function getContent(key) {
         let content = localStorage.getItem('auva_content_' + key);
         if(!content) {
@@ -571,7 +927,6 @@
         showToast('Konten berhasil disimpan!');
     }
     
-    // ==================== PANDUAN HAJI & UMROH ====================
     let currentPanduanType = '';
     function openPanduan(jenis) {
         currentPanduanType = jenis;
@@ -590,7 +945,6 @@
         document.getElementById('editorModal').classList.add('show');
     }
     
-    // ==================== ZIARAH ====================
     function openZiarah() {
         const content = getContent('ziarah');
         document.getElementById('ziarah-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap">${content}</div>`;
@@ -605,7 +959,6 @@
         document.getElementById('editorModal').classList.add('show');
     }
     
-    // ==================== TAHLIL ====================
     function openTahlil() {
         const content = getContent('tahlil');
         document.getElementById('tahlil-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap; font-family:'Amiri',serif; direction:rtl; text-align:right;">${content}</div>`;
@@ -620,7 +973,6 @@
         document.getElementById('editorModal').classList.add('show');
     }
     
-    // ==================== ATRIBUT ====================
     function openAtribut() {
         const content = getContent('atribut');
         document.getElementById('atribut-content').innerHTML = `<div class="panduan-content" style="white-space:pre-wrap">${content}</div>`;
@@ -635,7 +987,6 @@
         document.getElementById('editorModal').classList.add('show');
     }
     
-    // ==================== LOKASI (edit langsung di halaman) ====================
     function openLokasi() {
         let lokasi = JSON.parse(localStorage.getItem('auva_lokasi'));
         if(!lokasi) lokasi = { titik: ['Masjidil Haram - Pintu 79', 'Hotel Safwah - Lobi Utama', 'Makkah Tower - Depan Foodcourt'], info: 'Setiap sholat berjamaah berkumpul di pintu keluar hotel masing-masing.' };
@@ -657,20 +1008,17 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`);
     }
     
-    // ==================== SHARE FUNCTIONS ====================
     function sharePanduan() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent(currentPanduanType))}`); }
     function shareZiarah() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('ziarah'))}`); }
     function shareTahlil() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('tahlil'))}`); }
     function shareAtribut() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('atribut'))}`); }
     
-    // ==================== EDITOR MODAL ====================
     function closeEditor() { document.getElementById('editorModal').classList.remove('show'); }
     function saveEditedContent() {
         const newContent = document.getElementById('editorText').value;
         if(window.editingKey) {
             saveContent(window.editingKey, newContent);
             closeEditor();
-            // Refresh halaman yang sedang dibuka
             if(window.editingKey === 'haji' || window.editingKey === 'umroh') openPanduan(window.editingKey);
             else if(window.editingKey === 'ziarah') openZiarah();
             else if(window.editingKey === 'tahlil') openTahlil();
@@ -678,13 +1026,11 @@
         }
     }
     
-    // ==================== TASBIH ====================
     let count=0;
     function openTasbih() { count=0; document.getElementById('l-cont').innerHTML=`<div style="text-align:center;padding:40px;"><h1 id="t-count" style="font-size:100px;color:var(--primary)">0</h1><div onclick="hitung()" style="width:180px;height:180px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto;box-shadow:0 10px 20px rgba(0,0,0,0.2);cursor:pointer;">TAP</div><br><button onclick="count=0;document.getElementById('t-count').innerText=0" style="color:red;background:none;border:none;">Reset</button><br><button class="btn-action" style="background:var(--wa); margin-top:20px;" onclick="shareTasbih()">📢 Share Hitungan</button></div>`; document.getElementById('l-title').innerText="TASBIH DIGITAL"; document.getElementById('btn-plus').style.display='none'; showPage('page-list'); }
     function hitung() { count++; document.getElementById('t-count').innerText=count; if(navigator.vibrate) navigator.vibrate(50); }
     function shareTasbih() { window.open(`https://wa.me/?text=${encodeURIComponent(`*Tasbih Digital*\nHitungan: ${count} kali\n\n#AuvaMobile`)}`); }
     
-    // ==================== KAS ====================
     function openKas() { renderKas(); showPage('page-kas'); }
     function addKas(tipe) {
         const jml=parseInt(document.getElementById('k-jumlah').value), ket=document.getElementById('k-ket').value;
@@ -709,72 +1055,15 @@
         teks+=`━━━━━━━━━━━━━━━━━━\n💰 *SALDO AKHIR: Rp ${total.toLocaleString()}*\n\n#AuvaMobile`;
         window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`);
     }
-    
-    // ==================== JAMAAH ====================
-    function openJamaah() { renderJamaah(); showPage('page-jamaah'); }
-    function addJamaah() {
-        const n=document.getElementById('j-nama').value, b=document.getElementById('j-bus').value, no=document.getElementById('j-no').value;
-        if(!n) return showToast('Isi nama jamaah!');
-        let list=JSON.parse(localStorage.getItem('auva_jamaah')||'[]');
-        list.push({nama:n, bus:b||'-', no:no, tgl:new Date().toLocaleDateString('id-ID')});
-        localStorage.setItem('auva_jamaah',JSON.stringify(list)); renderJamaah(); showToast('Jamaah ditambahkan');
-        document.getElementById('j-nama').value=''; document.getElementById('j-bus').value=''; document.getElementById('j-no').value='';
-    }
-    function renderJamaah() {
-        const list=JSON.parse(localStorage.getItem('auva_jamaah')||'[]');
-        let h=''; list.forEach((it,i)=>{ h+=`<div class="list-item"><div><b>${i+1}. ${it.nama}</b><br><small>Bus: ${it.bus} | No: ${it.no||'-'}</small></div><div class="item-actions"><button onclick="shareJamaah(${i})" style="color:#25d366">💬</button><button onclick="deleteJamaah(${i})" style="color:red">🗑️</button></div></div>`; });
-        document.getElementById('jamaah-list-cont').innerHTML=h||'<p style="text-align:center">Belum ada jamaah</p>';
-    }
-    function deleteJamaah(i) { if(confirm('Hapus jamaah ini?')){ let list=JSON.parse(localStorage.getItem('auva_jamaah')); list.splice(i,1); localStorage.setItem('auva_jamaah',JSON.stringify(list)); renderJamaah(); showToast('Jamaah dihapus'); } }
-    function shareJamaah(i) { const list=JSON.parse(localStorage.getItem('auva_jamaah')); const j=list[i]; window.open(`https://wa.me/?text=${encodeURIComponent(`*Data Jamaah*\nNama: ${j.nama}\nBus: ${j.bus}\nNo: ${j.no||'-'}\n\n#AuvaMobile`)}`); }
-    function shareAllJamaah() {
-        const list=JSON.parse(localStorage.getItem('auva_jamaah')||'[]');
-        if(list.length===0) return showToast('Data jamaah kosong!');
-        let teks='*DAFTAR JAMAAH*\n━━━━━━━━━━━━━━━━━━\n';
-        list.forEach((it,i)=>{ teks+=`${i+1}. ${it.nama} (Bus: ${it.bus})\n`; });
-        teks+=`━━━━━━━━━━━━━━━━━━\n📊 *Total: ${list.length} Jamaah*\n\n#AuvaMobile`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`);
+    function exportCSV(type) {
+        const list = JSON.parse(localStorage.getItem('auva_'+type)||'[]');
+        if(list.length===0) return showToast('Data kosong!');
+        let csv = type==='jamaah' ? "No,Nama,Bus,No HP\n" : "Tanggal,Keterangan,Jumlah\n";
+        list.forEach((it,i)=>{ csv+=type==='jamaah' ? `${i+1},${it.nama},${it.bus},${it.no||''}\n` : `${it.tgl},${it.ket},${it.jml}\n`; });
+        const blob=new Blob([csv],{type:'text/csv'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+        a.href=url; a.download=`Auva_${type}_${new Date().toLocaleDateString()}.csv`; a.click(); showToast('CSV berhasil diexport');
     }
     
-    // ==================== SETTINGS MENU ====================
-    const menus = ['haji','umroh','ziarah','jamaah','kas','lokasi','tahlil','dzikir','atribut','siaran','doa','catatan'];
-    function initSettings() {
-        let h=''; menus.forEach(m=>{h+=`<div class="setting-row"><span>Menu ${m.toUpperCase()}</span><label class="switch"><input type="checkbox" id="sw-${m}" checked onchange="saveCfg()"><span class="slider"></span></label></div>`;});
-        document.getElementById('setting-switches').innerHTML=h; loadCfg();
-        // Load admin mode
-        const adminMode = localStorage.getItem('auva_admin_mode') === 'true';
-        document.getElementById('adminMode').checked = adminMode;
-        if(adminMode) toggleAdminMode();
-        loadTheme();
-    }
-    function saveCfg() { menus.forEach(m=>{const val=document.getElementById('sw-'+m).checked; document.getElementById('m-'+m).style.display=val?'block':'none'; localStorage.setItem('cfg_'+m,val);}); }
-    function loadCfg() { menus.forEach(m=>{const saved=localStorage.getItem('cfg_'+m); const vis=saved===null?true:saved==='true'; document.getElementById('sw-'+m).checked=vis; document.getElementById('m-'+m).style.display=vis?'block':'none';}); }
-    
-    // ==================== CATATAN & DOA ====================
-    let currentMode = '', currentIdx = -1;
-    function openList(m) { currentMode = m; document.getElementById('l-title').innerText = m.toUpperCase(); document.getElementById('btn-plus').style.display='block'; renderList(); showPage('page-list'); }
-    function renderList() { 
-        const list = JSON.parse(localStorage.getItem('auva_'+currentMode) || '[]');
-        let h = ''; 
-        list.forEach((it, i) => { 
-            h += `<div class="list-item"><div class="item-left"><div class="item-num">${i+1}</div><b>${it.judul}</b></div><div class="item-actions"><button onclick="viewDetail(${i})" style="color:var(--primary)">👁️</button><button onclick="shareListItem(${i})" style="color:#25d366">💬</button><button onclick="deleteListItem(${i})" style="color:red">🗑️</button></div></div>`; 
-        });
-        document.getElementById('l-cont').innerHTML = h || '<p style="text-align:center;padding:20px;">Kosong</p>';
-    }
-    function viewDetail(i) { currentIdx = i; const list = JSON.parse(localStorage.getItem('auva_'+currentMode)); document.getElementById('v-judul').innerText = list[i].judul; document.getElementById('v-isi').innerText = list[i].isi; showPage('page-detail'); }
-    function openEntry() { currentIdx = -1; document.getElementById('i-judul').value=''; document.getElementById('i-isi').value=''; showPage('page-entry'); }
-    function saveData() { 
-        const j = document.getElementById('i-judul').value, s = document.getElementById('i-isi').value;
-        if(!j || !s) return showToast('Isi judul dan isi!');
-        let list = JSON.parse(localStorage.getItem('auva_'+currentMode) || '[]');
-        list.push({judul:j, isi:s}); localStorage.setItem('auva_'+currentMode, JSON.stringify(list)); openList(currentMode); showToast('Data tersimpan');
-    }
-    function sendDetailWA() { const list = JSON.parse(localStorage.getItem('auva_'+currentMode)); window.open('https://wa.me/?text='+encodeURIComponent(`*${list[currentIdx].judul}*\n\n${list[currentIdx].isi}\n\n#AuvaMobile`)); }
-    function shareListItem(i) { const list = JSON.parse(localStorage.getItem('auva_'+currentMode)); window.open(`https://wa.me/?text=${encodeURIComponent(`*${list[i].judul}*\n\n${list[i].isi}\n\n#AuvaMobile`)}`); }
-    function deleteListItem(i) { if(confirm('Hapus?')){ let list = JSON.parse(localStorage.getItem('auva_'+currentMode)); list.splice(i,1); localStorage.setItem('auva_'+currentMode, JSON.stringify(list)); renderList(); showToast('Data dihapus'); } }
-    function deleteData() { if(confirm('Hapus item ini?')){ let list = JSON.parse(localStorage.getItem('auva_'+currentMode)); list.splice(currentIdx,1); localStorage.setItem('auva_'+currentMode, JSON.stringify(list)); openList(currentMode); showToast('Data dihapus'); } }
-    
-    // ==================== SIARAN WA ====================
     function openSiaran() {
         document.getElementById('l-cont').innerHTML = `
             <button class="btn-action" style="background:#25d366" onclick="shareKasWA()">💰 Share Laporan Kas</button>
@@ -791,7 +1080,6 @@
     function sharePanduanHaji() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('haji'))}`); }
     function sharePanduanUmroh() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('umroh'))}`); }
     
-    // ==================== RESET DATA ====================
     function resetAllData() {
         if(confirm('⚠️ PERINGATAN: Semua data (jamaah, kas, catatan, doa, lokasi, dan konten yang diedit) akan dihapus permanen!\n\nLanjutkan?')) {
             localStorage.clear();
@@ -800,20 +1088,23 @@
         }
     }
     
-    // ==================== EXPORT CSV ====================
-    function exportCSV(type) {
-        let list = JSON.parse(localStorage.getItem('auva_'+type)||'[]');
-        if(list.length===0) return showToast('Data kosong!');
-        let csv = type==='jamaah' ? "No,Nama,Bus,No HP\n" : "Tanggal,Keterangan,Jumlah\n";
-        list.forEach((it,i)=>{ csv+=type==='jamaah' ? `${i+1},${it.nama},${it.bus},${it.no||''}\n` : `${it.tgl},${it.ket},${it.jml}\n`; });
-        const blob=new Blob([csv],{type:'text/csv'}), url=URL.createObjectURL(blob), a=document.createElement('a');
-        a.href=url; a.download=`Auva_${type}_${new Date().toLocaleDateString()}.csv`; a.click(); showToast('CSV berhasil diexport');
+    const menus = ['haji','umroh','ziarah','jamaah','kas','lokasi','tahlil','dzikir','atribut','siaran','doa','catatan'];
+    function initSettings() {
+        let h=''; menus.forEach(m=>{h+=`<div class="setting-row"><span>Menu ${m.toUpperCase()}</span><label class="switch"><input type="checkbox" id="sw-${m}" checked onchange="saveCfg()"><span class="slider"></span></label></div>`;});
+        document.getElementById('setting-switches').innerHTML=h; loadCfg();
+        const adminMode = localStorage.getItem('auva_admin_mode') === 'true';
+        document.getElementById('adminMode').checked = adminMode;
+        if(adminMode) toggleAdminMode();
+        loadTheme();
+        loadDynamicFields();
+        renderJamaahFullList();
     }
+    function saveCfg() { menus.forEach(m=>{const val=document.getElementById('sw-'+m).checked; document.getElementById('m-'+m).style.display=val?'block':'none'; localStorage.setItem('cfg_'+m,val);}); }
+    function loadCfg() { menus.forEach(m=>{const saved=localStorage.getItem('cfg_'+m); const vis=saved===null?true:saved==='true'; document.getElementById('sw-'+m).checked=vis; document.getElementById('m-'+m).style.display=vis?'block':'none';}); }
     
-    // ==================== INIT ====================
     setTimeout(()=>document.getElementById('splashScreen').classList.add('hidden'), 2000);
     if(!navigator.onLine) document.getElementById('offlineIndicator').classList.add('show');
-    window.onload = () => { initSettings(); renderKas(); renderJamaah(); };
+    window.onload = () => { initSettings(); renderKas(); };
 </script> 
 </body> 
                 </html>
