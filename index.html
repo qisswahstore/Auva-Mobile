@@ -402,6 +402,17 @@
                     <span>🔧 Mode Admin (Edit Konten)</span>
                     <label class="switch"><input type="checkbox" id="adminMode" onchange="toggleAdminMode()"><span class="slider"></span></label>
                 </div>
+                <div class="setting-row">
+                    <span>👥 Mode Jamaah (Sembunyikan Menu Kas & Admin)</span>
+                    <label class="switch"><input type="checkbox" id="jamaahMode" onchange="toggleJamaahMode()"><span class="slider"></span></label>
+                </div>
+            </div>
+            <div class="setting-box">
+                <h4 style="margin-bottom:10px">💾 Backup & Restore Data</h4>
+                <button class="btn-action" style="background:var(--primary); margin-bottom:10px;" onclick="backupData()">📤 EXPORT BACKUP (JSON)</button>
+                <button class="btn-action" style="background:var(--share);" onclick="document.getElementById('restoreFileInput').click()">📥 IMPORT RESTORE (JSON)</button>
+                <input type="file" id="restoreFileInput" accept=".json" style="display:none" onchange="restoreData(this)">
+                <div class="card-info" style="margin-top:10px; font-size:12px;">⚠️ Restore akan mengganti semua data yang ada (Jamaah, Kas, Catatan, Doa, dll)</div>
             </div>
             <div class="setting-box">
                 <h4 style="margin-bottom:10px">🎨 Warna Tema</h4>
@@ -410,6 +421,16 @@
             <div id="setting-switches" class="setting-box"></div>
             <button class="btn-action" style="background:var(--share);" onclick="mainShare()">🔗 BAGIKAN APLIKASI</button>
             <button class="btn-action" style="background:var(--danger); margin-top:10px;" onclick="resetAllData()">🔄 RESET SEMUA DATA</button>
+        </div>
+    </div>
+
+    <!-- MODAL EDITOR untuk Ziarah, Tahlil, Atribut (DIPERBAIKI - SEBELUMNYA HILANG) -->
+    <div id="editorModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Edit Konten</h3>
+            <textarea id="editorText" rows="12" style="width:100%; padding:12px; font-family:monospace;"></textarea>
+            <button class="btn-submit" onclick="saveEditedContent()">💾 SIMPAN</button>
+            <button class="btn-action" style="background:var(--danger); margin-top:10px;" onclick="closeEditor()">BATAL</button>
         </div>
     </div>
 
@@ -422,7 +443,7 @@
 
 <script>
 // ==================== SERVICE WORKER & PWA ====================
-const SW_CODE = `const CACHE_NAME='auva-mobile-v8';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(STATIC_ASSETS)));self.skipWaiting();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>new Response('Offline mode'))));});`;
+const SW_CODE = `const CACHE_NAME='auva-mobile-v9';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(STATIC_ASSETS)));self.skipWaiting();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>new Response('Offline mode'))));});`;
 if ('serviceWorker' in navigator) { const blob = new Blob([SW_CODE], { type: 'application/javascript' }); navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(e=>console.log(e)); }
 
 let deferredPrompt = null;
@@ -457,6 +478,26 @@ function toggleAdminMode() {
         document.querySelectorAll('[id$="-edit-btn"]').forEach(btn => btn.style.display = 'none');
         showToast('Mode Admin Nonaktif');
     }
+}
+
+// ==================== MODE JAMAAH (FITUR BARU) ====================
+function toggleJamaahMode() {
+    const isJamaahMode = document.getElementById('jamaahMode').checked;
+    localStorage.setItem('auva_jamaah_mode', isJamaahMode);
+    if(isJamaahMode) {
+        document.getElementById('m-kas').style.display = 'none';
+        showToast('Mode Jamaah Aktif - Menu Kas disembunyikan');
+    } else {
+        document.getElementById('m-kas').style.display = 'block';
+        showToast('Mode Jamaah Nonaktif');
+    }
+}
+
+function loadJamaahMode() {
+    const isJamaahMode = localStorage.getItem('auva_jamaah_mode') === 'true';
+    document.getElementById('jamaahMode').checked = isJamaahMode;
+    if(isJamaahMode) document.getElementById('m-kas').style.display = 'none';
+    else document.getElementById('m-kas').style.display = 'block';
 }
 
 // ==================== KAS MODULE dengan CRUD ====================
@@ -999,6 +1040,18 @@ function editTahlil() { document.getElementById('modalTitle').innerText = 'Edit 
 function openAtribut() { const content = getContent('atribut'); document.getElementById('atribut-content').innerHTML = `<div class="panduan-content">${content.replace(/\n/g,'<br>')}</div>`; if(isAdminMode) document.getElementById('atribut-edit-btn').style.display = 'block'; else document.getElementById('atribut-edit-btn').style.display = 'none'; showPage('page-atribut'); }
 function editAtribut() { document.getElementById('modalTitle').innerText = 'Edit Atribut & Perlengkapan'; document.getElementById('editorText').value = getContent('atribut'); window.editingKey = 'atribut'; document.getElementById('editorModal').classList.add('show'); }
 
+function closeEditor() { document.getElementById('editorModal').classList.remove('show'); }
+function saveEditedContent() {
+    const newContent = document.getElementById('editorText').value;
+    if(window.editingKey) {
+        saveContent(window.editingKey, newContent);
+        closeEditor();
+        if(window.editingKey === 'ziarah') openZiarah();
+        else if(window.editingKey === 'tahlil') openTahlil();
+        else if(window.editingKey === 'atribut') openAtribut();
+    }
+}
+
 function openLokasi() {
     let lokasi = JSON.parse(localStorage.getItem('auva_lokasi'));
     if(!lokasi) lokasi = { titik: ['Masjidil Haram - Pintu 79', 'Hotel Safwah - Lobi Utama', 'Makkah Tower - Depan Foodcourt'], info: 'Setiap sholat berjamaah berkumpul di pintu keluar hotel masing-masing.' };
@@ -1018,17 +1071,44 @@ function shareZiarah() { window.open(`https://wa.me/?text=${encodeURIComponent(g
 function shareTahlil() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('tahlil')+'\n\n#AuvaMobile')}`); }
 function shareAtribut() { window.open(`https://wa.me/?text=${encodeURIComponent(getContent('atribut')+'\n\n#AuvaMobile')}`); }
 
-// ==================== EDITOR MODAL ====================
-function closeEditor() { document.getElementById('editorModal').classList.remove('show'); }
-function saveEditedContent() {
-    const newContent = document.getElementById('editorText').value;
-    if(window.editingKey) {
-        saveContent(window.editingKey, newContent);
-        closeEditor();
-        if(window.editingKey === 'ziarah') openZiarah();
-        else if(window.editingKey === 'tahlil') openTahlil();
-        else if(window.editingKey === 'atribut') openAtribut();
-    }
+// ==================== BACKUP & RESTORE (FITUR BARU) ====================
+function backupData() {
+    const keys = ['auva_kas', 'auva_haji_submenus', 'auva_umroh_submenus', 'auva_jamaah', 'auva_dynamic_fields', 
+                  'auva_doa', 'auva_catatan', 'auva_lokasi', 'auva_content_ziarah', 'auva_content_tahlil', 'auva_content_atribut',
+                  'auva_admin_mode', 'auva_jamaah_mode'];
+    const backup = {};
+    keys.forEach(key => { const val = localStorage.getItem(key); if(val !== null) backup[key] = JSON.parse(val); });
+    const dataStr = JSON.stringify(backup, null, 2);
+    const blob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Auva_Backup_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Backup berhasil diexport');
+}
+
+function restoreData(input) {
+    if(!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const backup = JSON.parse(e.target.result);
+            let restoredCount = 0;
+            for(const [key, value] of Object.entries(backup)) {
+                localStorage.setItem(key, JSON.stringify(value));
+                restoredCount++;
+            }
+            showToast(`Restore berhasil! ${restoredCount} data dipulihkan. Silakan refresh halaman.`);
+            setTimeout(() => location.reload(), 2000);
+        } catch(err) {
+            showToast('File backup tidak valid!');
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
 }
 
 // ==================== TASBIH ====================
@@ -1050,6 +1130,7 @@ function initSettings() {
     const adminMode = localStorage.getItem('auva_admin_mode') === 'true';
     document.getElementById('adminMode').checked = adminMode;
     if(adminMode) toggleAdminMode();
+    loadJamaahMode();
     const colors = ['#1a5d4a','#2c3e50','#8e44ad','#16a085','#2980b9','#e67e22'];
     let colorHtml=''; colors.forEach(c=>{ colorHtml+=`<div class="color-opt" style="background:${c}" onclick="setTheme('${c}', '#c9a227')"></div>`; });
     document.getElementById('colorOptions').innerHTML=colorHtml;
@@ -1062,9 +1143,13 @@ function loadTheme() { const p=localStorage.getItem('auva_theme_primary'); const
 function saveCfg() { menus.forEach(m=>{const val=document.getElementById('sw-'+m).checked; document.getElementById('m-'+m).style.display=val?'block':'none'; localStorage.setItem('cfg_'+m,val);}); }
 function loadCfg() { menus.forEach(m=>{const saved=localStorage.getItem('cfg_'+m); const vis=saved===null?true:saved==='true'; document.getElementById('sw-'+m).checked=vis; document.getElementById('m-'+m).style.display=vis?'block':'none';}); }
 
-setTimeout(()=>document.getElementById('splashScreen').classList.add('hidden'), 2000);
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        document.getElementById('splashScreen').classList.add('hidden');
+    }, 1500);
+});
 if(!navigator.onLine) document.getElementById('offlineIndicator').classList.add('show');
 window.onload = () => { initSettings(); };
 </script>
 </body> 
-            </html>
+                </html>
