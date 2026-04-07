@@ -66,9 +66,9 @@
         .highlight { color: var(--accent); font-weight: bold; font-size: 1.4rem; }
         .summary-real { background: var(--dark); color: white; padding: 15px; border-radius: 10px; margin-top: 15px; }
         .table-container { overflow-x: auto; margin-top: 20px; background: white; border-radius: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { background: #eee; padding: 10px 8px; text-align: left; font-size: 10px; }
-        td { padding: 10px 8px; border-bottom: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: var(--primary); color: white; padding: 12px 8px; text-align: left; font-size: 12px; font-weight: bold; }
+        td { padding: 10px 8px; border-bottom: 1px solid #eee; vertical-align: middle; }
         .txt-in { color: var(--green); font-weight: bold; }
         .txt-out { color: var(--red); font-weight: bold; }
         .btn-del { color: var(--red); border: none; background: none; font-size: 18px; cursor: pointer; width: 30px; height: 30px; border-radius: 5px; }
@@ -183,6 +183,8 @@
         .btn-batch-cancel { background: none; border: none; color: var(--red); font-size: 20px; cursor: pointer; }
         .checkbox-col { width: 40px; text-align: center; }
         .menu-card-fullwidth { grid-column: span 2; }
+        .btn-delete-mass { background: var(--red) !important; }
+        .btn-delete-selected { background: var(--orange) !important; }
     </style>
 </head>
 <body onload="initApp()">
@@ -197,13 +199,20 @@
 
     <div id="page-home" class="page active"><div class="header-main"><div style="font-size:50px;">🕋</div><h2>AUVA KBIHU AU</h2><p style="color:var(--accent); font-weight:bold;">by Kbihu Amanatul Ummah</p></div><div class="menu-grid" id="menuGrid"></div></div>
 
-    <div id="page-estimasi" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>estimasiUmroh</h2><div style="width:40px;"></div></div><div class="card"><div class="logo-box"><img src="https://img.icons8.com/color/96/kaaba.png" style="width:60px;"></div><p class="subtitle">Auva Kbihu AU</p><div class="section-title">Data Rombongan</div><div class="input-group"><label>Nama Paket / Lokasi</label><input type="text" id="lokasiPaket" value="Umroh Syawal - Auva Kbihu AU"></div><div class="row"><div class="input-group"><label>Total Pax</label><input type="number" id="totJam" value="35"></div><div class="input-group"><label>Gratis</label><input type="number" id="jamGratis" value="1"></div><div class="input-group"><label>Jumlah TL</label><input type="number" id="numTL" value="1"></div></div><div class="section-title">Komponen Biaya</div><div class="row"><div class="input-group"><label>Tiket</label><input type="text" id="cTiket" class="money-input" value="15.450.000"></div><div class="input-group"><label>LA / Hotel</label><input type="text" id="cLA" class="money-input" value="14.450.000"></div></div><div class="row"><div class="input-group"><label>Asuransi</label><input type="text" id="cAsuransi" class="money-input" value="60.000"></div><div class="input-group"><label>Handling</label><input type="text" id="cHandling" class="money-input" value="100.000"></div></div><div class="row"><div class="input-group"><label>Perlengkapan</label><input type="text" id="cAlat" class="money-input" value="1.000.000"></div><div class="input-group"><label>Aplikasi</label><input type="text" id="cAplikasi" class="money-input" value="60.000"></div></div><div class="row"><div class="input-group"><label>Diskon/PIC</label><input type="text" id="cPIC" class="money-input" value="0"></div><div class="input-group"><label>Lain-lain</label><input type="text" id="cLain" class="money-input" value="0"></div></div><div class="section-title">Margin</div><div class="input-group"><label>Profit (%)</label><input type="number" id="profitPct" value="5"></div><button class="btn" onclick="hitungUmroh()"><i class="fas fa-calculator"></i> HITUNG ESTIMASI</button><button class="btn btn-reset-default" onclick="resetEstimasiToDefault()"><i class="fas fa-undo-alt"></i> RESET KE DEFAULT</button></div><div id="hasilEstimasi" class="res-card"></div></div>
+    <div id="page-estimasi" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Cuan Plan Umroh</h2><div style="width:40px;"></div></div><div class="card"><div class="logo-box"><img src="https://img.icons8.com/color/96/kaaba.png" style="width:60px;"></div><p class="subtitle">Auva Kbihu AU</p><div class="section-title">Data Rombongan</div><div class="input-group"><label>Nama Paket / Lokasi</label><input type="text" id="lokasiPaket" value="Umroh Syawal - Auva Kbihu AU"></div><div class="row"><div class="input-group"><label>Total Pax</label><input type="number" id="totJam" value="35"></div><div class="input-group"><label>Gratis</label><input type="number" id="jamGratis" value="1"></div><div class="input-group"><label>Jumlah TL</label><input type="number" id="numTL" value="1"></div></div><div class="section-title">Komponen Biaya</div><div class="row"><div class="input-group"><label>Tiket</label><input type="text" id="cTiket" class="money-input" value="15.450.000"></div><div class="input-group"><label>LA / Hotel</label><input type="text" id="cLA" class="money-input" value="14.450.000"></div></div><div class="row"><div class="input-group"><label>Asuransi</label><input type="text" id="cAsuransi" class="money-input" value="60.000"></div><div class="input-group"><label>Handling</label><input type="text" id="cHandling" class="money-input" value="100.000"></div></div><div class="row"><div class="input-group"><label>Perlengkapan</label><input type="text" id="cAlat" class="money-input" value="1.000.000"></div><div class="input-group"><label>Aplikasi</label><input type="text" id="cAplikasi" class="money-input" value="60.000"></div></div><div class="row"><div class="input-group"><label>Diskon/PIC</label><input type="text" id="cPIC" class="money-input" value="0"></div><div class="input-group"><label>Lain-lain</label><input type="text" id="cLain" class="money-input" value="0"></div></div><div class="section-title">Margin</div><div class="input-group"><label>Profit (%)</label><input type="number" id="profitPct" value="5"></div><button class="btn" onclick="hitungUmroh()"><i class="fas fa-calculator"></i> HITUNG ESTIMASI</button><button class="btn btn-reset-default" onclick="resetEstimasiToDefault()"><i class="fas fa-undo-alt"></i> RESET KE DEFAULT</button></div><div id="hasilEstimasi" class="res-card"></div></div>
 
-    <div id="page-kas" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Uang Kas</h2><div style="width:40px;"></div></div><div class="card"><div class="section-title">Kegiatan / Nama Rombongan</div><div class="input-group"><input type="text" id="kegiatan" placeholder="Contoh: Umroh Syawal 2026" value="Umroh Syawal 2026"></div><div class="section-title">Input Transaksi</div><div class="input-group"><input type="text" id="ketReal" placeholder="Keterangan detail transaksi"></div><div class="row"><div style="flex:2"><input id="nomReal" type="text" class="money-input" placeholder="Nominal Rp"></div><div style="flex:1"><select id="tipeReal"><option value="masuk">Masuk</option><option value="keluar">Keluar</option></select></div></div><button class="btn" onclick="tambahTransaksi()" style="background:var(--accent)"><i class="fas fa-plus-circle"></i> TAMBAH TRANSAKSI</button><button class="btn btn-teal" onclick="buatLaporanWA()"><i class="fab fa-whatsapp"></i> BUAT LAPORAN WA</button><div class="summary-real" id="summaryKas"></div><div class="table-container"><table><thead><tr><th>Tgl</th><th>Kegiatan</th><th>Ket</th><th>Nominal</th><th></th></thead><tbody id="bodyKas"></tbody></table></div><div id="hasilWA" class="res-card"></div><div class="section-title">Backup & Restore Data Kas</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore data transaksi kas</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupKasData()" style="flex:1"><i class="fas fa-download"></i> BACKUP KAS</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreKasFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE KAS</button></div><input type="file" id="restoreKasFile" accept=".json" style="display:none" onchange="restoreKasData(this)"><div class="section-title">Export Laporan Kas</div><div class="row"><button class="btn btn-purple btn-small" onclick="exportKasPDFWithSpinner()" style="flex:1"><i class="fas fa-file-pdf"></i> PDF</button><button class="btn btn-small" onclick="exportKasExcelWithSpinner()" style="flex:1; background:#27ae60;"><i class="fas fa-file-excel"></i> EXCEL</button></div><button class="btn btn-danger" onclick="confirmResetKas()" style="font-size:12px"><i class="fas fa-trash-alt"></i> KOSONGKAN BUKU KAS</button></div></div>
+    <div id="page-kas" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Uang Kas</h2><div style="width:40px;"></div></div><div class="card"><div class="section-title">Kegiatan / Nama Rombongan</div><div class="input-group"><input type="text" id="kegiatan" placeholder="Contoh: Umroh Syawal 2026" value="Umroh Syawal 2026"></div><div class="section-title">Input Transaksi</div><div class="input-group"><input type="text" id="ketReal" placeholder="Keterangan detail transaksi"></div><div class="row"><div style="flex:2"><input id="nomReal" type="text" class="money-input" placeholder="Nominal Rp"></div><div style="flex:1"><select id="tipeReal"><option value="masuk">Masuk</option><option value="keluar">Keluar</option></select></div></div><button class="btn" onclick="tambahTransaksi()" style="background:var(--accent)"><i class="fas fa-plus-circle"></i> TAMBAH TRANSAKSI</button><button class="btn btn-teal" onclick="buatLaporanWA()"><i class="fab fa-whatsapp"></i> BUAT LAPORAN WA</button><div class="summary-real" id="summaryKas"></div><div class="table-container">
+        <table id="kasTable" style="width:100%; border-collapse:collapse;">
+            <thead id="kasTableHead">
+                <tr><th>Tgl</th><th>Kegiatan</th><th>Keterangan</th><th>Nominal</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="bodyKas"></tbody>
+        </table>
+    </div><div id="hasilWA" class="res-card"></div><div class="section-title">Backup & Restore Data Kas</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore data transaksi kas</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupKasData()" style="flex:1"><i class="fas fa-download"></i> BACKUP KAS</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreKasFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE KAS</button></div><input type="file" id="restoreKasFile" accept=".json" style="display:none" onchange="restoreKasData(this)"><div class="section-title">Export Laporan Kas</div><div class="row"><button class="btn btn-purple btn-small" onclick="exportKasPDFWithSpinner()" style="flex:1"><i class="fas fa-file-pdf"></i> PDF</button><button class="btn btn-small" onclick="exportKasExcelWithSpinner()" style="flex:1; background:#27ae60;"><i class="fas fa-file-excel"></i> EXCEL</button></div><button class="btn btn-danger" onclick="confirmResetKas()" style="font-size:12px"><i class="fas fa-trash-alt"></i> KOSONGKAN BUKU KAS</button></div></div>
 
     <div id="page-jamaah" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>database</h2><div style="width:40px;"></div></div><div class="card"><div id="jamaahAdminPanel" class="admin-panel" style="display:none"><h3>🔧 Panel Admin Jamaah</h3><button class="btn-admin" onclick="openTambahJamaahModal()">📝 + Tambah database</button><button class="btn-admin" onclick="openManageFieldsModal()">⚙️ Kelola Field Dinamis</button><button class="btn-admin" onclick="exportJamaahToExcel()">📊 Export ke Excel</button><button class="btn-admin" onclick="document.getElementById('importExcelFile').click()">📥 IMPORT EXCEL</button><input type="file" id="importExcelFile" accept=".xlsx,.xls" style="display:none" onchange="importJamaahFromExcel(this)"><button class="btn-admin btn-delete-all" onclick="confirmDeleteAllJamaah()">🗑️ HAPUS SEMUA database</button></div><div class="section-title">DAFTAR JAMAAH</div><div class="search-box"><input type="text" id="searchJamaahInput" placeholder="🔍 Cari nama jamaah..." onkeyup="filterJamaahList()"><select id="sortJamaahSelect" onchange="sortJamaahList()"><option value="urutan_asli">Urutan asli (sesuai input)</option><option value="nama_asc">Nama A-Z</option><option value="nama_desc">Nama Z-A</option><option value="tgl_asc">Tanggal lama ke baru</option><option value="tgl_desc">Tanggal baru ke lama</option></select><button onclick="resetJamaahFilter()">Reset</button></div><div class="sort-buttons"><span style="font-size:12px; color:#666;">Jumlah per halaman:</span><select id="perPageJamaah" onchange="changePerPage()"><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="all">Semua</option></select></div><div id="jamaahListContainer"></div><div id="paginationContainer" class="pagination"></div><button class="btn btn-wa" onclick="shareAllJamaahToWA()"><i class="fab fa-whatsapp"></i> SHARE SEMUA JAMAAH KE WA</button><div class="section-title" style="margin-top:20px;">Backup & Restore database</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore database dan field dinamis</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupJamaahData()" style="flex:1"><i class="fas fa-download"></i> BACKUP JAMAAH</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreJamaahFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE JAMAAH</button></div><input type="file" id="restoreJamaahFile" accept=".json" style="display:none" onchange="restoreJamaahData(this)"></div></div>
 
-    <div id="page-jamaahkita" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Jamaah on proses</h2><div style="width:40px;"></div></div><div class="card"><div id="jamaahKitaAdminPanel" class="admin-panel" style="display:none"><h3>🔧 Pengaturan Jamaah on proses</h3><button class="btn-admin" onclick="openJamaahKitaFieldModal()">⚙️ Kelola Field Dinamis (Kamar/Bus/dll)</button></div><div class="section-title">TAMBAH database on proses</div><div class="input-group"><label>Pilih Jamaah dari database</label><select id="pilihJamaahKita"></select></div><div id="jamaahKitaDynamicFields"></div><button class="btn" onclick="tambahJamaahKita()" style="background:var(--accent)"><i class="fas fa-plus-circle"></i> TAMBAHKAN KE Jamaah on proses</button><div class="section-title">DAFTAR Jamaah on proses</div><div id="jamaahKitaListContainer"></div><button class="btn btn-wa" onclick="shareAllJamaahKitaToWA()"><i class="fab fa-whatsapp"></i> SHARE SEMUA Jamaah on proses KE WA</button><button class="btn print-group-btn" onclick="printGroupedPDF()"><i class="fas fa-print"></i> 📄 CETAK PDF PER KELOMPOK (KAMAR/BUS/KELAS)</button><div class="section-title">Backup & Restore database on proses</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore database on proses</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupJamaahKitaData()" style="flex:1"><i class="fas fa-download"></i> BACKUP Jamaah on proses</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreJamaahKitaFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE Jamaah on proses</button></div><input type="file" id="restoreJamaahKitaFile" accept=".json" style="display:none" onchange="restoreJamaahKitaData(this)"></div></div>
+    <div id="page-jamaahkita" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Jamaah on proses</h2><div style="width:40px;"></div></div><div class="card"><div id="jamaahKitaAdminPanel" class="admin-panel" style="display:none"><h3>🔧 Pengaturan Jamaah on proses</h3><button class="btn-admin" onclick="openJamaahKitaFieldModal()">⚙️ Kelola Field Dinamis (Kamar/Bus/dll)</button></div><div class="section-title">TAMBAH database KITA</div><div class="input-group"><label>Pilih Jamaah dari database</label><select id="pilihJamaahKita"></select></div><div id="jamaahKitaDynamicFields"></div><button class="btn" onclick="tambahJamaahKita()" style="background:var(--accent)"><i class="fas fa-plus-circle"></i> TAMBAHKAN KE Jamaah on proses</button><div class="section-title">DAFTAR Jamaah on proses</div><div id="jamaahKitaListContainer"></div><button class="btn btn-wa" onclick="shareAllJamaahKitaToWA()"><i class="fab fa-whatsapp"></i> SHARE SEMUA Jamaah on proses KE WA</button><button class="btn print-group-btn" onclick="printGroupedPDF()"><i class="fas fa-print"></i> 📄 CETAK PDF PER KELOMPOK (KAMAR/BUS/KELAS)</button><div class="section-title">Backup & Restore database Kita</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore database kita</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupJamaahKitaData()" style="flex:1"><i class="fas fa-download"></i> BACKUP Jamaah on proses</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreJamaahKitaFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE Jamaah on proses</button></div><input type="file" id="restoreJamaahKitaFile" accept=".json" style="display:none" onchange="restoreJamaahKitaData(this)"></div></div>
 
     <div id="page-catatan" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Catatan</h2><button class="back-btn" onclick="openTambahCatatan()" style="font-size:1.2rem;">+</button></div><div class="container" style="padding:15px; max-width:500px; margin:0 auto;"><div id="catatanListContainer"></div></div></div>
 
@@ -224,6 +233,11 @@
                 </div>
                 <div class="row" style="margin-top:10px;">
                     <button class="btn btn-small btn-purple" onclick="copyFromJamaah()" style="flex:1">📋 Copy dari database</button>
+                    <button class="btn btn-small" onclick="openModeManager()" style="flex:1; background:#9b59b6;"><i class="fas fa-sliders-h"></i> ⚙️ Kelola Mode</button>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <button class="btn btn-small btn-delete-mass" onclick="confirmDeleteAllMasterData()" style="flex:1"><i class="fas fa-trash-alt"></i> 🗑️ HAPUS SEMUA</button>
+                    <button class="btn btn-small btn-delete-selected" onclick="deleteSelectedMasterData()" style="flex:1"><i class="fas fa-trash-alt"></i> 🗑️ HAPUS TERPILIH</button>
                 </div>
             </div>
             <div id="modeSwitcherContainer"></div>
@@ -287,6 +301,19 @@
         </div>
     </div></div>
 
+    <div id="modeManagerModal" class="modal"><div class="modal-content"><h3><i class="fas fa-sliders-h"></i> Kelola Mode Switcher</h3>
+        <p style="font-size:12px; color:#666; margin-bottom:15px;">Centang mode yang ingin ditampilkan. Hapus centang untuk menyembunyikan.</p>
+        <div id="modeManagerList" style="margin-bottom:20px;"></div>
+        <div class="row">
+            <div class="input-group" style="flex:3"><input type="text" id="newModeName" placeholder="Nama mode baru (contoh: Wisata)"></div>
+            <button class="btn-small" onclick="addNewMode()" style="background:var(--primary); color:white; padding:0 15px; margin-top:0;">+ TAMBAH</button>
+        </div>
+        <div class="row" style="margin-top:15px;">
+            <button class="btn" style="background:var(--red);" onclick="closeModeManager()">BATAL</button>
+            <button class="btn" style="background:var(--primary);" onclick="saveModes()">💾 SIMPAN PERUBAHAN</button>
+        </div>
+    </div></div>
+
     <div id="page-setting" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Pengaturan</h2><div style="width:40px;"></div></div><div class="container" style="padding:15px; max-width:500px; margin:0 auto;"><div class="setting-box"><div class="setting-row"><span>🔧 Mode Admin (Edit Konten & Menu)</span><label class="switch"><input type="checkbox" id="adminMode" onchange="toggleAdminMode()"><span class="slider"></span></label></div></div><div class="setting-box"><h4 style="margin-bottom:10px">🎨 Warna Tema</h4><div class="color-options" id="colorOptions"></div></div><div class="setting-box"><h4 style="margin-bottom:10px">📋 Atur Tampilan Menu</h4><div id="menuSettingsContainer"></div></div><button class="btn btn-danger" onclick="confirmResetAllData()">🔄 RESET SEMUA DATA</button></div></div>
 
     <div id="jamaahModal" class="modal"><div class="modal-content"><h3 id="jamaahModalTitle">Tambah database</h3><div id="jamaahFormContainer"></div><button class="btn-submit" onclick="saveJamaah()">💾 SIMPAN</button><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeJamaahModal()">BATAL</button></div></div>
@@ -299,7 +326,7 @@
     <div class="bottom-nav"><div class="nav-item nav-active" onclick="showPage('home')">🏠<br>Home</div><div class="nav-item" onclick="showPage('estimasi')">📊<br>Estimasi</div><div class="nav-item" onclick="showPage('kas')">💰<br>Kas</div><div class="nav-item" onclick="showPage('jamaah')">👥<br>Jamaah</div><div class="nav-item" onclick="showPage('setting')">⚙️<br>Setting</div></div>
 
 <script>
-const SW_CODE_STABLE = `const CACHE_NAME='auva-v22';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css','https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(async c=>{try{await c.addAll(STATIC_ASSETS);}catch(e){}}));self.skipWaiting();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>new Response('Offline mode'))));});`;
+const SW_CODE_STABLE = `const CACHE_NAME='auva-v24';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css','https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(async c=>{try{await c.addAll(STATIC_ASSETS);}catch(e){}}));self.skipWaiting();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>new Response('Offline mode'))));});`;
 function registerServiceWorker() { if(!('serviceWorker' in navigator)) return; const blob = new Blob([SW_CODE_STABLE], { type:'application/javascript' }); navigator.serviceWorker.register(URL.createObjectURL(blob), { scope:'/' }).catch(e=>console.log(e)); }
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', registerServiceWorker); else registerServiceWorker();
 
@@ -354,7 +381,8 @@ function showPage(pageId) {
         const judulInput = document.getElementById('masterJudul'); 
         if(judulInput && !judulInput.value) judulInput.value = localStorage.getItem('auva_master_judul') || 'Multi Event';
         setTimeout(() => {
-            injectDynamicModeSwitcher();
+            loadModesFromStorage();
+            renderDynamicModeSwitcher();
         }, 150);
     }
 }
@@ -362,7 +390,7 @@ function loadKegiatanToInput() { const saved = localStorage.getItem('auva_kegiat
 
 let isAdminMode = false;
 const menuItems = [
-    { id: 'estimasi', icon: '💰', label: 'estimasi', default: true },
+    { id: 'estimasi', icon: '💰', label: 'Cuan Plan', default: true },
     { id: 'kas', icon: '📊', label: 'Uang Kas', default: true },
     { id: 'jamaah', icon: '👥', label: 'database', default: true },
     { id: 'jamaahkita', icon: '👥', label: 'Jamaah on proses', default: true },
@@ -375,7 +403,7 @@ function renderMenuGrid() {
     if(!container) return;
     let html = '';
     const existingMenus = [
-        { id: 'estimasi', icon: '💰', label: 'estimasi' },
+        { id: 'estimasi', icon: '💰', label: 'Cuan Plan' },
         { id: 'kas', icon: '📊', label: 'UANG KAS' },
         { id: 'jamaah', icon: '👥', label: 'database' },
         { id: 'jamaahkita', icon: '👥', label: 'Jamaah on proses' },
@@ -412,7 +440,7 @@ function renderMenuSettings() {
     if(!container) return; 
     let html = ''; 
     const allMenus = [
-        { id: 'estimasi', icon: '💰', label: 'estimasi' },
+        { id: 'estimasi', icon: '💰', label: 'Cuan Plan' },
         { id: 'kas', icon: '📊', label: 'Uang Kas' },
         { id: 'jamaah', icon: '👥', label: 'database' },
         { id: 'jamaahkita', icon: '👥', label: 'Jamaah on proses' },
@@ -563,8 +591,14 @@ function renderKasTable() {
     dataKas.forEach(i=>{ 
         if(i.tipe==='masuk') masuk+=i.nom; 
         else keluar+=i.nom; 
-        const kegiatanDisplay = i.kegiatan ? `<span class="keg-tag">${escapeHtml(i.kegiatan)}</span><br>` : ''; 
-        body.innerHTML += `<tr><td style="vertical-align:middle;">${i.tgl}</td><td style="vertical-align:middle;">${kegiatanDisplay}</td><td style="vertical-align:middle;">${escapeHtml(i.ket)}</td><td class="${i.tipe==='masuk'?'txt-in':'txt-out'}" style="vertical-align:middle;">${i.nom.toLocaleString('id-ID')}</td><td style="vertical-align:middle;"><button class="btn-del" onclick="confirmHapusTransaksi(${i.id})">🗑️</button></td></tr>`; 
+        const kegiatanDisplay = i.kegiatan ? `<span class="keg-tag">${escapeHtml(i.kegiatan)}</span>` : '-'; 
+        body.innerHTML += `<tr>
+            <td style="vertical-align:middle; padding:10px 5px;">${i.tgl}</td>
+            <td style="vertical-align:middle; padding:10px 5px;">${kegiatanDisplay}</td>
+            <td style="vertical-align:middle; padding:10px 5px;">${escapeHtml(i.ket)}</td>
+            <td class="${i.tipe==='masuk'?'txt-in':'txt-out'}" style="vertical-align:middle; padding:10px 5px;">Rp ${i.nom.toLocaleString('id-ID')}</td>
+            <td style="vertical-align:middle; padding:10px 5px;"><button class="btn-del" onclick="confirmHapusTransaksi(${i.id})">🗑️</button></td>
+         </tr>`; 
     }); 
     const summary = document.getElementById('summaryKas'); 
     if(summary) summary.innerHTML = `<b>Saldo Akhir: Rp ${(masuk-keluar).toLocaleString('id-ID')}</b>`; 
@@ -731,10 +765,10 @@ function loadDynamicFieldsJamaahKita() { const saved = localStorage.getItem('auv
 function saveDynamicFieldsJamaahKita() { localStorage.setItem('auva_jamaah_kita_fields', JSON.stringify(dynamicFieldsJamaahKita)); }
 function renderPilihJamaahKita() { const select=document.getElementById('pilihJamaahKita'); if(!select) return; let html='<option value="">-- Pilih Jamaah --</option>'; jamaahList.forEach((j,idx)=>{ html+=`<option value="${idx}">${escapeHtml(j.nama_lengkap)}</option>`; }); select.innerHTML=html; }
 function renderJamaahKitaDynamicFieldsForm() { const container=document.getElementById('jamaahKitaDynamicFields'); if(!container) return; let html=''; for(const field of dynamicFieldsJamaahKita){ html+=`<div class="dynamic-field"><label>${escapeHtml(field.label)}</label>${field.type==='textarea'?`<textarea id="jamaahKitaField_${field.name}" rows="2"></textarea>`:`<input type="${field.type}" id="jamaahKitaField_${field.name}">`}</div>`; } container.innerHTML=html; }
-function tambahJamaahKita() { const select=document.getElementById('pilihJamaahKita'); const selectedIndex=select.value; if(!selectedIndex) return showToast('Pilih jamaah terlebih dahulu!'); const jamaah=jamaahList[parseInt(selectedIndex)]; if(!jamaah) return; const additionalFields={}; for(const field of dynamicFieldsJamaahKita){ const input=document.getElementById(`jamaahKitaField_${field.name}`); if(input) additionalFields[field.name]=input.value.trim(); } const now=new Date().toLocaleDateString('id-ID')+' '+new Date().toLocaleTimeString('id-ID'); const existing=jamaahKitaList.find(jk=>jk.jamaahId===jamaah.id); if(existing){ showConfirm('Jamaah ini sudah ada di daftar. Update data?', (confirmed)=>{ if(confirmed){ existing.additional_fields=additionalFields; existing.updated_at=now; saveJamaahKitaData(); renderJamaahKitaList(); showToast('database on proses diupdate'); } }); } else { jamaahKitaList.push({ id:Date.now(), jamaahId:jamaah.id, nama_lengkap:jamaah.nama_lengkap, additional_fields:additionalFields, created_at:now }); saveJamaahKitaData(); renderJamaahKitaList(); showToast('Jamaah ditambahkan ke Jamaah on proses'); } for(const field of dynamicFieldsJamaahKita){ const input=document.getElementById(`jamaahKitaField_${field.name}`); if(input) input.value=''; } select.value=''; }
-function renderJamaahKitaList() { const container=document.getElementById('jamaahKitaListContainer'); if(!container) return; if(jamaahKitaList.length===0){ container.innerHTML='<p style="text-align:center; padding:20px;">Belum ada database on proses</p>'; return; } let html=''; [...jamaahKitaList].reverse().forEach((jk,idx)=>{ const originalIdx=jamaahKitaList.length-1-idx; html+=`<div class="jamaah-card"><div class="jamaah-header"><div><div class="jamaah-nama"><span style="background:var(--primary); color:white; display:inline-block; width:28px; height:28px; border-radius:50%; text-align:center; line-height:28px; font-size:13px; margin-right:10px;">${idx+1}</span> ${escapeHtml(jk.nama_lengkap)}</div><div class="jamaah-tgl">📅 ${jk.created_at||'-'}</div></div><div class="jamaah-actions"><button class="btn-share-wa" onclick="shareSingleJamaahKita(${originalIdx})">💬</button><button class="btn-edit-jamaah" onclick="editJamaahKita(${originalIdx})">✏️</button><button class="btn-delete-jamaah" onclick="confirmDeleteJamaahKita(${originalIdx})">🗑️</button></div></div><div class="jamaah-detail">`; for(const field of dynamicFieldsJamaahKita){ const val=jk.additional_fields?.[field.name]||''; if(val) html+=`<div class="jamaah-detail-item"><strong>${escapeHtml(field.label)}:</strong> ${escapeHtml(val)}</div>`; } html+=`</div></div>`; }); container.innerHTML=html; }
+function tambahJamaahKita() { const select=document.getElementById('pilihJamaahKita'); const selectedIndex=select.value; if(!selectedIndex) return showToast('Pilih jamaah terlebih dahulu!'); const jamaah=jamaahList[parseInt(selectedIndex)]; if(!jamaah) return; const additionalFields={}; for(const field of dynamicFieldsJamaahKita){ const input=document.getElementById(`jamaahKitaField_${field.name}`); if(input) additionalFields[field.name]=input.value.trim(); } const now=new Date().toLocaleDateString('id-ID')+' '+new Date().toLocaleTimeString('id-ID'); const existing=jamaahKitaList.find(jk=>jk.jamaahId===jamaah.id); if(existing){ showConfirm('Jamaah ini sudah ada di daftar. Update data?', (confirmed)=>{ if(confirmed){ existing.additional_fields=additionalFields; existing.updated_at=now; saveJamaahKitaData(); renderJamaahKitaList(); showToast('database kita diupdate'); } }); } else { jamaahKitaList.push({ id:Date.now(), jamaahId:jamaah.id, nama_lengkap:jamaah.nama_lengkap, additional_fields:additionalFields, created_at:now }); saveJamaahKitaData(); renderJamaahKitaList(); showToast('Jamaah ditambahkan ke Jamaah on proses'); } for(const field of dynamicFieldsJamaahKita){ const input=document.getElementById(`jamaahKitaField_${field.name}`); if(input) input.value=''; } select.value=''; }
+function renderJamaahKitaList() { const container=document.getElementById('jamaahKitaListContainer'); if(!container) return; if(jamaahKitaList.length===0){ container.innerHTML='<p style="text-align:center; padding:20px;">Belum ada database kita</p>'; return; } let html=''; [...jamaahKitaList].reverse().forEach((jk,idx)=>{ const originalIdx=jamaahKitaList.length-1-idx; html+=`<div class="jamaah-card"><div class="jamaah-header"><div><div class="jamaah-nama"><span style="background:var(--primary); color:white; display:inline-block; width:28px; height:28px; border-radius:50%; text-align:center; line-height:28px; font-size:13px; margin-right:10px;">${idx+1}</span> ${escapeHtml(jk.nama_lengkap)}</div><div class="jamaah-tgl">📅 ${jk.created_at||'-'}</div></div><div class="jamaah-actions"><button class="btn-share-wa" onclick="shareSingleJamaahKita(${originalIdx})">💬</button><button class="btn-edit-jamaah" onclick="editJamaahKita(${originalIdx})">✏️</button><button class="btn-delete-jamaah" onclick="confirmDeleteJamaahKita(${originalIdx})">🗑️</button></div></div><div class="jamaah-detail">`; for(const field of dynamicFieldsJamaahKita){ const val=jk.additional_fields?.[field.name]||''; if(val) html+=`<div class="jamaah-detail-item"><strong>${escapeHtml(field.label)}:</strong> ${escapeHtml(val)}</div>`; } html+=`</div></div>`; }); container.innerHTML=html; }
 function editJamaahKita(index) { if(!isAdminMode) return showToast('Aktifkan Mode Admin dulu!'); const jk=jamaahKitaList[index]; if(!jk) return; for(const field of dynamicFieldsJamaahKita){ const input=document.getElementById(`jamaahKitaField_${field.name}`); if(input) input.value=jk.additional_fields?.[field.name]||''; } const select=document.getElementById('pilihJamaahKita'); const jamaahIndex=jamaahList.findIndex(j=>j.id===jk.jamaahId); if(jamaahIndex!==-1) select.value=jamaahIndex; jamaahKitaList.splice(index,1); saveJamaahKitaData(); renderJamaahKitaList(); showToast('Edit data, silakan simpan ulang'); }
-function confirmDeleteJamaahKita(index) { showConfirm('Hapus database on proses ini?', (confirmed)=>{ if(confirmed) { jamaahKitaList.splice(index,1); saveJamaahKitaData(); renderJamaahKitaList(); showToast('Data dihapus'); } }); }
+function confirmDeleteJamaahKita(index) { showConfirm('Hapus database kita ini?', (confirmed)=>{ if(confirmed) { jamaahKitaList.splice(index,1); saveJamaahKitaData(); renderJamaahKitaList(); showToast('Data dihapus'); } }); }
 function shareSingleJamaahKita(index) { 
     const jk = jamaahKitaList[index]; 
     if(!jk) return; 
@@ -750,9 +784,9 @@ function shareSingleJamaahKita(index) {
     text += `\n📅 *Tgl Input:* ${jk.created_at||'-'}\n#AuvaKbihuAU`; 
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); 
 }
-function shareAllJamaahKitaToWA() { if(jamaahKitaList.length===0) return showAlert('Tidak ada database on proses!'); let text=`*Jamaah on proses*\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${jamaahKitaList.length} Jamaah*\n━━━━━━━━━━━━━━━━━━\n\n`; jamaahKitaList.forEach((jk,i)=>{ text+=`${i+1}. *${jk.nama_lengkap}*\n`; for(const field of dynamicFieldsJamaahKita){ const val=jk.additional_fields?.[field.name]||''; if(val) text+=`   ${field.label}: ${val}\n`; } text+=`\n`; }); text+=`━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
+function shareAllJamaahKitaToWA() { if(jamaahKitaList.length===0) return showAlert('Tidak ada database kita!'); let text=`*Jamaah on proses*\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${jamaahKitaList.length} Jamaah*\n━━━━━━━━━━━━━━━━━━\n\n`; jamaahKitaList.forEach((jk,i)=>{ text+=`${i+1}. *${jk.nama_lengkap}*\n`; for(const field of dynamicFieldsJamaahKita){ const val=jk.additional_fields?.[field.name]||''; if(val) text+=`   ${field.label}: ${val}\n`; } text+=`\n`; }); text+=`━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
 function backupJamaahKitaData() { if(jamaahKitaList.length===0 && dynamicFieldsJamaahKita.length===0) return showAlert("Tidak ada data!"); const backup={ app:"Auva Kbihu AU - Jamaah on proses", version:"1.0", created:new Date().toISOString(), fields:dynamicFieldsJamaahKita, data:jamaahKitaList }; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'})); a.download=`Auva_JamaahKita_Backup_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.json`; a.click(); showToast('Backup Jamaah on proses berhasil'); }
-function restoreJamaahKitaData(input) { const file=input.files[0]; if(!file) return; input.value=''; showConfirm("Timpa database on proses yang ada?", (confirmed)=>{ if(confirmed) { const reader=new FileReader(); reader.onload=e=>{ try{ const backup=JSON.parse(e.target.result); if(backup.data && Array.isArray(backup.data)){ jamaahKitaList=backup.data; if(backup.fields){ dynamicFieldsJamaahKita=backup.fields; saveDynamicFieldsJamaahKita(); } saveJamaahKitaData(); renderJamaahKitaList(); showToast(`Restore ${jamaahKitaList.length} data berhasil`); } else showAlert("File backup tidak valid!"); } catch(err){ showAlert("File backup tidak valid!"); } }; reader.readAsText(file); } }); }
+function restoreJamaahKitaData(input) { const file=input.files[0]; if(!file) return; input.value=''; showConfirm("Timpa database kita yang ada?", (confirmed)=>{ if(confirmed) { const reader=new FileReader(); reader.onload=e=>{ try{ const backup=JSON.parse(e.target.result); if(backup.data && Array.isArray(backup.data)){ jamaahKitaList=backup.data; if(backup.fields){ dynamicFieldsJamaahKita=backup.fields; saveDynamicFieldsJamaahKita(); } saveJamaahKitaData(); renderJamaahKitaList(); showToast(`Restore ${jamaahKitaList.length} data berhasil`); } else showAlert("File backup tidak valid!"); } catch(err){ showAlert("File backup tidak valid!"); } }; reader.readAsText(file); } }); }
 function openJamaahKitaFieldModal() { if(!isAdminMode) return showToast('Aktifkan Mode Admin dulu!'); renderJamaahKitaFieldsList(); document.getElementById('jamaahKitaFieldModal').classList.add('show'); }
 function closeJamaahKitaFieldModal() { document.getElementById('jamaahKitaFieldModal').classList.remove('show'); }
 function renderJamaahKitaFieldsList() { const container=document.getElementById('jamaahKitaFieldsListContainer'); if(!container) return; if(dynamicFieldsJamaahKita.length===0){ container.innerHTML='<p>Belum ada field dinamis</p>'; return; } let html='<h4 style="margin-top:10px;">Daftar Field Saat Ini:</h4>'; dynamicFieldsJamaahKita.forEach((f,idx)=>{ html+=`<div class="field-item"><div class="field-info"><div class="field-name">${escapeHtml(f.label)}</div><div class="field-label">${f.name} (${f.type})</div></div><div><button class="btn-danger-small" onclick="confirmDeleteJamaahKitaDynamicField(${idx})">Hapus</button></div></div>`; }); container.innerHTML=html; }
@@ -862,6 +896,125 @@ let masterDynamicFields = [];
 let masterPerlengkapanList = ['Kain Ihram', 'Sendal', 'Obat-obatan', 'Tas', 'Air Zamzam', 'Kopyah'];
 let editingMasterId = null;
 
+// Mode Switcher Data (disimpan di localStorage)
+let availableModes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
+let activeModes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
+
+function loadModesFromStorage() {
+    const savedModes = localStorage.getItem('auva_master_modes');
+    if(savedModes) {
+        const parsed = JSON.parse(savedModes);
+        if(parsed.available) availableModes = parsed.available;
+        if(parsed.active) activeModes = parsed.active;
+    } else {
+        availableModes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
+        activeModes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
+    }
+}
+
+function saveModesToStorage() {
+    localStorage.setItem('auva_master_modes', JSON.stringify({ available: availableModes, active: activeModes }));
+}
+
+function renderDynamicModeSwitcher() {
+    const container = document.getElementById('modeSwitcherContainer');
+    if(!container) return;
+    
+    const modeIcons = {
+        'Semua': '📋', 'Haji': '🕋', 'Toko': '🛒', 'Sekolah': '🎓', 'Umroh': '🕋', 'Donasi': '💰'
+    };
+    
+    let html = `<div id="dynamicModeSwitcher" class="mode-switcher-container">`;
+    activeModes.forEach(mode => {
+        html += `<button class="mode-btn ${currentDisplayMode === mode ? 'active' : ''}" onclick="setDisplayMode('${mode}')">${modeIcons[mode] || '📌'} ${mode}</button>`;
+    });
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+let currentDisplayMode = 'Semua';
+
+function setDisplayMode(mode) {
+    currentDisplayMode = mode;
+    renderDynamicModeSwitcher();
+    showToast(`Mode ${mode} aktif`);
+}
+
+function openModeManager() {
+    if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; }
+    renderModeManagerList();
+    document.getElementById('modeManagerModal').classList.add('show');
+}
+
+function closeModeManager() {
+    document.getElementById('modeManagerModal').classList.remove('show');
+    document.getElementById('newModeName').value = '';
+}
+
+function renderModeManagerList() {
+    const container = document.getElementById('modeManagerList');
+    if(!container) return;
+    let html = '<div class="mode-manager-list">';
+    availableModes.forEach((mode, idx) => {
+        const isChecked = activeModes.includes(mode);
+        html += `<div class="setting-row" style="padding:8px 0;">
+            <span><strong>${mode}</strong></span>
+            <label class="switch">
+                <input type="checkbox" class="mode-checkbox" data-mode="${mode}" ${isChecked ? 'checked' : ''}>
+                <span class="slider"></span>
+            </label>
+            ${mode !== 'Semua' ? `<button class="btn-danger-small" onclick="deleteModeFromList('${mode}')" style="margin-left:10px;">Hapus</button>` : ''}
+        </div>`;
+    });
+    html += `</div>`;
+    container.innerHTML = html;
+    
+    document.querySelectorAll('.mode-checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const mode = this.getAttribute('data-mode');
+            if(this.checked) {
+                if(!activeModes.includes(mode)) activeModes.push(mode);
+            } else {
+                activeModes = activeModes.filter(m => m !== mode);
+            }
+            saveModesToStorage();
+        });
+    });
+}
+
+function addNewMode() {
+    const newMode = document.getElementById('newModeName').value.trim();
+    if(!newMode) { showToast('Masukkan nama mode!'); return; }
+    if(availableModes.includes(newMode)) { showToast('Mode sudah ada!'); return; }
+    availableModes.push(newMode);
+    activeModes.push(newMode);
+    saveModesToStorage();
+    document.getElementById('newModeName').value = '';
+    renderModeManagerList();
+    renderDynamicModeSwitcher();
+    showToast(`Mode "${newMode}" ditambahkan`);
+}
+
+function deleteModeFromList(mode) {
+    showConfirm(`Hapus mode "${mode}"?`, (confirmed) => {
+        if(confirmed) {
+            availableModes = availableModes.filter(m => m !== mode);
+            activeModes = activeModes.filter(m => m !== mode);
+            saveModesToStorage();
+            renderModeManagerList();
+            renderDynamicModeSwitcher();
+            showToast(`Mode "${mode}" dihapus`);
+        }
+    });
+}
+
+function saveModes() {
+    saveModesToStorage();
+    renderDynamicModeSwitcher();
+    closeModeManager();
+    showToast('Perubahan mode disimpan');
+}
+
 function loadMasterData() {
     const saved = localStorage.getItem('auva_master_data');
     masterDataList = saved ? JSON.parse(saved) : [];
@@ -950,7 +1103,7 @@ function renderMasterTable() {
     thead.innerHTML = headerHtml;
     
     if(masterDataList.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td><tr>';
         return; 
     }
     
@@ -1051,6 +1204,41 @@ function confirmDeleteMasterData(id) {
             saveMasterDataToLocal();
             renderMasterTable();
             showToast('Data dihapus');
+        }
+    });
+}
+function confirmDeleteAllMasterData() {
+    if(masterDataList.length === 0) { showAlert('Tidak ada data untuk dihapus!'); return; }
+    showConfirm(`⚠️ PERINGATAN: Anda akan menghapus SEMUA ${masterDataList.length} data di Multi Event!\n\nData tidak dapat dikembalikan. Lanjutkan?`, (confirmed) => {
+        if(confirmed) {
+            masterDataList = [];
+            saveMasterDataToLocal();
+            renderMasterTable();
+            showToast(`✅ Semua data telah dihapus`);
+        }
+    });
+}
+function deleteSelectedMasterData() {
+    const selected = document.querySelectorAll('.master-checkbox:checked');
+    if(selected.length === 0) { showAlert('Pilih data yang ingin dihapus terlebih dahulu!'); return; }
+    showConfirm(`Hapus ${selected.length} data yang dipilih?`, (confirmed) => {
+        if(confirmed) {
+            const idsToDelete = [];
+            selected.forEach(cb => {
+                const row = cb.closest('tr');
+                if(row) {
+                    const editBtn = row.querySelector('button[onclick*="editMasterData"]');
+                    if(editBtn) {
+                        const match = editBtn.getAttribute('onclick').match(/'(\d+)'/);
+                        if(match) idsToDelete.push(parseInt(match[1]));
+                    }
+                }
+            });
+            masterDataList = masterDataList.filter(d => !idsToDelete.includes(d.id));
+            saveMasterDataToLocal();
+            renderMasterTable();
+            clearBatchSelection();
+            showToast(`✅ ${idsToDelete.length} data telah dihapus`);
         }
     });
 }
@@ -1224,137 +1412,40 @@ function confirmDeleteMasterPerlengkapan(idx) {
     });
 }
 
-// ==================== MODE SWITCHER DINAMIS ====================
-let currentMode = 'Semua';
-
-function injectDynamicModeSwitcher() {
-    const container = document.getElementById('modeSwitcherContainer');
-    if(!container) return;
-    if(document.getElementById('dynamicModeSwitcher')) return;
-    
-    // Mode yang tersedia (bisa ditambah sesuai kebutuhan)
-    const modes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
-    const modeIcons = {
-        'Semua': '📋', 'Haji': '🕋', 'Toko': '🛒', 'Sekolah': '🎓', 'Umroh': '🕋', 'Donasi': '💰'
-    };
-    
-    let html = `<div id="dynamicModeSwitcher" class="mode-switcher-container">`;
-    modes.forEach(mode => {
-        html += `<button class="mode-btn ${currentMode === mode ? 'active' : ''}" onclick="applyDynamicMode('${mode}')">${modeIcons[mode] || '📌'} ${mode}</button>`;
-    });
-    html += `</div>`;
-    container.innerHTML = html;
-}
-
-function applyDynamicMode(mode) {
-    currentMode = mode;
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if(btn.innerText.includes(mode)) {
-            btn.classList.add('active');
-        }
-    });
-    
-    const table = document.querySelector('#masterTable');
-    if(!table) return;
-    const headers = table.querySelectorAll('thead th');
-    const rows = table.querySelectorAll('tbody tr');
-    
-    // Kolom yang selalu tampil: checkbox, No, Nama Lengkap, Aksi
-    // Kolom yang bisa diatur: field dinamis dan perlengkapan
-    
-    if(mode === 'Semua') {
-        // Tampilkan semua kolom
-        headers.forEach(th => th.style.display = '');
-        rows.forEach(row => {
-            row.querySelectorAll('td').forEach(td => td.style.display = '');
-        });
-        return;
-    }
-    
-    // Sembunyikan semua kolom field dinamis dan perlengkapan dulu
-    headers.forEach((th, index) => {
-        const headerText = th.innerText.trim();
-        // Kolom checkbox (index 0), No (index 1), Nama Lengkap (index 2), Aksi (last) tetap tampil
-        if(index === 0 || index === 1 || index === 2 || index === headers.length - 1) {
-            th.style.display = '';
-            return;
-        }
-        // Sembunyikan dulu
-        th.style.display = 'none';
-    });
-    
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        cells.forEach((td, index) => {
-            if(index === 0 || index === 1 || index === 2 || index === cells.length - 1) {
-                td.style.display = '';
-                return;
-            }
-            td.style.display = 'none';
-        });
-    });
-    
-    // Tampilkan kolom yang sesuai dengan mode (bisa dikustomisasi sesuai kebutuhan)
-    // Untuk mode Haji: tampilkan kolom yang berhubungan dengan haji
-    // Untuk mode Toko: tampilkan kolom produk, jumlah, harga
-    // Untuk mode Sekolah: tampilkan kolom kelas, mapel, nilai
-    
-    // Karena field bersifat dinamis, kita tampilkan semua kolom yang ada
-    // Tapi biarkan user memilih melalui Kelola Field mana yang mau ditampilkan
-    // Untuk saat ini, semua field tetap bisa dilihat dengan scroll horizontal
-    showToast(`Mode ${mode} aktif. Gunakan scroll horizontal untuk melihat semua kolom.`);
-}
-
 // ==================== COPY DARI database ====================
 function copyFromJamaah() {
     if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; }
     document.getElementById('copyModal').classList.add('show');
 }
-
 function closeCopyModal() {
     document.getElementById('copyModal').classList.remove('show');
 }
-
 function executeCopyFromJamaah() {
     const category = document.getElementById('copyCategory').value;
     const jamaahData = JSON.parse(localStorage.getItem('auva_jamaah_list')) || [];
-    
     if(jamaahData.length === 0) {
         showAlert('Tidak ada data di database!');
         closeCopyModal();
         return;
     }
-    
     let copiedCount = 0;
     const now = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID');
-    
-    // Cari field whatsapp di masterDynamicFields
     let whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp');
-    
     for(const j of jamaahData) {
-        // Cek apakah data sudah ada di master (berdasarkan nama)
         const existing = masterDataList.find(m => m.nama === j.nama_lengkap);
-        if(existing) continue; // Lewati jika sudah ada
-        
-        // Ambil nilai whatsapp dari database
+        if(existing) continue;
         let whatsappValue = '';
         if(j.additional_fields && j.additional_fields.whatsapp) {
             whatsappValue = j.additional_fields.whatsapp;
         }
-        
-        // Buat additional fields untuk master
         const additional = {};
         if(whatsappField && whatsappValue) {
             additional[whatsappField.name] = whatsappValue;
         }
-        
-        // Tambahkan field kategori
         const kategoriField = masterDynamicFields.find(f => f.name.toLowerCase() === 'kategori');
         if(kategoriField) {
             additional[kategoriField.name] = category;
         }
-        
         masterDataList.push({
             id: Date.now() + copiedCount,
             nama: j.nama_lengkap,
@@ -1365,7 +1456,6 @@ function executeCopyFromJamaah() {
         });
         copiedCount++;
     }
-    
     if(copiedCount > 0) {
         saveMasterDataToLocal();
         renderMasterTable();
@@ -1374,7 +1464,6 @@ function executeCopyFromJamaah() {
     } else {
         showAlert('Tidak ada data baru yang disalin. Mungkin semua data sudah ada di Multi Event.');
     }
-    
     closeCopyModal();
 }
 
@@ -1405,10 +1494,11 @@ function initApp() {
     if(savedMasterJudul && document.getElementById('masterJudul')) document.getElementById('masterJudul').value = savedMasterJudul;
     if(document.getElementById('masterJudulHeader')) document.getElementById('masterJudulHeader').innerText = savedMasterJudul || 'Multi Event';
     
+    loadModesFromStorage();
     setTimeout(() => {
-        injectDynamicModeSwitcher();
+        renderDynamicModeSwitcher();
     }, 200);
 }
 </script>
 </body>
-                                                                         </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </html>
