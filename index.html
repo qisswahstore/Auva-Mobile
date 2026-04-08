@@ -185,6 +185,118 @@
         .menu-card-fullwidth { grid-column: span 2; }
         .btn-delete-mass { background: var(--red) !important; }
         .btn-delete-selected { background: var(--orange) !important; }
+
+        /* ========== STYLE KHUSUS MENU PEMBAYARAN (MANAJEMEN PEMBAYARAN JAMAAH & INVOICE) ========== */
+        .payment-dashboard-card {
+            background: linear-gradient(145deg, var(--primary), #0d4a3a);
+            color: white;
+            padding: 20px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(26, 93, 74, 0.25);
+        }
+        .payment-stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .payment-stat-item {
+            flex: 1;
+            background: rgba(255,255,255,0.12);
+            padding: 10px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .payment-stat-item h4 {
+            margin: 0;
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        .payment-stat-item .payment-value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+        .payment-jamaah-card {
+            background: white;
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-left: 6px solid;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .payment-jamaah-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+            font-weight: bold;
+            color: #1e2a32;
+        }
+        .payment-price-detail {
+            font-size: 11px;
+            color: #5a6e7c;
+        }
+        .payment-sisa-badge {
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .payment-btn-bayar {
+            background: rgba(26, 93, 74, 0.1);
+            border: none;
+            color: var(--primary);
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .payment-btn-bayar:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .payment-btn-invoice {
+            background: rgba(37, 99, 235, 0.08);
+            color: #2563eb;
+            margin-left: 6px;
+        }
+        .payment-btn-invoice:hover {
+            background: #2563eb;
+            color: white;
+        }
+        .payment-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, var(--primary), #0d4a3a);
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(26, 93, 74, 0.4);
+            border: none;
+            cursor: pointer;
+            font-size: 26px;
+            z-index: 200;
+            transition: all 0.2s;
+        }
+        .payment-fab:active { transform: scale(0.94); }
+        .payment-modal { display: none; position: fixed; bottom: 0; left: 0; right: 0; top: 0; background: rgba(0,0,0,0.6); align-items: flex-end; z-index: 1000; backdrop-filter: blur(4px); }
+        .payment-modal-content { background: white; width: 100%; padding: 24px; border-radius: 32px 32px 0 0; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+        .payment-form-group { margin-bottom: 16px; }
+        .payment-form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #1e2a32; }
+        .payment-form-control { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 16px; font-size: 14px; box-sizing: border-box; background: #fefefe; }
+        .payment-form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26, 93, 74, 0.1); }
+        .payment-modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+        .payment-btn-cancel { flex: 1; padding: 12px; border: none; background: #f1f5f9; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .payment-btn-save { flex: 1; padding: 12px; border: none; background: linear-gradient(135deg, var(--primary), #0d4a3a); color: white; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .payment-toast { position: fixed; bottom: 100px; left: 20px; right: 20px; background: #1e2a32; color: white; text-align: center; padding: 10px; border-radius: 50px; font-size: 13px; z-index: 1200; animation: fadeInOut 2.5s ease forwards; }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(20px); } 15% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(20px); visibility: hidden; } }
     </style>
 </head>
 <body onload="initApp()">
@@ -217,6 +329,84 @@
     <div id="page-catatan" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Catatan</h2><button class="back-btn" onclick="openTambahCatatan()" style="font-size:1.2rem;">+</button></div><div class="container" style="padding:15px; max-width:500px; margin:0 auto;"><div id="catatanListContainer"></div></div></div>
 
     <div id="page-zakat" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Kalkulator Zakat</h2><div style="width:40px;"></div></div><div class="card"><div class="logo-box"><div style="font-size:40px;">📊</div></div><p class="subtitle">Auva Kbihu AU</p><div class="section-title">Pengaturan Umum</div><div class="row"><div class="input-group"><label>Jenis Zakat</label><select id="jenisZakat" onchange="toggleZakatInput()"><option value="mal">Zakat Mal (Harta/Uang)</option><option value="pertanian">Zakat Pertanian</option><option value="perdagangan">Zakat Perdagangan</option></select></div></div><div id="zakatGlobalInput"><div class="input-group"><label>Harga Emas per Gram (Rp)</label><input type="text" id="hargaEmas" class="money-input" value="1.200.000"></div></div><div class="section-title">Sumber Harta</div><div id="sumberHartaContainer"></div><button class="btn" onclick="tambahSumberHarta()" style="background:var(--accent); margin-top:10px;"><i class="fas fa-plus-circle"></i> + TAMBAH SUMBER HARTA</button><button class="btn" onclick="hitungZakat()"><i class="fas fa-calculator"></i> HITUNG ZAKAT</button></div><div id="hasilZakat" class="res-card"></div></div>
+
+    <!-- ==================== MENU KE-8: MANAJEMEN PEMBAYARAN JAMAAH & INVOICE ==================== -->
+    <div id="page-pembayaran" class="page">
+        <div class="page-header">
+            <button class="back-btn" onclick="showPage('home')">←</button>
+            <h2>Pembayaran Jamaah</h2>
+            <div style="width:40px;"></div>
+        </div>
+        <div class="card">
+            <!-- Dashboard Ringkasan -->
+            <div class="payment-dashboard-card">
+                <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span style="font-weight: 600;">Dashboard Piutang</span>
+                </div>
+                <div class="payment-stats-row">
+                    <div class="payment-stat-item">
+                        <h4>💰 Total Uang Masuk</h4>
+                        <div class="payment-value" id="paymentTotalMasuk">Rp 0</div>
+                    </div>
+                    <div class="payment-stat-item">
+                        <h4>📋 Total Piutang</h4>
+                        <div class="payment-value" id="paymentTotalPiutang">Rp 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daftar Tagihan Jamaah -->
+            <div class="section-title">
+                <i class="fas fa-users" style="margin-right: 5px;"></i> Daftar Tagihan Jamaah
+            </div>
+            <div id="paymentJamaahListContainer">
+                <div style="text-align:center; padding:20px; color:#94a3b8;">Memuat data jamaah...</div>
+            </div>
+
+            <!-- Tombol Tambah Pembayaran -->
+            <button class="payment-fab" id="paymentFabOpen">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Input Pembayaran -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-modal-content">
+            <h3 style="margin-top:0; color: var(--primary);">💸 Input Pembayaran</h3>
+            <div class="payment-form-group">
+                <label>📅 Tanggal</label>
+                <input type="date" id="paymentTanggal" class="payment-form-control">
+            </div>
+            <div class="payment-form-group">
+                <label>👤 Nama Jamaah *</label>
+                <select id="paymentJamaahSelect" class="payment-form-control" required>
+                    <option value="">-- Pilih Jamaah --</option>
+                </select>
+            </div>
+            <div class="payment-form-group">
+                <label>💵 Nominal (Rp)</label>
+                <input type="number" id="paymentNominal" class="payment-form-control" placeholder="Contoh: 5000000">
+            </div>
+            <div class="payment-form-group">
+                <label>🏦 Metode</label>
+                <select id="paymentMetode" class="payment-form-control">
+                    <option value="Transfer">Transfer Bank</option>
+                    <option value="Cash">Cash Tunai</option>
+                    <option value="QRIS">QRIS</option>
+                </select>
+            </div>
+            <div class="payment-form-group">
+                <label>📝 Keterangan</label>
+                <input type="text" id="paymentKeterangan" class="payment-form-control" placeholder="DP / Cicilan 1 / Pelunasan">
+            </div>
+            <div class="payment-modal-actions">
+                <button class="payment-btn-cancel" onclick="closePaymentModal()">Batal</button>
+                <button class="payment-btn-save" onclick="simpanPembayaran()">Simpan</button>
+            </div>
+        </div>
+    </div>
 
     <div id="page-datamaster" class="page">
         <div class="page-header">
@@ -385,6 +575,11 @@ function showPage(pageId) {
             renderDynamicModeSwitcher();
         }, 150);
     }
+    if(pageId==='pembayaran') {
+        renderPaymentDashboard();
+        renderPaymentJamaahList();
+        populatePaymentJamaahDropdown();
+    }
 }
 function loadKegiatanToInput() { const saved = localStorage.getItem('auva_kegiatan'); if(saved) document.getElementById('kegiatan').value = saved; }
 
@@ -396,7 +591,8 @@ const menuItems = [
     { id: 'jamaahkita', icon: '👥', label: 'Jamaah on proses', default: true },
     { id: 'catatan', icon: '📝', label: 'Catatan', default: true },
     { id: 'zakat', icon: '📊', label: 'Zakat', default: true },
-    { id: 'datamaster', icon: '🔄', label: 'Multi Event', default: true }
+    { id: 'datamaster', icon: '🔄', label: 'Multi Event', default: true },
+    { id: 'pembayaran', icon: '💰', label: 'Pembayaran', default: true }
 ];
 function renderMenuGrid() {
     const container = document.getElementById('menuGrid');
@@ -408,7 +604,8 @@ function renderMenuGrid() {
         { id: 'jamaah', icon: '👥', label: 'database' },
         { id: 'jamaahkita', icon: '👥', label: 'Jamaah on proses' },
         { id: 'catatan', icon: '📝', label: 'CATATAN' },
-        { id: 'zakat', icon: '📊', label: 'ZAKAT' }
+        { id: 'zakat', icon: '📊', label: 'ZAKAT' },
+        { id: 'pembayaran', icon: '💰', label: 'PEMBAYARAN' }
     ];
     for(let i=0; i<existingMenus.length; i+=2) {
         html += `<div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">`;
@@ -446,6 +643,7 @@ function renderMenuSettings() {
         { id: 'jamaahkita', icon: '👥', label: 'Jamaah on proses' },
         { id: 'catatan', icon: '📝', label: 'Catatan' },
         { id: 'zakat', icon: '📊', label: 'Zakat' },
+        { id: 'pembayaran', icon: '💰', label: 'Pembayaran' },
         { id: 'datamaster', icon: '🔄', label: 'Multi Event' }
     ];
     for(const menu of allMenus) { 
@@ -598,7 +796,7 @@ function renderKasTable() {
             <td style="vertical-align:middle; padding:10px 5px;">${escapeHtml(i.ket)}</td>
             <td class="${i.tipe==='masuk'?'txt-in':'txt-out'}" style="vertical-align:middle; padding:10px 5px;">Rp ${i.nom.toLocaleString('id-ID')}</td>
             <td style="vertical-align:middle; padding:10px 5px;"><button class="btn-del" onclick="confirmHapusTransaksi(${i.id})">🗑️</button></td>
-         </tr>`; 
+          `; 
     }); 
     const summary = document.getElementById('summaryKas'); 
     if(summary) summary.innerHTML = `<b>Saldo Akhir: Rp ${(masuk-keluar).toLocaleString('id-ID')}</b>`; 
@@ -877,6 +1075,250 @@ function shareCatatanItem(idx) { const item=catatanList[idx]; window.open(`https
 function closeEntryModal() { document.getElementById('entryModal').classList.remove('show'); editingCatatanIndex=null; }
 function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
 
+// ==================== MANAJEMEN PEMBAYARAN JAMAAH & INVOICE (MENU KE-8) ====================
+// Data transaksi pembayaran (terpisah dari uang kas)
+let paymentTransaksiList = [];
+
+function loadPaymentData() {
+    const saved = localStorage.getItem('auva_pembayaran_transaksi');
+    paymentTransaksiList = saved ? JSON.parse(saved) : [];
+}
+
+function savePaymentData() {
+    localStorage.setItem('auva_pembayaran_transaksi', JSON.stringify(paymentTransaksiList));
+}
+
+// Hitung total pembayaran per jamaah
+function hitungTotalBayarJamaah(idJamaah) {
+    return paymentTransaksiList.filter(t => t.id_jamaah == idJamaah).reduce((sum, t) => sum + t.nominal, 0);
+}
+
+// Dapatkan status pembayaran (sisa, warna, status teks)
+function getStatusPembayaran(jamaah) {
+    const totalBayar = hitungTotalBayarJamaah(jamaah.id);
+    // Ambil total_harga_paket dari additional_fields atau gunakan nilai default
+    let totalHargaPaket = 0;
+    if (jamaah.additional_fields && jamaah.additional_fields.total_harga_paket) {
+        totalHargaPaket = parseRupiah(jamaah.additional_fields.total_harga_paket.toString());
+    } else {
+        // Fallback: coba cari dari field dinamis atau set default
+        totalHargaPaket = 35000000; // default jika belum diisi
+    }
+    const sisa = totalHargaPaket - totalBayar;
+    let status, warna;
+    if (sisa <= 0) {
+        status = 'LUNAS';
+        warna = '#2ecc71'; // Hijau
+    } else {
+        status = 'BELUM LUNAS';
+        warna = '#e74c3c'; // Merah
+    }
+    return { status, warna, sisa: sisa > 0 ? sisa : 0, totalBayar, totalHargaPaket };
+}
+
+// Render dashboard ringkasan
+function renderPaymentDashboard() {
+    let totalMasuk = paymentTransaksiList.reduce((sum, t) => sum + t.nominal, 0);
+    let totalPiutang = 0;
+    jamaahList.forEach(j => {
+        const { sisa } = getStatusPembayaran(j);
+        totalPiutang += sisa;
+    });
+    document.getElementById('paymentTotalMasuk').innerHTML = formatRupiah(totalMasuk);
+    document.getElementById('paymentTotalPiutang').innerHTML = formatRupiah(totalPiutang);
+}
+
+// Render list jamaah dengan status warna merah/hijau
+function renderPaymentJamaahList() {
+    const container = document.getElementById('paymentJamaahListContainer');
+    if (!container) return;
+    
+    if (jamaahList.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">Belum ada data jamaah. Silakan tambah jamaah di menu database.</div>';
+        return;
+    }
+    
+    let html = '';
+    jamaahList.forEach(j => {
+        const { status, warna, sisa, totalBayar, totalHargaPaket } = getStatusPembayaran(j);
+        const totalHargaDisplay = totalHargaPaket > 0 ? formatRupiah(totalHargaPaket) : 'Belum diisi';
+        
+        html += `<div class="payment-jamaah-card" style="border-left-color: ${warna};">
+            <div class="payment-jamaah-info">
+                <h4>${escapeHtml(j.nama_lengkap)}</h4>
+                <div class="payment-price-detail">
+                    💎 Total Paket: ${totalHargaDisplay}<br>
+                    💸 Dibayar: ${formatRupiah(totalBayar)}
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class="payment-sisa-badge" style="color: ${warna}; margin-bottom: 8px;">
+                    ${status === 'LUNAS' ? '✅ LUNAS' : '📌 Sisa ' + formatRupiah(sisa)}
+                </div>
+                <div>
+                    <button class="payment-btn-bayar" onclick="openPaymentModalWithJamaah('${j.id}')">
+                        <i class="fas fa-plus-circle"></i> Bayar
+                    </button>
+                    <button class="payment-btn-bayar payment-btn-invoice" onclick="generateInvoiceText('${j.id}')">
+                        <i class="fas fa-file-invoice"></i> Invoice
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// Populate dropdown jamaah di modal
+function populatePaymentJamaahDropdown() {
+    const select = document.getElementById('paymentJamaahSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="">-- Pilih Jamaah --</option>';
+    jamaahList.forEach(j => {
+        const option = document.createElement('option');
+        option.value = j.id;
+        let totalHarga = ' - ';
+        if (j.additional_fields && j.additional_fields.total_harga_paket) {
+            totalHarga = formatRupiah(parseRupiah(j.additional_fields.total_harga_paket.toString()));
+        }
+        option.textContent = `${j.nama_lengkap} (Paket: ${totalHarga})`;
+        select.appendChild(option);
+    });
+}
+
+// Modal functions
+function openPaymentModal() {
+    document.getElementById('paymentModal').style.display = 'flex';
+    document.getElementById('paymentTanggal').value = new Date().toISOString().split('T')[0];
+    document.getElementById('paymentNominal').value = '';
+    document.getElementById('paymentKeterangan').value = '';
+}
+
+function closePaymentModal() {
+    document.getElementById('paymentModal').style.display = 'none';
+}
+
+function openPaymentModalWithJamaah(id) {
+    openPaymentModal();
+    const select = document.getElementById('paymentJamaahSelect');
+    if (select) select.value = id;
+}
+
+// Simpan pembayaran
+function simpanPembayaran() {
+    const idJamaah = document.getElementById('paymentJamaahSelect').value;
+    const nominal = parseInt(document.getElementById('paymentNominal').value);
+    const tanggal = document.getElementById('paymentTanggal').value;
+    const metode = document.getElementById('paymentMetode').value;
+    const keterangan = document.getElementById('paymentKeterangan').value.trim() || 'Pembayaran';
+    
+    if (!idJamaah) {
+        showPaymentToast('❌ Pilih jamaah terlebih dahulu!');
+        return;
+    }
+    if (!nominal || nominal <= 0) {
+        showPaymentToast('❌ Masukkan nominal pembayaran yang valid!');
+        return;
+    }
+    
+    const jamaah = jamaahList.find(j => j.id == idJamaah);
+    if (!jamaah) {
+        showPaymentToast('Data jamaah tidak ditemukan');
+        return;
+    }
+    
+    // Simpan transaksi
+    const newTrx = {
+        id: 'PMB-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+        id_jamaah: idJamaah,
+        nama_jamaah: jamaah.nama_lengkap,
+        tanggal: tanggal || new Date().toISOString().split('T')[0],
+        nominal: nominal,
+        metode: metode,
+        keterangan: keterangan
+    };
+    
+    paymentTransaksiList.push(newTrx);
+    savePaymentData();
+    
+    // Reset & tutup modal
+    closePaymentModal();
+    renderPaymentDashboard();
+    renderPaymentJamaahList();
+    showPaymentToast(`✅ Pembayaran Rp ${nominal.toLocaleString('id-ID')} untuk ${jamaah.nama_lengkap} berhasil!`);
+}
+
+// Generate invoice dan kirim ke WhatsApp
+function generateInvoiceText(idJamaah) {
+    const jamaah = jamaahList.find(j => j.id == idJamaah);
+    if (!jamaah) {
+        showPaymentToast('Jamaah tidak ditemukan');
+        return;
+    }
+    
+    const transaksiList = paymentTransaksiList.filter(t => t.id_jamaah == idJamaah).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
+    const totalBayar = hitungTotalBayarJamaah(idJamaah);
+    let totalHargaPaket = 0;
+    if (jamaah.additional_fields && jamaah.additional_fields.total_harga_paket) {
+        totalHargaPaket = parseRupiah(jamaah.additional_fields.total_harga_paket.toString());
+    } else {
+        totalHargaPaket = 35000000;
+    }
+    const sisa = totalHargaPaket - totalBayar;
+    
+    let text = `🏆 *INVOICE PEMBAYARAN UMROH - AUVA MOBILE* 🏆\n`;
+    text += `━━━━━━━━━━━━━━━━━━\n`;
+    text += `👤 *Nama Jamaah:* ${jamaah.nama_lengkap}\n`;
+    text += `💎 *Total Paket:* ${formatRupiah(totalHargaPaket)}\n`;
+    text += `📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}\n`;
+    text += `━━━━━━━━━━━━━━━━━━\n`;
+    text += `📋 *RINCIAN PEMBAYARAN:*\n`;
+    
+    if (transaksiList.length === 0) {
+        text += `Belum ada pembayaran tercatat.\n`;
+    } else {
+        transaksiList.forEach((t, i) => {
+            text += `${i+1}. ${t.tanggal} | ${t.keterangan}\n   💰 ${formatRupiah(t.nominal)} (${t.metode})\n`;
+        });
+    }
+    
+    text += `━━━━━━━━━━━━━━━━━━\n`;
+    text += `💰 *Total Dibayar:* ${formatRupiah(totalBayar)}\n`;
+    text += `📌 *Sisa Tagihan:* ${formatRupiah(sisa > 0 ? sisa : 0)}\n`;
+    text += `✅ *Status:* ${sisa <= 0 ? 'LUNAS 🎉' : 'BELUM LUNAS ⚠️'}\n`;
+    text += `━━━━━━━━━━━━━━━━━━\n`;
+    text += `Terima kasih atas kepercayaan Anda.\n`;
+    text += `_Auva Mobile - Kbihu Amanatul Ummah_`;
+    
+    // Cari nomor WhatsApp jamaah jika ada
+    let waNumber = '628123456789';
+    if (jamaah.additional_fields && jamaah.additional_fields.whatsapp) {
+        let num = jamaah.additional_fields.whatsapp.replace(/\D/g, '');
+        if (num.startsWith('0')) num = '62' + num.substring(1);
+        if (num.length >= 10) waNumber = num;
+    }
+    
+    const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`;
+    window.open(waLink, '_blank');
+    showPaymentToast('Membuka WhatsApp untuk kirim invoice...');
+}
+
+function showPaymentToast(msg) {
+    const existing = document.querySelector('.payment-toast');
+    if (existing) existing.remove();
+    const div = document.createElement('div');
+    div.className = 'payment-toast';
+    div.innerText = msg;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 2600);
+}
+
+// Helper format rupiah untuk angka
+function formatRupiah(angka) {
+    if (angka === undefined || angka === null) return 'Rp 0';
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+}
+
 // ==================== SETTINGS & THEME ====================
 function loadTheme() { const p=localStorage.getItem('auva_theme_primary'); const a=localStorage.getItem('auva_theme_accent'); if(p) document.documentElement.style.setProperty('--primary',p); if(a) document.documentElement.style.setProperty('--accent',a); }
 function setTheme(primary,accent) { document.documentElement.style.setProperty('--primary',primary); document.documentElement.style.setProperty('--accent',accent); localStorage.setItem('auva_theme_primary',primary); localStorage.setItem('auva_theme_accent',accent); }
@@ -1103,7 +1545,7 @@ function renderMasterTable() {
     thead.innerHTML = headerHtml;
     
     if(masterDataList.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td><tr>';
+        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>';
         return; 
     }
     
@@ -1115,7 +1557,7 @@ function renderMasterTable() {
         if(whatsappField) {
             whatsappValue = item.additional_fields?.[whatsappField.name] || '';
         }
-        bodyHtml += `<tr>`;
+        bodyHtml += `<tr`;
         bodyHtml += `<td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td>`;
         bodyHtml += `<td style="text-align:center;">${displayNum}</td>`;
         bodyHtml += `<td><strong>${escapeHtml(item.nama)}</strong></td>`;
@@ -1128,7 +1570,7 @@ function renderMasterTable() {
             <button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;" title="Edit">✏️</button>
             <button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;" title="Share">💬</button>
             <button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;" title="Hapus">🗑️</button>
-        </td></tr>`;
+        </td>`;
     });
     tbody.innerHTML = bodyHtml;
 }
@@ -1477,6 +1919,7 @@ function initApp() {
     loadDynamicFieldsJamaahKita();
     loadCatatanData();
     loadMasterData();
+    loadPaymentData();
     loadTheme();
     loadEstimasiData();
     const savedAdmin = localStorage.getItem('auva_admin_mode') === 'true';
@@ -1498,7 +1941,11 @@ function initApp() {
     setTimeout(() => {
         renderDynamicModeSwitcher();
     }, 200);
+    
+    // Event listener untuk FAB pembayaran
+    const fabBtn = document.getElementById('paymentFabOpen');
+    if (fabBtn) fabBtn.onclick = openPaymentModal;
 }
 </script>
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </html>
+    </html>
