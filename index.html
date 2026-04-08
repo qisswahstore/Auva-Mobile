@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#1a5d4a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -186,7 +186,7 @@
         .btn-delete-mass { background: var(--red) !important; }
         .btn-delete-selected { background: var(--orange) !important; }
 
-        /* ========== STYLE KHUSUS MENU PEMBAYARAN (MANAJEMEN PEMBAYARAN JAMAAH & INVOICE) ========== */
+        /* ========== STYLE MENU PEMBAYARAN ========== */
         .payment-dashboard-card {
             background: linear-gradient(145deg, var(--primary), #0d4a3a);
             color: white;
@@ -227,6 +227,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
         .payment-jamaah-info h4 {
             margin: 0 0 5px 0;
@@ -266,6 +267,15 @@
             background: #2563eb;
             color: white;
         }
+        .payment-btn-edit-harga {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+            margin-left: 6px;
+        }
+        .payment-btn-edit-harga:hover {
+            background: #f39c12;
+            color: white;
+        }
         .payment-fab {
             position: fixed;
             bottom: 24px;
@@ -297,6 +307,88 @@
         .payment-btn-save { flex: 1; padding: 12px; border: none; background: linear-gradient(135deg, var(--primary), #0d4a3a); color: white; border-radius: 40px; font-weight: 600; cursor: pointer; }
         .payment-toast { position: fixed; bottom: 100px; left: 20px; right: 20px; background: #1e2a32; color: white; text-align: center; padding: 10px; border-radius: 50px; font-size: 13px; z-index: 1200; animation: fadeInOut 2.5s ease forwards; }
         @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(20px); } 15% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(20px); visibility: hidden; } }
+        
+        /* ========== PERBAIKAN IPHONE UNTUK MULTI EVENT ========== */
+        @supports (-webkit-touch-callout: none) {
+            .master-checkbox-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .master-checkbox-group label {
+                flex: 0 0 auto;
+                width: auto;
+                min-width: 80px;
+                background: #f5f5f5;
+                padding: 8px 12px;
+                border-radius: 20px;
+                margin: 0;
+            }
+            .mode-switcher-container {
+                flex-wrap: wrap;
+            }
+            .payment-jamaah-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .payment-jamaah-card > div:last-child {
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+        }
+        
+        /* ========== STYLE UNTUK TRANSACTION LIST ========== */
+        .payment-transaction-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .payment-transaction-info {
+            flex: 1;
+        }
+        .payment-transaction-date {
+            font-size: 11px;
+            color: #888;
+        }
+        .payment-transaction-nominal {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .payment-transaction-actions button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 8px;
+            margin-left: 5px;
+        }
+        .payment-detail-section {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .payment-filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .payment-filter-row input, .payment-filter-row select {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body onload="initApp()">
@@ -356,6 +448,18 @@
                 </div>
             </div>
 
+            <!-- Filter Laporan -->
+            <div class="payment-filter-row">
+                <input type="date" id="paymentFilterStart" placeholder="Dari tanggal">
+                <input type="date" id="paymentFilterEnd" placeholder="Sampai tanggal">
+                <button class="btn-small" onclick="filterPaymentReport()" style="background:var(--primary); color:white; padding:8px 12px;">Filter</button>
+                <button class="btn-small" onclick="resetPaymentFilter()" style="background:var(--orange); color:white; padding:8px 12px;">Reset</button>
+            </div>
+            <div class="action-buttons" style="margin-bottom:15px;">
+                <button class="btn-small btn-purple" onclick="exportPaymentPDF()"><i class="fas fa-file-pdf"></i> PDF Laporan</button>
+                <button class="btn-small" onclick="exportPaymentExcel()" style="background:#27ae60;"><i class="fas fa-file-excel"></i> Excel Laporan</button>
+            </div>
+
             <!-- Daftar Tagihan Jamaah -->
             <div class="section-title">
                 <i class="fas fa-users" style="margin-right: 5px;"></i> Daftar Tagihan Jamaah
@@ -404,6 +508,50 @@
             <div class="payment-modal-actions">
                 <button class="payment-btn-cancel" onclick="closePaymentModal()">Batal</button>
                 <button class="payment-btn-save" onclick="simpanPembayaran()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Invoice WA -->
+    <div class="payment-modal" id="invoiceConfirmModal">
+        <div class="payment-modal-content">
+            <h3 style="margin-top:0; color: var(--primary);">📱 Konfirmasi Kirim Invoice</h3>
+            <p>Akan dikirim ke nomor WhatsApp:</p>
+            <p id="invoiceWANumber" style="font-weight:bold; font-size:18px; background:#f0f0f0; padding:10px; border-radius:10px;"></p>
+            <p id="invoiceWAName" style="color:#666;"></p>
+            <div class="payment-modal-actions" style="margin-top:20px;">
+                <button class="payment-btn-cancel" onclick="closeInvoiceConfirmModal()">Batal</button>
+                <button class="payment-btn-save" onclick="sendInvoiceWA()" style="background:var(--wa);">Kirim via WA</button>
+                <button class="payment-btn-save" onclick="copyInvoiceText()" style="background:var(--orange);">Salin Teks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Harga -->
+    <div class="payment-modal" id="editHargaModal">
+        <div class="payment-modal-content">
+            <h3 style="margin-top:0; color: var(--primary);">✏️ Edit Harga Paket</h3>
+            <p id="editHargaNama" style="font-weight:bold;"></p>
+            <div class="payment-form-group">
+                <label>💰 Total Harga Paket (Rp)</label>
+                <input type="number" id="editHargaValue" class="payment-form-control" placeholder="Contoh: 35000000">
+            </div>
+            <div class="payment-modal-actions">
+                <button class="payment-btn-cancel" onclick="closeEditHargaModal()">Batal</button>
+                <button class="payment-btn-save" onclick="saveEditHarga()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Transaksi & Riwayat -->
+    <div class="payment-modal" id="riwayatModal">
+        <div class="payment-modal-content">
+            <h3 style="margin-top:0; color: var(--primary);">📋 Riwayat Pembayaran</h3>
+            <p id="riwayatNama" style="font-weight:bold;"></p>
+            <div id="riwayatListContainer" style="max-height:400px; overflow-y:auto;"></div>
+            <div class="payment-modal-actions">
+                <button class="payment-btn-cancel" onclick="closeRiwayatModal()">Tutup</button>
+                <button class="payment-btn-save" onclick="printRiwayatPDF()" style="background:var(--purple);"><i class="fas fa-file-pdf"></i> Cetak PDF</button>
             </div>
         </div>
     </div>
@@ -532,8 +680,8 @@ document.getElementById('alertModal').onclick = function(e) { if(e.target === do
 let deferredPrompt = null;
 function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
 function escapeHtml(text) { if(!text) return ''; return text.replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; }); }
-function formatRupiah(angka) { if(!angka) return '0'; return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
-function parseRupiah(str) { if(!str) return 0; let cleaned = str.toString().replace(/\./g, ''); let num = parseInt(cleaned, 10); return isNaN(num) ? 0 : num; }
+function formatRupiah(angka) { if(!angka && angka!==0) return '0'; return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function parseRupiah(str) { if(!str) return 0; let cleaned = str.toString().replace(/\./g, '').replace(/[^0-9]/g, ''); let num = parseInt(cleaned, 10); return isNaN(num) ? 0 : num; }
 document.addEventListener('input', function(e) { 
     if(e.target.classList && e.target.classList.contains('money-input')) { 
         let value = e.target.value.replace(/\./g, ''); 
@@ -579,6 +727,7 @@ function showPage(pageId) {
         renderPaymentDashboard();
         renderPaymentJamaahList();
         populatePaymentJamaahDropdown();
+        loadPaymentData();
     }
 }
 function loadKegiatanToInput() { const saved = localStorage.getItem('auva_kegiatan'); if(saved) document.getElementById('kegiatan').value = saved; }
@@ -796,7 +945,7 @@ function renderKasTable() {
             <td style="vertical-align:middle; padding:10px 5px;">${escapeHtml(i.ket)}</td>
             <td class="${i.tipe==='masuk'?'txt-in':'txt-out'}" style="vertical-align:middle; padding:10px 5px;">Rp ${i.nom.toLocaleString('id-ID')}</td>
             <td style="vertical-align:middle; padding:10px 5px;"><button class="btn-del" onclick="confirmHapusTransaksi(${i.id})">🗑️</button></td>
-          `; 
+          </tr>`; 
     }); 
     const summary = document.getElementById('summaryKas'); 
     if(summary) summary.innerHTML = `<b>Saldo Akhir: Rp ${(masuk-keluar).toLocaleString('id-ID')}</b>`; 
@@ -1076,8 +1225,9 @@ function closeEntryModal() { document.getElementById('entryModal').classList.rem
 function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
 
 // ==================== MANAJEMEN PEMBAYARAN JAMAAH & INVOICE (MENU KE-8) ====================
-// Data transaksi pembayaran (terpisah dari uang kas)
 let paymentTransaksiList = [];
+let currentInvoiceJamaahId = null;
+let currentInvoiceText = '';
 
 function loadPaymentData() {
     const saved = localStorage.getItem('auva_pembayaran_transaksi');
@@ -1088,88 +1238,127 @@ function savePaymentData() {
     localStorage.setItem('auva_pembayaran_transaksi', JSON.stringify(paymentTransaksiList));
 }
 
-// Hitung total pembayaran per jamaah
+// Ambil total harga paket dari field apapun
+function getTotalHargaPaket(jamaah) {
+    const fields = jamaah.additional_fields || {};
+    const possibleNames = ['total_harga_paket', 'total_harga', 'harga_paket', 'paket', 'total harga', 'harga total', 'tagihan', 'nominal', 'TOTAL HARGA', 'Total Harga'];
+    for (const name of possibleNames) {
+        if (fields[name] !== undefined && fields[name] !== null && fields[name] !== '') {
+            let val = fields[name];
+            if (typeof val === 'string') {
+                val = val.replace(/\./g, '').replace(/[^0-9]/g, '');
+            }
+            const num = parseInt(val);
+            if (!isNaN(num) && num > 0) return num;
+        }
+    }
+    for (const field of dynamicFieldsJamaah) {
+        const label = field.label.toLowerCase();
+        if (label.includes('harga') || label.includes('paket') || label.includes('tagihan') || label.includes('total')) {
+            const val = fields[field.name];
+            if (val) {
+                let cleaned = val.toString().replace(/\./g, '').replace(/[^0-9]/g, '');
+                const num = parseInt(cleaned);
+                if (!isNaN(num) && num > 0) return num;
+            }
+        }
+    }
+    return null;
+}
+
 function hitungTotalBayarJamaah(idJamaah) {
     return paymentTransaksiList.filter(t => t.id_jamaah == idJamaah).reduce((sum, t) => sum + t.nominal, 0);
 }
 
-// Dapatkan status pembayaran (sisa, warna, status teks)
 function getStatusPembayaran(jamaah) {
     const totalBayar = hitungTotalBayarJamaah(jamaah.id);
-    // Ambil total_harga_paket dari additional_fields atau gunakan nilai default
-    let totalHargaPaket = 0;
-    if (jamaah.additional_fields && jamaah.additional_fields.total_harga_paket) {
-        totalHargaPaket = parseRupiah(jamaah.additional_fields.total_harga_paket.toString());
-    } else {
-        // Fallback: coba cari dari field dinamis atau set default
-        totalHargaPaket = 35000000; // default jika belum diisi
+    let totalHargaPaket = getTotalHargaPaket(jamaah);
+    if (totalHargaPaket === null || totalHargaPaket === 0) {
+        return { status: 'BELUM DIISI', warna: '#f39c12', sisa: 0, totalBayar, totalHargaPaket: 0, needInput: true };
     }
     const sisa = totalHargaPaket - totalBayar;
     let status, warna;
     if (sisa <= 0) {
         status = 'LUNAS';
-        warna = '#2ecc71'; // Hijau
+        warna = '#2ecc71';
     } else {
         status = 'BELUM LUNAS';
-        warna = '#e74c3c'; // Merah
+        warna = '#e74c3c';
     }
-    return { status, warna, sisa: sisa > 0 ? sisa : 0, totalBayar, totalHargaPaket };
+    return { status, warna, sisa: sisa > 0 ? sisa : 0, totalBayar, totalHargaPaket, needInput: false };
 }
 
-// Render dashboard ringkasan
 function renderPaymentDashboard() {
     let totalMasuk = paymentTransaksiList.reduce((sum, t) => sum + t.nominal, 0);
     let totalPiutang = 0;
     jamaahList.forEach(j => {
-        const { sisa } = getStatusPembayaran(j);
-        totalPiutang += sisa;
+        const totalHarga = getTotalHargaPaket(j);
+        if (totalHarga) {
+            const bayar = hitungTotalBayarJamaah(j.id);
+            const sisa = totalHarga - bayar;
+            if (sisa > 0) totalPiutang += sisa;
+        }
     });
     document.getElementById('paymentTotalMasuk').innerHTML = formatRupiah(totalMasuk);
     document.getElementById('paymentTotalPiutang').innerHTML = formatRupiah(totalPiutang);
 }
 
-// Render list jamaah dengan status warna merah/hijau
 function renderPaymentJamaahList() {
     const container = document.getElementById('paymentJamaahListContainer');
     if (!container) return;
-    
     if (jamaahList.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">Belum ada data jamaah. Silakan tambah jamaah di menu database.</div>';
+        container.innerHTML = '<div style="text-align:center; padding:20px;">Belum ada data jamaah.</div>';
         return;
     }
-    
     let html = '';
     jamaahList.forEach(j => {
-        const { status, warna, sisa, totalBayar, totalHargaPaket } = getStatusPembayaran(j);
-        const totalHargaDisplay = totalHargaPaket > 0 ? formatRupiah(totalHargaPaket) : 'Belum diisi';
-        
-        html += `<div class="payment-jamaah-card" style="border-left-color: ${warna};">
-            <div class="payment-jamaah-info">
-                <h4>${escapeHtml(j.nama_lengkap)}</h4>
-                <div class="payment-price-detail">
-                    💎 Total Paket: ${totalHargaDisplay}<br>
-                    💸 Dibayar: ${formatRupiah(totalBayar)}
-                </div>
-            </div>
-            <div style="text-align: right;">
-                <div class="payment-sisa-badge" style="color: ${warna}; margin-bottom: 8px;">
-                    ${status === 'LUNAS' ? '✅ LUNAS' : '📌 Sisa ' + formatRupiah(sisa)}
+        const { status, warna, sisa, totalBayar, totalHargaPaket, needInput } = getStatusPembayaran(j);
+        if (needInput) {
+            html += `<div class="payment-jamaah-card" style="border-left-color: #f39c12;">
+                <div class="payment-jamaah-info">
+                    <h4>${escapeHtml(j.nama_lengkap)}</h4>
+                    <div class="payment-price-detail" style="color: #f39c12;">⚠️ Total Harga Paket belum diisi!</div>
                 </div>
                 <div>
-                    <button class="payment-btn-bayar" onclick="openPaymentModalWithJamaah('${j.id}')">
-                        <i class="fas fa-plus-circle"></i> Bayar
-                    </button>
-                    <button class="payment-btn-bayar payment-btn-invoice" onclick="generateInvoiceText('${j.id}')">
-                        <i class="fas fa-file-invoice"></i> Invoice
+                    <button class="payment-btn-bayar payment-btn-edit-harga" onclick="openEditHargaModal('${j.id}')" style="background:#f39c12; color:white;">
+                        <i class="fas fa-tag"></i> Atur Harga
                     </button>
                 </div>
-            </div>
-        </div>`;
+            </div>`;
+        } else {
+            html += `<div class="payment-jamaah-card" style="border-left-color: ${warna};">
+                <div class="payment-jamaah-info">
+                    <h4>${escapeHtml(j.nama_lengkap)}</h4>
+                    <div class="payment-price-detail">
+                        💎 Total Paket: ${formatRupiah(totalHargaPaket)}<br>
+                        💸 Dibayar: ${formatRupiah(totalBayar)}
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="payment-sisa-badge" style="color: ${warna}; margin-bottom: 8px;">
+                        ${status === 'LUNAS' ? '✅ LUNAS' : '📌 Sisa ' + formatRupiah(sisa)}
+                    </div>
+                    <div>
+                        <button class="payment-btn-bayar" onclick="openPaymentModalWithJamaah('${j.id}')">
+                            <i class="fas fa-plus-circle"></i> Bayar
+                        </button>
+                        <button class="payment-btn-bayar payment-btn-invoice" onclick="prepareInvoice('${j.id}')">
+                            <i class="fas fa-file-invoice"></i> Invoice
+                        </button>
+                        <button class="payment-btn-bayar payment-btn-edit-harga" onclick="openEditHargaModal('${j.id}')">
+                            <i class="fas fa-edit"></i> Harga
+                        </button>
+                        <button class="payment-btn-bayar" onclick="openRiwayatModal('${j.id}')">
+                            <i class="fas fa-history"></i> Riwayat
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
     });
     container.innerHTML = html;
 }
 
-// Populate dropdown jamaah di modal
 function populatePaymentJamaahDropdown() {
     const select = document.getElementById('paymentJamaahSelect');
     if (!select) return;
@@ -1177,147 +1366,220 @@ function populatePaymentJamaahDropdown() {
     jamaahList.forEach(j => {
         const option = document.createElement('option');
         option.value = j.id;
-        let totalHarga = ' - ';
-        if (j.additional_fields && j.additional_fields.total_harga_paket) {
-            totalHarga = formatRupiah(parseRupiah(j.additional_fields.total_harga_paket.toString()));
-        }
-        option.textContent = `${j.nama_lengkap} (Paket: ${totalHarga})`;
+        let totalHarga = getTotalHargaPaket(j);
+        option.textContent = `${j.nama_lengkap} (Paket: ${totalHarga ? formatRupiah(totalHarga) : 'belum diisi'})`;
         select.appendChild(option);
     });
 }
 
-// Modal functions
 function openPaymentModal() {
     document.getElementById('paymentModal').style.display = 'flex';
     document.getElementById('paymentTanggal').value = new Date().toISOString().split('T')[0];
     document.getElementById('paymentNominal').value = '';
     document.getElementById('paymentKeterangan').value = '';
 }
+function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; }
+function openPaymentModalWithJamaah(id) { openPaymentModal(); const select = document.getElementById('paymentJamaahSelect'); if (select) select.value = id; }
 
-function closePaymentModal() {
-    document.getElementById('paymentModal').style.display = 'none';
-}
-
-function openPaymentModalWithJamaah(id) {
-    openPaymentModal();
-    const select = document.getElementById('paymentJamaahSelect');
-    if (select) select.value = id;
-}
-
-// Simpan pembayaran
 function simpanPembayaran() {
     const idJamaah = document.getElementById('paymentJamaahSelect').value;
     const nominal = parseInt(document.getElementById('paymentNominal').value);
     const tanggal = document.getElementById('paymentTanggal').value;
     const metode = document.getElementById('paymentMetode').value;
     const keterangan = document.getElementById('paymentKeterangan').value.trim() || 'Pembayaran';
-    
-    if (!idJamaah) {
-        showPaymentToast('❌ Pilih jamaah terlebih dahulu!');
-        return;
-    }
-    if (!nominal || nominal <= 0) {
-        showPaymentToast('❌ Masukkan nominal pembayaran yang valid!');
-        return;
-    }
-    
+    if (!idJamaah) { showPaymentToast('❌ Pilih jamaah!'); return; }
+    if (!nominal || nominal <= 0) { showPaymentToast('❌ Masukkan nominal!'); return; }
     const jamaah = jamaahList.find(j => j.id == idJamaah);
-    if (!jamaah) {
-        showPaymentToast('Data jamaah tidak ditemukan');
-        return;
-    }
-    
-    // Simpan transaksi
-    const newTrx = {
-        id: 'PMB-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-        id_jamaah: idJamaah,
-        nama_jamaah: jamaah.nama_lengkap,
-        tanggal: tanggal || new Date().toISOString().split('T')[0],
-        nominal: nominal,
-        metode: metode,
-        keterangan: keterangan
-    };
-    
+    if (!jamaah) { showPaymentToast('Data jamaah tidak ditemukan'); return; }
+    const newTrx = { id: 'PMB-' + Date.now() + '-' + Math.floor(Math.random() * 1000), id_jamaah: idJamaah, nama_jamaah: jamaah.nama_lengkap, tanggal: tanggal || new Date().toISOString().split('T')[0], nominal: nominal, metode: metode, keterangan: keterangan };
     paymentTransaksiList.push(newTrx);
     savePaymentData();
-    
-    // Reset & tutup modal
     closePaymentModal();
     renderPaymentDashboard();
     renderPaymentJamaahList();
     showPaymentToast(`✅ Pembayaran Rp ${nominal.toLocaleString('id-ID')} untuk ${jamaah.nama_lengkap} berhasil!`);
 }
 
-// Generate invoice dan kirim ke WhatsApp
-function generateInvoiceText(idJamaah) {
+function prepareInvoice(idJamaah) {
+    currentInvoiceJamaahId = idJamaah;
     const jamaah = jamaahList.find(j => j.id == idJamaah);
-    if (!jamaah) {
-        showPaymentToast('Jamaah tidak ditemukan');
-        return;
-    }
-    
+    if (!jamaah) return;
     const transaksiList = paymentTransaksiList.filter(t => t.id_jamaah == idJamaah).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
     const totalBayar = hitungTotalBayarJamaah(idJamaah);
-    let totalHargaPaket = 0;
-    if (jamaah.additional_fields && jamaah.additional_fields.total_harga_paket) {
-        totalHargaPaket = parseRupiah(jamaah.additional_fields.total_harga_paket.toString());
-    } else {
-        totalHargaPaket = 35000000;
-    }
+    let totalHargaPaket = getTotalHargaPaket(jamaah) || 0;
     const sisa = totalHargaPaket - totalBayar;
-    
-    let text = `🏆 *INVOICE PEMBAYARAN UMROH - AUVA MOBILE* 🏆\n`;
-    text += `━━━━━━━━━━━━━━━━━━\n`;
-    text += `👤 *Nama Jamaah:* ${jamaah.nama_lengkap}\n`;
-    text += `💎 *Total Paket:* ${formatRupiah(totalHargaPaket)}\n`;
-    text += `📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}\n`;
-    text += `━━━━━━━━━━━━━━━━━━\n`;
-    text += `📋 *RINCIAN PEMBAYARAN:*\n`;
-    
-    if (transaksiList.length === 0) {
-        text += `Belum ada pembayaran tercatat.\n`;
-    } else {
-        transaksiList.forEach((t, i) => {
-            text += `${i+1}. ${t.tanggal} | ${t.keterangan}\n   💰 ${formatRupiah(t.nominal)} (${t.metode})\n`;
-        });
-    }
-    
-    text += `━━━━━━━━━━━━━━━━━━\n`;
-    text += `💰 *Total Dibayar:* ${formatRupiah(totalBayar)}\n`;
-    text += `📌 *Sisa Tagihan:* ${formatRupiah(sisa > 0 ? sisa : 0)}\n`;
-    text += `✅ *Status:* ${sisa <= 0 ? 'LUNAS 🎉' : 'BELUM LUNAS ⚠️'}\n`;
-    text += `━━━━━━━━━━━━━━━━━━\n`;
-    text += `Terima kasih atas kepercayaan Anda.\n`;
-    text += `_Auva Mobile - Kbihu Amanatul Ummah_`;
-    
-    // Cari nomor WhatsApp jamaah jika ada
+    let text = `🏆 *INVOICE PEMBAYARAN UMROH - AUVA MOBILE* 🏆\n━━━━━━━━━━━━━━━━━━\n👤 *Nama Jamaah:* ${jamaah.nama_lengkap}\n💎 *Total Paket:* ${formatRupiah(totalHargaPaket)}\n📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}\n━━━━━━━━━━━━━━━━━━\n📋 *RINCIAN PEMBAYARAN:*\n`;
+    if (transaksiList.length === 0) { text += `Belum ada pembayaran tercatat.\n`; } else { transaksiList.forEach((t, i) => { text += `${i+1}. ${t.tanggal} | ${t.keterangan}\n   💰 ${formatRupiah(t.nominal)} (${t.metode})\n`; }); }
+    text += `━━━━━━━━━━━━━━━━━━\n💰 *Total Dibayar:* ${formatRupiah(totalBayar)}\n📌 *Sisa Tagihan:* ${formatRupiah(sisa > 0 ? sisa : 0)}\n✅ *Status:* ${sisa <= 0 ? 'LUNAS 🎉' : 'BELUM LUNAS ⚠️'}\n━━━━━━━━━━━━━━━━━━\nTerima kasih atas kepercayaan Anda.\n_Auva Mobile - Kbihu Amanatul Ummah_`;
+    currentInvoiceText = text;
     let waNumber = '628123456789';
     if (jamaah.additional_fields && jamaah.additional_fields.whatsapp) {
         let num = jamaah.additional_fields.whatsapp.replace(/\D/g, '');
         if (num.startsWith('0')) num = '62' + num.substring(1);
         if (num.length >= 10) waNumber = num;
     }
-    
-    const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`;
-    window.open(waLink, '_blank');
-    showPaymentToast('Membuka WhatsApp untuk kirim invoice...');
+    document.getElementById('invoiceWANumber').innerText = waNumber;
+    document.getElementById('invoiceWAName').innerHTML = `Atas nama: ${jamaah.nama_lengkap}`;
+    document.getElementById('invoiceConfirmModal').style.display = 'flex';
+}
+function closeInvoiceConfirmModal() { document.getElementById('invoiceConfirmModal').style.display = 'none'; }
+function sendInvoiceWA() { if (currentInvoiceText) window.open(`https://wa.me/${document.getElementById('invoiceWANumber').innerText}?text=${encodeURIComponent(currentInvoiceText)}`, '_blank'); closeInvoiceConfirmModal(); showPaymentToast('Membuka WhatsApp...'); }
+function copyInvoiceText() { if (currentInvoiceText) { navigator.clipboard.writeText(currentInvoiceText); showPaymentToast('✅ Teks invoice tersalin!'); } closeInvoiceConfirmModal(); }
+
+function openEditHargaModal(jamaahId) {
+    const jamaah = jamaahList.find(j => j.id == jamaahId);
+    if (!jamaah) return;
+    currentEditJamaahId = jamaahId;
+    let currentHarga = getTotalHargaPaket(jamaah) || 0;
+    document.getElementById('editHargaNama').innerText = jamaah.nama_lengkap;
+    document.getElementById('editHargaValue').value = currentHarga;
+    document.getElementById('editHargaModal').style.display = 'flex';
+}
+let currentEditJamaahId = null;
+function closeEditHargaModal() { document.getElementById('editHargaModal').style.display = 'none'; }
+function saveEditHarga() {
+    const newHarga = parseInt(document.getElementById('editHargaValue').value);
+    if (isNaN(newHarga) || newHarga <= 0) { showPaymentToast('❌ Masukkan harga yang valid!'); return; }
+    const jamaah = jamaahList.find(j => j.id == currentEditJamaahId);
+    if (jamaah) {
+        let targetField = null;
+        for (const field of dynamicFieldsJamaah) {
+            const label = field.label.toLowerCase();
+            if (label.includes('harga') || label.includes('paket') || label.includes('tagihan') || label.includes('total')) {
+                targetField = field;
+                break;
+            }
+        }
+        if (!targetField) {
+            dynamicFieldsJamaah.push({ name: 'total_harga_paket', label: 'Total Harga Paket', type: 'text' });
+            saveDynamicFieldsJamaah();
+            targetField = dynamicFieldsJamaah[dynamicFieldsJamaah.length - 1];
+        }
+        if (!jamaah.additional_fields) jamaah.additional_fields = {};
+        jamaah.additional_fields[targetField.name] = newHarga.toLocaleString('id-ID');
+        saveJamaahData();
+        renderPaymentJamaahList();
+        renderPaymentDashboard();
+        showPaymentToast(`✅ Harga paket ${jamaah.nama_lengkap} diatur ke ${formatRupiah(newHarga)}`);
+    }
+    closeEditHargaModal();
 }
 
-function showPaymentToast(msg) {
-    const existing = document.querySelector('.payment-toast');
-    if (existing) existing.remove();
-    const div = document.createElement('div');
-    div.className = 'payment-toast';
-    div.innerText = msg;
-    document.body.appendChild(div);
-    setTimeout(() => div.remove(), 2600);
+function openRiwayatModal(jamaahId) {
+    const jamaah = jamaahList.find(j => j.id == jamaahId);
+    if (!jamaah) return;
+    const transaksi = paymentTransaksiList.filter(t => t.id_jamaah == jamaahId).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+    document.getElementById('riwayatNama').innerHTML = `${jamaah.nama_lengkap} <span style="font-size:12px; color:#888;">(Total: ${formatRupiah(transaksi.reduce((s,t)=>s+t.nominal,0))})</span>`;
+    let html = '';
+    transaksi.forEach((t, idx) => {
+        html += `<div class="payment-transaction-item">
+            <div class="payment-transaction-info">
+                <div class="payment-transaction-date">📅 ${t.tanggal} | ${t.metode}</div>
+                <div><strong>${escapeHtml(t.keterangan)}</strong></div>
+            </div>
+            <div class="payment-transaction-nominal">${formatRupiah(t.nominal)}</div>
+            <div class="payment-transaction-actions">
+                <button onclick="deletePaymentTransaction('${t.id}')" title="Hapus" style="color:var(--red);">🗑️</button>
+            </div>
+        </div>`;
+    });
+    if (transaksi.length === 0) html = '<div style="text-align:center; padding:20px;">Belum ada transaksi pembayaran</div>';
+    document.getElementById('riwayatListContainer').innerHTML = html;
+    currentRiwayatJamaahId = jamaahId;
+    document.getElementById('riwayatModal').style.display = 'flex';
+}
+let currentRiwayatJamaahId = null;
+function closeRiwayatModal() { document.getElementById('riwayatModal').style.display = 'none'; }
+function deletePaymentTransaction(trxId) {
+    showConfirm('Hapus transaksi ini?', (confirmed) => {
+        if (confirmed) {
+            paymentTransaksiList = paymentTransaksiList.filter(t => t.id != trxId);
+            savePaymentData();
+            if (currentRiwayatJamaahId) openRiwayatModal(currentRiwayatJamaahId);
+            renderPaymentDashboard();
+            renderPaymentJamaahList();
+            showPaymentToast('✅ Transaksi dihapus');
+        }
+    });
+}
+function printRiwayatPDF() {
+    const jamaah = jamaahList.find(j => j.id == currentRiwayatJamaahId);
+    if (!jamaah) return;
+    const transaksi = paymentTransaksiList.filter(t => t.id_jamaah == currentRiwayatJamaahId).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
+    const totalBayar = transaksi.reduce((s,t)=>s+t.nominal,0);
+    const totalHarga = getTotalHargaPaket(jamaah) || 0;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFillColor(26,93,74); doc.rect(0,0,210,35,'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(16);
+    doc.text('RIWAYAT PEMBAYARAN', 105, 22, { align: 'center' });
+    doc.setTextColor(0,0,0); doc.setFontSize(11);
+    doc.text(`Nama: ${jamaah.nama_lengkap}`, 20, 50);
+    doc.text(`Total Paket: ${formatRupiah(totalHarga)}`, 20, 60);
+    doc.text(`Total Dibayar: ${formatRupiah(totalBayar)}`, 20, 70);
+    doc.text(`Sisa: ${formatRupiah(totalHarga - totalBayar)}`, 20, 80);
+    const tableData = transaksi.map((t, i) => [i+1, t.tanggal, t.keterangan, t.metode, formatRupiah(t.nominal)]);
+    doc.autoTable({ startY: 95, head: [['No', 'Tanggal', 'Keterangan', 'Metode', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9 } });
+    doc.save(`Riwayat_${jamaah.nama_lengkap.replace(/\s/g,'_')}.pdf`);
+    showPaymentToast('PDF riwayat berhasil dibuat');
 }
 
-// Helper format rupiah untuk angka
-function formatRupiah(angka) {
-    if (angka === undefined || angka === null) return 'Rp 0';
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+function filterPaymentReport() {
+    renderPaymentJamaahList();
+    showPaymentToast('Filter diterapkan');
 }
+function resetPaymentFilter() {
+    document.getElementById('paymentFilterStart').value = '';
+    document.getElementById('paymentFilterEnd').value = '';
+    renderPaymentJamaahList();
+}
+function exportPaymentPDF() {
+    const startDate = document.getElementById('paymentFilterStart').value;
+    const endDate = document.getElementById('paymentFilterEnd').value;
+    let filtered = [...paymentTransaksiList];
+    if (startDate) filtered = filtered.filter(t => t.tanggal >= startDate);
+    if (endDate) filtered = filtered.filter(t => t.tanggal <= endDate);
+    if (filtered.length === 0) { showAlert('Tidak ada data untuk diexport!'); return; }
+    showSpinner();
+    setTimeout(() => {
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            doc.setFillColor(26,93,74); doc.rect(0,0,297,30,'F');
+            doc.setTextColor(255,255,255); doc.setFontSize(16);
+            doc.text('LAPORAN PEMBAYARAN JAMAAH', 148.5, 20, { align: 'center' });
+            doc.setTextColor(0,0,0); doc.setFontSize(9);
+            doc.text(`Periode: ${startDate || 'Awal'} s/d ${endDate || 'Sekarang'}`, 14, 42);
+            doc.text(`Tanggal cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 50);
+            let totalMasuk = filtered.reduce((s,t)=>s+t.nominal,0);
+            const tableData = filtered.map((t, i) => [i+1, t.tanggal, t.nama_jamaah, t.keterangan, t.metode, formatRupiah(t.nominal)]);
+            doc.autoTable({ startY: 60, head: [['No', 'Tanggal', 'Jamaah', 'Keterangan', 'Metode', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 8 } });
+            let finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(10); doc.setTextColor(0,0,0);
+            doc.text(`TOTAL PEMASUKAN: ${formatRupiah(totalMasuk)}`, 14, finalY);
+            doc.save(`Laporan_Pembayaran_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`);
+            showToast('PDF laporan berhasil dibuat');
+        } catch(e) { showAlert('Gagal PDF: '+e.message); }
+        hideSpinner();
+    }, 100);
+}
+function exportPaymentExcel() {
+    const startDate = document.getElementById('paymentFilterStart').value;
+    const endDate = document.getElementById('paymentFilterEnd').value;
+    let filtered = [...paymentTransaksiList];
+    if (startDate) filtered = filtered.filter(t => t.tanggal >= startDate);
+    if (endDate) filtered = filtered.filter(t => t.tanggal <= endDate);
+    if (filtered.length === 0) { showAlert('Tidak ada data!'); return; }
+    const totalMasuk = filtered.reduce((s,t)=>s+t.nominal,0);
+    const wsData = filtered.map(t => ({ Tanggal:t.tanggal, Jamaah:t.nama_jamaah, Keterangan:t.keterangan, Metode:t.metode, Nominal:t.nominal }));
+    wsData.push({ Tanggal:'', Jamaah:'', Keterangan:'TOTAL', Metode:'', Nominal:totalMasuk });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(wsData), "Laporan Pembayaran");
+    XLSX.writeFile(wb, `Laporan_Pembayaran_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.xlsx`);
+    showToast('Excel berhasil di-export');
+}
+
+function showPaymentToast(msg) { const div = document.createElement('div'); div.className = 'payment-toast'; div.innerText = msg; document.body.appendChild(div); setTimeout(() => div.remove(), 2600); }
 
 // ==================== SETTINGS & THEME ====================
 function loadTheme() { const p=localStorage.getItem('auva_theme_primary'); const a=localStorage.getItem('auva_theme_accent'); if(p) document.documentElement.style.setProperty('--primary',p); if(a) document.documentElement.style.setProperty('--accent',a); }
@@ -1337,8 +1599,6 @@ let masterDataList = [];
 let masterDynamicFields = [];
 let masterPerlengkapanList = ['Kain Ihram', 'Sendal', 'Obat-obatan', 'Tas', 'Air Zamzam', 'Kopyah'];
 let editingMasterId = null;
-
-// Mode Switcher Data (disimpan di localStorage)
 let availableModes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
 let activeModes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
 
@@ -1353,46 +1613,20 @@ function loadModesFromStorage() {
         activeModes = ['Semua', 'Haji', 'Toko', 'Sekolah', 'Umroh', 'Donasi'];
     }
 }
-
-function saveModesToStorage() {
-    localStorage.setItem('auva_master_modes', JSON.stringify({ available: availableModes, active: activeModes }));
-}
-
+function saveModesToStorage() { localStorage.setItem('auva_master_modes', JSON.stringify({ available: availableModes, active: activeModes })); }
 function renderDynamicModeSwitcher() {
     const container = document.getElementById('modeSwitcherContainer');
     if(!container) return;
-    
-    const modeIcons = {
-        'Semua': '📋', 'Haji': '🕋', 'Toko': '🛒', 'Sekolah': '🎓', 'Umroh': '🕋', 'Donasi': '💰'
-    };
-    
+    const modeIcons = { 'Semua': '📋', 'Haji': '🕋', 'Toko': '🛒', 'Sekolah': '🎓', 'Umroh': '🕋', 'Donasi': '💰' };
     let html = `<div id="dynamicModeSwitcher" class="mode-switcher-container">`;
-    activeModes.forEach(mode => {
-        html += `<button class="mode-btn ${currentDisplayMode === mode ? 'active' : ''}" onclick="setDisplayMode('${mode}')">${modeIcons[mode] || '📌'} ${mode}</button>`;
-    });
+    activeModes.forEach(mode => { html += `<button class="mode-btn ${currentDisplayMode === mode ? 'active' : ''}" onclick="setDisplayMode('${mode}')">${modeIcons[mode] || '📌'} ${mode}</button>`; });
     html += `</div>`;
     container.innerHTML = html;
 }
-
 let currentDisplayMode = 'Semua';
-
-function setDisplayMode(mode) {
-    currentDisplayMode = mode;
-    renderDynamicModeSwitcher();
-    showToast(`Mode ${mode} aktif`);
-}
-
-function openModeManager() {
-    if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; }
-    renderModeManagerList();
-    document.getElementById('modeManagerModal').classList.add('show');
-}
-
-function closeModeManager() {
-    document.getElementById('modeManagerModal').classList.remove('show');
-    document.getElementById('newModeName').value = '';
-}
-
+function setDisplayMode(mode) { currentDisplayMode = mode; renderDynamicModeSwitcher(); showToast(`Mode ${mode} aktif`); }
+function openModeManager() { if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; } renderModeManagerList(); document.getElementById('modeManagerModal').classList.add('show'); }
+function closeModeManager() { document.getElementById('modeManagerModal').classList.remove('show'); document.getElementById('newModeName').value = ''; }
 function renderModeManagerList() {
     const container = document.getElementById('modeManagerList');
     if(!container) return;
@@ -1410,20 +1644,15 @@ function renderModeManagerList() {
     });
     html += `</div>`;
     container.innerHTML = html;
-    
     document.querySelectorAll('.mode-checkbox').forEach(cb => {
         cb.addEventListener('change', function() {
             const mode = this.getAttribute('data-mode');
-            if(this.checked) {
-                if(!activeModes.includes(mode)) activeModes.push(mode);
-            } else {
-                activeModes = activeModes.filter(m => m !== mode);
-            }
+            if(this.checked) { if(!activeModes.includes(mode)) activeModes.push(mode); }
+            else { activeModes = activeModes.filter(m => m !== mode); }
             saveModesToStorage();
         });
     });
 }
-
 function addNewMode() {
     const newMode = document.getElementById('newModeName').value.trim();
     if(!newMode) { showToast('Masukkan nama mode!'); return; }
@@ -1436,7 +1665,6 @@ function addNewMode() {
     renderDynamicModeSwitcher();
     showToast(`Mode "${newMode}" ditambahkan`);
 }
-
 function deleteModeFromList(mode) {
     showConfirm(`Hapus mode "${mode}"?`, (confirmed) => {
         if(confirmed) {
@@ -1449,13 +1677,7 @@ function deleteModeFromList(mode) {
         }
     });
 }
-
-function saveModes() {
-    saveModesToStorage();
-    renderDynamicModeSwitcher();
-    closeModeManager();
-    showToast('Perubahan mode disimpan');
-}
+function saveModes() { saveModesToStorage(); renderDynamicModeSwitcher(); closeModeManager(); showToast('Perubahan mode disimpan'); }
 
 function loadMasterData() {
     const saved = localStorage.getItem('auva_master_data');
@@ -1477,437 +1699,96 @@ function renderMasterForm() {
     const container = document.getElementById('masterFormContainer');
     if(!container) return;
     let html = `<div class="master-field-group"><label>Nama Lengkap / Judul Item <span style="color:red;">*</span></label><input type="text" id="masterNama" placeholder="Contoh: Ahmad bin Abdullah"></div>`;
-    for(const field of masterDynamicFields) {
-        html += `<div class="master-field-group"><label>${escapeHtml(field.label)}</label>${field.type==='textarea' ? `<textarea id="masterField_${field.name}" rows="2"></textarea>` : `<input type="${field.type}" id="masterField_${field.name}">`}</div>`;
-    }
+    for(const field of masterDynamicFields) { html += `<div class="master-field-group"><label>${escapeHtml(field.label)}</label>${field.type==='textarea' ? `<textarea id="masterField_${field.name}" rows="2"></textarea>` : `<input type="${field.type}" id="masterField_${field.name}">`}</div>`; }
     html += `<div class="master-field-group"><label>Perlengkapan</label><div class="master-checkbox-group" id="masterCheckboxGroup">`;
-    masterPerlengkapanList.forEach((item, idx) => {
-        html += `<label><input type="checkbox" class="master-perlengkapan-cb" value="${escapeHtml(item)}"> ${escapeHtml(item)}</label>`;
-    });
+    masterPerlengkapanList.forEach((item, idx) => { html += `<label><input type="checkbox" class="master-perlengkapan-cb" value="${escapeHtml(item)}"> ${escapeHtml(item)}</label>`; });
     html += `</div></div>`;
     container.innerHTML = html;
 }
-function getSelectedPerlengkapan() {
-    const selected = [];
-    document.querySelectorAll('.master-perlengkapan-cb:checked').forEach(cb => selected.push(cb.value));
-    return selected;
-}
-function setSelectedPerlengkapan(selectedArray) {
-    const selected = selectedArray || [];
-    document.querySelectorAll('.master-perlengkapan-cb').forEach(cb => {
-        cb.checked = selected.includes(cb.value);
-    });
-}
+function getSelectedPerlengkapan() { const selected = []; document.querySelectorAll('.master-perlengkapan-cb:checked').forEach(cb => selected.push(cb.value)); return selected; }
+function setSelectedPerlengkapan(selectedArray) { const selected = selectedArray || []; document.querySelectorAll('.master-perlengkapan-cb').forEach(cb => { cb.checked = selected.includes(cb.value); }); }
 function saveMasterData() {
     const nama = document.getElementById('masterNama')?.value.trim();
     if(!nama) { showToast('Nama lengkap wajib diisi!'); return; }
     const additional = {};
-    for(const field of masterDynamicFields) {
-        const input = document.getElementById(`masterField_${field.name}`);
-        if(input) additional[field.name] = input.value.trim();
-    }
+    for(const field of masterDynamicFields) { const input = document.getElementById(`masterField_${field.name}`); if(input) additional[field.name] = input.value.trim(); }
     const perlengkapan = getSelectedPerlengkapan();
     const now = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID');
     if(editingMasterId !== null) {
         const index = masterDataList.findIndex(d => d.id == editingMasterId);
-        if(index !== -1) {
-            masterDataList[index] = { ...masterDataList[index], nama, additional_fields: additional, perlengkapan, updated_at: now };
-            showToast('Data berhasil diupdate!');
-        }
+        if(index !== -1) { masterDataList[index] = { ...masterDataList[index], nama, additional_fields: additional, perlengkapan, updated_at: now }; showToast('Data berhasil diupdate!'); }
         editingMasterId = null;
         document.getElementById('masterFormTitle').innerText = 'TAMBAH DATA';
-    } else {
-        masterDataList.push({ id: Date.now(), nama, additional_fields: additional, perlengkapan, created_at: now });
-        showToast('Data ditambahkan');
-    }
+    } else { masterDataList.push({ id: Date.now(), nama, additional_fields: additional, perlengkapan, created_at: now }); showToast('Data ditambahkan'); }
     saveMasterDataToLocal();
     renderMasterTable();
     renderMasterForm();
     document.getElementById('masterNama').value = '';
-    for(const field of masterDynamicFields) {
-        const input = document.getElementById(`masterField_${field.name}`);
-        if(input) input.value = '';
-    }
+    for(const field of masterDynamicFields) { const input = document.getElementById(`masterField_${field.name}`); if(input) input.value = ''; }
     setSelectedPerlengkapan([]);
 }
 function renderMasterTable() {
     const thead = document.getElementById('masterTableHead');
     const tbody = document.getElementById('masterTableBody');
     if(!thead || !tbody) return;
-    let headerHtml = '<tr>';
-    headerHtml += '<th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th>';
-    headerHtml += '<th>No</th>';
-    headerHtml += '<th>Nama Lengkap</th>';
-    for(const field of masterDynamicFields) {
-        headerHtml += `<th>${escapeHtml(field.label)}</th>`;
-    }
+    let headerHtml = '<tr><th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th><th>No</th><th>Nama Lengkap</th>';
+    for(const field of masterDynamicFields) { headerHtml += `<th>${escapeHtml(field.label)}</th>`; }
     headerHtml += '<th>Perlengkapan</th><th>Aksi</th></tr>';
     thead.innerHTML = headerHtml;
-    
-    if(masterDataList.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>';
-        return; 
-    }
-    
+    if(masterDataList.length === 0) { tbody.innerHTML = '<td><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>'; return; }
     let bodyHtml = '';
     [...masterDataList].reverse().forEach((item, idx) => {
         const displayNum = idx + 1;
         let whatsappValue = '';
         const whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp' || f.label.toLowerCase() === 'whatsapp');
-        if(whatsappField) {
-            whatsappValue = item.additional_fields?.[whatsappField.name] || '';
-        }
-        bodyHtml += `<tr`;
-        bodyHtml += `<td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td>`;
-        bodyHtml += `<td style="text-align:center;">${displayNum}</td>`;
-        bodyHtml += `<td><strong>${escapeHtml(item.nama)}</strong></td>`;
-        for(const field of masterDynamicFields) {
-            const val = item.additional_fields?.[field.name] || '-';
-            bodyHtml += `<td>${escapeHtml(val)}</td>`;
-        }
-        bodyHtml += `<td>${item.perlengkapan?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td>`;
-        bodyHtml += `<td style="white-space:nowrap;">
+        if(whatsappField) { whatsappValue = item.additional_fields?.[whatsappField.name] || ''; }
+        bodyHtml += `<tr><td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td><td style="text-align:center;">${displayNum}</td><td><strong>${escapeHtml(item.nama)}</strong></td>`;
+        for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || '-'; bodyHtml += `<td>${escapeHtml(val)}</td>`; }
+        bodyHtml += `<td>${item.perlengkapan?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td><td style="white-space:nowrap;">
             <button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;" title="Edit">✏️</button>
             <button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;" title="Share">💬</button>
             <button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;" title="Hapus">🗑️</button>
-        </td>`;
+        </td></tr>`;
     });
     tbody.innerHTML = bodyHtml;
 }
-function toggleAllMasterCheckboxes(master) {
-    document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = master.checked);
-    updateBatchBar();
-}
-function updateBatchBar() {
-    const checked = document.querySelectorAll('.master-checkbox:checked');
-    const bar = document.getElementById('batchFloatingBar');
-    const countSpan = document.getElementById('batchCount');
-    if (checked.length > 0) {
-        if (countSpan) countSpan.innerText = `${checked.length} dipilih`;
-        if (bar) bar.style.display = 'flex';
-    } else {
-        if (bar) bar.style.display = 'none';
-    }
-}
-function clearBatchSelection() {
-    document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = false);
-    const selectAll = document.getElementById('selectAllMaster');
-    if (selectAll) selectAll.checked = false;
-    updateBatchBar();
-}
+function toggleAllMasterCheckboxes(master) { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = master.checked); updateBatchBar(); }
+function updateBatchBar() { const checked = document.querySelectorAll('.master-checkbox:checked'); const bar = document.getElementById('batchFloatingBar'); const countSpan = document.getElementById('batchCount'); if (checked.length > 0) { if (countSpan) countSpan.innerText = `${checked.length} dipilih`; if (bar) bar.style.display = 'flex'; } else { if (bar) bar.style.display = 'none'; } }
+function clearBatchSelection() { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = false); const selectAll = document.getElementById('selectAllMaster'); if (selectAll) selectAll.checked = false; updateBatchBar(); }
 function runBatchWA() {
     const selected = document.querySelectorAll('.master-checkbox:checked');
     const hasWA = Array.from(selected).some(cb => cb.getAttribute('data-wa') && cb.getAttribute('data-wa') !== '' && cb.getAttribute('data-wa') !== '-');
-    
-    if (!hasWA) {
-        showAlert("⚠️ Peringatan: Tidak ada nomor WhatsApp yang ditemukan pada data yang dipilih.\n\nPastikan Anda sudah menambah field 'whatsapp' (huruf kecil) di Kelola Field Dinamis Multi Event, lalu isi nomornya.");
-        return;
-    }
-    
+    if (!hasWA) { showAlert("⚠️ Peringatan: Tidak ada nomor WhatsApp yang ditemukan pada data yang dipilih.\n\nPastikan Anda sudah menambah field 'whatsapp' (huruf kecil) di Kelola Field Dinamis Multi Event, lalu isi nomornya."); return; }
     const template = prompt("Ketik pesan untuk pengiriman WA (Gunakan [nama] untuk nama otomatis):", "Assalamu'alaikum [nama], informasi dari KBIHU Amanatul Ummah...");
     if (!template) return;
-    
-    selected.forEach((cb, index) => {
-        const nama = cb.getAttribute('data-nama');
-        let wa = cb.getAttribute('data-wa');
-        
-        if (wa && wa !== '' && wa !== '-') {
-            let num = wa.replace(/\D/g, '');
-            if (num.startsWith('0')) num = '62' + num.substring(1);
-            if (num.length < 10) return;
-            
-            const msg = template.replace(/\[nama\]/gi, nama);
-            const url = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
-            
-            setTimeout(() => { window.open(url, '_blank'); }, index * 2000);
-        }
-    });
+    selected.forEach((cb, index) => { const nama = cb.getAttribute('data-nama'); let wa = cb.getAttribute('data-wa'); if (wa && wa !== '' && wa !== '-') { let num = wa.replace(/\D/g, ''); if (num.startsWith('0')) num = '62' + num.substring(1); if (num.length < 10) return; const msg = template.replace(/\[nama\]/gi, nama); const url = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`; setTimeout(() => { window.open(url, '_blank'); }, index * 2000); } });
     showToast(`Membuka ${selected.length} chat WhatsApp...`);
 }
-function editMasterData(id) {
-    if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; }
-    const item = masterDataList.find(d => d.id == id);
-    if(!item) return;
-    editingMasterId = id;
-    document.getElementById('masterNama').value = item.nama;
-    for(const field of masterDynamicFields) {
-        const input = document.getElementById(`masterField_${field.name}`);
-        if(input) input.value = item.additional_fields?.[field.name] || '';
-    }
-    setSelectedPerlengkapan(item.perlengkapan || []);
-    document.getElementById('masterFormTitle').innerText = '✏️ EDIT DATA';
-    document.getElementById('masterFormTitle').scrollIntoView({ behavior: 'smooth' });
-    showToast('Edit data, lalu klik SIMPAN DATA');
-}
-function confirmDeleteMasterData(id) {
-    showConfirm('Hapus data ini?', (confirmed) => {
-        if(confirmed) {
-            masterDataList = masterDataList.filter(d => d.id != id);
-            saveMasterDataToLocal();
-            renderMasterTable();
-            showToast('Data dihapus');
-        }
-    });
-}
-function confirmDeleteAllMasterData() {
-    if(masterDataList.length === 0) { showAlert('Tidak ada data untuk dihapus!'); return; }
-    showConfirm(`⚠️ PERINGATAN: Anda akan menghapus SEMUA ${masterDataList.length} data di Multi Event!\n\nData tidak dapat dikembalikan. Lanjutkan?`, (confirmed) => {
-        if(confirmed) {
-            masterDataList = [];
-            saveMasterDataToLocal();
-            renderMasterTable();
-            showToast(`✅ Semua data telah dihapus`);
-        }
-    });
-}
-function deleteSelectedMasterData() {
-    const selected = document.querySelectorAll('.master-checkbox:checked');
-    if(selected.length === 0) { showAlert('Pilih data yang ingin dihapus terlebih dahulu!'); return; }
-    showConfirm(`Hapus ${selected.length} data yang dipilih?`, (confirmed) => {
-        if(confirmed) {
-            const idsToDelete = [];
-            selected.forEach(cb => {
-                const row = cb.closest('tr');
-                if(row) {
-                    const editBtn = row.querySelector('button[onclick*="editMasterData"]');
-                    if(editBtn) {
-                        const match = editBtn.getAttribute('onclick').match(/'(\d+)'/);
-                        if(match) idsToDelete.push(parseInt(match[1]));
-                    }
-                }
-            });
-            masterDataList = masterDataList.filter(d => !idsToDelete.includes(d.id));
-            saveMasterDataToLocal();
-            renderMasterTable();
-            clearBatchSelection();
-            showToast(`✅ ${idsToDelete.length} data telah dihapus`);
-        }
-    });
-}
-function shareSingleMasterToWA(id) {
-    const item = masterDataList.find(d => d.id == id);
-    if(!item) return;
-    let text = `*${getMasterJudul().toUpperCase()}*\n━━━━━━━━━━━━━━━━━━\n*Nama:* ${item.nama}\n`;
-    for(const field of masterDynamicFields) {
-        const val = item.additional_fields?.[field.name] || '';
-        if(val) text += `*${field.label}:* ${val}\n`;
-    }
-    if(item.perlengkapan && item.perlengkapan.length) text += `*Perlengkapan:* ${item.perlengkapan.join(', ')}\n`;
-    text += `━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-}
-function shareAllMasterToWA() {
-    if(masterDataList.length === 0) { showAlert('Tidak ada data!'); return; }
-    let text = `*${getMasterJudul().toUpperCase()}*\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${masterDataList.length} data*\n━━━━━━━━━━━━━━━━━━\n\n`;
-    masterDataList.forEach((item, i) => {
-        text += `${i+1}. *${item.nama}*\n`;
-        for(const field of masterDynamicFields) {
-            const val = item.additional_fields?.[field.name] || '';
-            if(val) text += `   ${field.label}: ${val}\n`;
-        }
-        if(item.perlengkapan && item.perlengkapan.length) text += `   Perlengkapan: ${item.perlengkapan.join(', ')}\n`;
-        text += `\n`;
-    });
-    text += `━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-}
-function exportMasterPDF() {
-    if(masterDataList.length === 0) { showAlert('Tidak ada data!'); return; }
-    showSpinner();
-    setTimeout(() => {
-        try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-            const judul = getMasterJudul();
-            doc.setFillColor(26,93,74);
-            doc.rect(0,0,297,30,'F');
-            doc.setTextColor(255,255,255);
-            doc.setFontSize(16);
-            doc.text(judul, 148.5, 18, { align: 'center' });
-            doc.setTextColor(0,0,0);
-            doc.setFontSize(9);
-            doc.text(`Tanggal cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 40);
-            const headers = ['No', 'Nama Lengkap', ...masterDynamicFields.map(f => f.label), 'Perlengkapan'];
-            const body = masterDataList.map((item, i) => {
-                const row = [i+1, item.nama];
-                for(const field of masterDynamicFields) row.push(item.additional_fields?.[field.name] || '-');
-                row.push(item.perlengkapan?.join(', ') || '-');
-                return row;
-            });
-            doc.autoTable({ startY: 50, head: [headers], body: body, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9 } });
-            doc.save(`${judul.replace(/\s+/g,'_')}.pdf`);
-            showToast('PDF berhasil dibuat');
-        } catch(e) { showAlert('Gagal PDF: '+e.message); }
-        hideSpinner();
-    }, 100);
-}
-function exportMasterExcel() {
-    if(masterDataList.length === 0) { showAlert('Tidak ada data!'); return; }
-    const headers = ['No', 'Nama Lengkap', ...masterDynamicFields.map(f => f.label), 'Perlengkapan', 'Tanggal Input'];
-    const rows = masterDataList.map((item, i) => [
-        i+1, item.nama,
-        ...masterDynamicFields.map(f => item.additional_fields?.[f.name] || ''),
-        item.perlengkapan?.join(', ') || '',
-        item.created_at || '-'
-    ]);
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, getMasterJudul());
-    XLSX.writeFile(wb, `${getMasterJudul().replace(/\s+/g,'_')}.xlsx`);
-    showToast('Excel berhasil di-export');
-}
-function backupMasterData() {
-    if(masterDataList.length === 0 && masterDynamicFields.length === 0) { showAlert('Tidak ada data!'); return; }
-    const backup = { app: "Auva - Multi Event", version: "1.0", created: new Date().toISOString(), judul: getMasterJudul(), fields: masterDynamicFields, perlengkapan: masterPerlengkapanList, data: masterDataList };
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'}));
-    a.download = `Auva_DataMaster_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.json`;
-    a.click();
-    showToast('Backup berhasil');
-}
-function restoreMasterData(input) {
-    const file = input.files[0];
-    if(!file) return;
-    input.value = '';
-    showConfirm('Timpa data yang ada?', (confirmed) => {
-        if(confirmed) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                try {
-                    const backup = JSON.parse(e.target.result);
-                    if(backup.data && Array.isArray(backup.data)) {
-                        masterDataList = backup.data;
-                        if(backup.fields) masterDynamicFields = backup.fields;
-                        if(backup.perlengkapan) masterPerlengkapanList = backup.perlengkapan;
-                        if(backup.judul && document.getElementById('masterJudul')) document.getElementById('masterJudul').value = backup.judul;
-                        saveMasterDataToLocal();
-                        renderMasterForm();
-                        renderMasterTable();
-                        showToast(`Restore ${masterDataList.length} data berhasil`);
-                    } else showAlert('File backup tidak valid!');
-                } catch(err) { showAlert('File backup tidak valid!'); }
-            };
-            reader.readAsText(file);
-        }
-    });
-}
+function editMasterData(id) { if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; } const item = masterDataList.find(d => d.id == id); if(!item) return; editingMasterId = id; document.getElementById('masterNama').value = item.nama; for(const field of masterDynamicFields) { const input = document.getElementById(`masterField_${field.name}`); if(input) input.value = item.additional_fields?.[field.name] || ''; } setSelectedPerlengkapan(item.perlengkapan || []); document.getElementById('masterFormTitle').innerText = '✏️ EDIT DATA'; document.getElementById('masterFormTitle').scrollIntoView({ behavior: 'smooth' }); showToast('Edit data, lalu klik SIMPAN DATA'); }
+function confirmDeleteMasterData(id) { showConfirm('Hapus data ini?', (confirmed) => { if(confirmed) { masterDataList = masterDataList.filter(d => d.id != id); saveMasterDataToLocal(); renderMasterTable(); showToast('Data dihapus'); } }); }
+function confirmDeleteAllMasterData() { if(masterDataList.length === 0) { showAlert('Tidak ada data untuk dihapus!'); return; } showConfirm(`⚠️ PERINGATAN: Anda akan menghapus SEMUA ${masterDataList.length} data di Multi Event!\n\nData tidak dapat dikembalikan. Lanjutkan?`, (confirmed) => { if(confirmed) { masterDataList = []; saveMasterDataToLocal(); renderMasterTable(); showToast(`✅ Semua data telah dihapus`); } }); }
+function deleteSelectedMasterData() { const selected = document.querySelectorAll('.master-checkbox:checked'); if(selected.length === 0) { showAlert('Pilih data yang ingin dihapus terlebih dahulu!'); return; } showConfirm(`Hapus ${selected.length} data yang dipilih?`, (confirmed) => { if(confirmed) { const idsToDelete = []; selected.forEach(cb => { const row = cb.closest('tr'); if(row) { const editBtn = row.querySelector('button[onclick*="editMasterData"]'); if(editBtn) { const match = editBtn.getAttribute('onclick').match(/'(\d+)'/); if(match) idsToDelete.push(parseInt(match[1])); } } }); masterDataList = masterDataList.filter(d => !idsToDelete.includes(d.id)); saveMasterDataToLocal(); renderMasterTable(); clearBatchSelection(); showToast(`✅ ${idsToDelete.length} data telah dihapus`); } }); }
+function shareSingleMasterToWA(id) { const item = masterDataList.find(d => d.id == id); if(!item) return; let text = `*${getMasterJudul().toUpperCase()}*\n━━━━━━━━━━━━━━━━━━\n*Nama:* ${item.nama}\n`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || ''; if(val) text += `*${field.label}:* ${val}\n`; } if(item.perlengkapan && item.perlengkapan.length) text += `*Perlengkapan:* ${item.perlengkapan.join(', ')}\n`; text += `━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
+function shareAllMasterToWA() { if(masterDataList.length === 0) { showAlert('Tidak ada data!'); return; } let text = `*${getMasterJudul().toUpperCase()}*\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${masterDataList.length} data*\n━━━━━━━━━━━━━━━━━━\n\n`; masterDataList.forEach((item, i) => { text += `${i+1}. *${item.nama}*\n`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || ''; if(val) text += `   ${field.label}: ${val}\n`; } if(item.perlengkapan && item.perlengkapan.length) text += `   Perlengkapan: ${item.perlengkapan.join(', ')}\n`; text += `\n`; }); text += `━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
+function exportMasterPDF() { if(masterDataList.length === 0) { showAlert('Tidak ada data!'); return; } showSpinner(); setTimeout(() => { try { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }); const judul = getMasterJudul(); doc.setFillColor(26,93,74); doc.rect(0,0,297,30,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.text(judul, 148.5, 18, { align: 'center' }); doc.setTextColor(0,0,0); doc.setFontSize(9); doc.text(`Tanggal cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 40); const headers = ['No', 'Nama Lengkap', ...masterDynamicFields.map(f => f.label), 'Perlengkapan']; const body = masterDataList.map((item, i) => { const row = [i+1, item.nama]; for(const field of masterDynamicFields) row.push(item.additional_fields?.[field.name] || '-'); row.push(item.perlengkapan?.join(', ') || '-'); return row; }); doc.autoTable({ startY: 50, head: [headers], body: body, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9 } }); doc.save(`${judul.replace(/\s+/g,'_')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e) { showAlert('Gagal PDF: '+e.message); } hideSpinner(); }, 100); }
+function exportMasterExcel() { if(masterDataList.length === 0) { showAlert('Tidak ada data!'); return; } const headers = ['No', 'Nama Lengkap', ...masterDynamicFields.map(f => f.label), 'Perlengkapan', 'Tanggal Input']; const rows = masterDataList.map((item, i) => [ i+1, item.nama, ...masterDynamicFields.map(f => item.additional_fields?.[f.name] || ''), item.perlengkapan?.join(', ') || '', item.created_at || '-' ]); const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, getMasterJudul()); XLSX.writeFile(wb, `${getMasterJudul().replace(/\s+/g,'_')}.xlsx`); showToast('Excel berhasil di-export'); }
+function backupMasterData() { if(masterDataList.length === 0 && masterDynamicFields.length === 0) { showAlert('Tidak ada data!'); return; } const backup = { app: "Auva - Multi Event", version: "1.0", created: new Date().toISOString(), judul: getMasterJudul(), fields: masterDynamicFields, perlengkapan: masterPerlengkapanList, data: masterDataList }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'})); a.download = `Auva_DataMaster_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.json`; a.click(); showToast('Backup berhasil'); }
+function restoreMasterData(input) { const file = input.files[0]; if(!file) return; input.value = ''; showConfirm('Timpa data yang ada?', (confirmed) => { if(confirmed) { const reader = new FileReader(); reader.onload = e => { try { const backup = JSON.parse(e.target.result); if(backup.data && Array.isArray(backup.data)) { masterDataList = backup.data; if(backup.fields) masterDynamicFields = backup.fields; if(backup.perlengkapan) masterPerlengkapanList = backup.perlengkapan; if(backup.judul && document.getElementById('masterJudul')) document.getElementById('masterJudul').value = backup.judul; saveMasterDataToLocal(); renderMasterForm(); renderMasterTable(); showToast(`Restore ${masterDataList.length} data berhasil`); } else showAlert('File backup tidak valid!'); } catch(err) { showAlert('File backup tidak valid!'); } }; reader.readAsText(file); } }); }
 function openMasterSetting() { if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; } document.getElementById('masterAdminPanel').style.display = 'block'; }
 function openMasterFieldModal() { if(!isAdminMode) return; renderMasterFieldsList(); document.getElementById('masterFieldModal').classList.add('show'); }
 function closeMasterFieldModal() { document.getElementById('masterFieldModal').classList.remove('show'); }
-function renderMasterFieldsList() {
-    const container = document.getElementById('masterFieldsList');
-    if(!container) return;
-    if(masterDynamicFields.length === 0) { container.innerHTML = '<p>Belum ada field dinamis</p>'; return; }
-    let html = '<h4>Daftar Field:</h4>';
-    masterDynamicFields.forEach((f, idx) => {
-        html += `<div class="field-item"><div><strong>${escapeHtml(f.label)}</strong><br><small>${f.name} (${f.type})</small></div><button class="btn-danger-small" onclick="confirmDeleteMasterField(${idx})">Hapus</button></div>`;
-    });
-    container.innerHTML = html;
-}
-function addMasterDynamicField() {
-    const name = document.getElementById('masterNewFieldName').value.trim().toLowerCase();
-    const label = document.getElementById('masterNewFieldLabel').value.trim();
-    const type = document.getElementById('masterNewFieldType').value;
-    if(!/^[a-z0-9_]+$/.test(name)) { showToast('Nama field: huruf kecil, angka, underscore!'); return; }
-    if(!label) { showToast('Label harus diisi!'); return; }
-    if(masterDynamicFields.some(f => f.name === name)) { showToast('Field sudah ada!'); return; }
-    masterDynamicFields.push({ name, label, type });
-    saveMasterDataToLocal();
-    document.getElementById('masterNewFieldName').value = '';
-    document.getElementById('masterNewFieldLabel').value = '';
-    renderMasterFieldsList();
-    renderMasterForm();
-    renderMasterTable();
-    showToast('Field ditambahkan');
-}
-function confirmDeleteMasterField(idx) {
-    showConfirm(`Hapus field "${masterDynamicFields[idx].label}"?`, (confirmed) => {
-        if(confirmed) { masterDynamicFields.splice(idx,1); saveMasterDataToLocal(); renderMasterFieldsList(); renderMasterForm(); renderMasterTable(); showToast('Field dihapus'); }
-    });
-}
+function renderMasterFieldsList() { const container = document.getElementById('masterFieldsList'); if(!container) return; if(masterDynamicFields.length === 0) { container.innerHTML = '<p>Belum ada field dinamis</p>'; return; } let html = '<h4>Daftar Field:</h4>'; masterDynamicFields.forEach((f, idx) => { html += `<div class="field-item"><div><strong>${escapeHtml(f.label)}</strong><br><small>${f.name} (${f.type})</small></div><button class="btn-danger-small" onclick="confirmDeleteMasterField(${idx})">Hapus</button></div>`; }); container.innerHTML = html; }
+function addMasterDynamicField() { const name = document.getElementById('masterNewFieldName').value.trim().toLowerCase(); const label = document.getElementById('masterNewFieldLabel').value.trim(); const type = document.getElementById('masterNewFieldType').value; if(!/^[a-z0-9_]+$/.test(name)) { showToast('Nama field: huruf kecil, angka, underscore!'); return; } if(!label) { showToast('Label harus diisi!'); return; } if(masterDynamicFields.some(f => f.name === name)) { showToast('Field sudah ada!'); return; } masterDynamicFields.push({ name, label, type }); saveMasterDataToLocal(); document.getElementById('masterNewFieldName').value = ''; document.getElementById('masterNewFieldLabel').value = ''; renderMasterFieldsList(); renderMasterForm(); renderMasterTable(); showToast('Field ditambahkan'); }
+function confirmDeleteMasterField(idx) { showConfirm(`Hapus field "${masterDynamicFields[idx].label}"?`, (confirmed) => { if(confirmed) { masterDynamicFields.splice(idx,1); saveMasterDataToLocal(); renderMasterFieldsList(); renderMasterForm(); renderMasterTable(); showToast('Field dihapus'); } }); }
 function openMasterPerlengkapanModal() { if(!isAdminMode) return; renderMasterPerlengkapanList(); document.getElementById('masterPerlengkapanModal').classList.add('show'); }
 function closeMasterPerlengkapanModal() { document.getElementById('masterPerlengkapanModal').classList.remove('show'); }
-function renderMasterPerlengkapanList() {
-    const container = document.getElementById('masterPerlengkapanList');
-    if(!container) return;
-    if(masterPerlengkapanList.length === 0) { container.innerHTML = '<p>Belum ada daftar perlengkapan</p>'; return; }
-    let html = '<h4>Daftar Perlengkapan:</h4>';
-    masterPerlengkapanList.forEach((item, idx) => {
-        html += `<div class="field-item"><div>${escapeHtml(item)}</div><button class="btn-danger-small" onclick="confirmDeleteMasterPerlengkapan(${idx})">Hapus</button></div>`;
-    });
-    container.innerHTML = html;
-}
-function addMasterPerlengkapan() {
-    const newItem = document.getElementById('masterNewPerlengkapan').value.trim();
-    if(!newItem) { showToast('Isi nama perlengkapan!'); return; }
-    if(masterPerlengkapanList.includes(newItem)) { showToast('Sudah ada!'); return; }
-    masterPerlengkapanList.push(newItem);
-    saveMasterDataToLocal();
-    document.getElementById('masterNewPerlengkapan').value = '';
-    renderMasterPerlengkapanList();
-    renderMasterForm();
-    showToast('Perlengkapan ditambahkan');
-}
-function confirmDeleteMasterPerlengkapan(idx) {
-    showConfirm(`Hapus "${masterPerlengkapanList[idx]}"?`, (confirmed) => {
-        if(confirmed) { masterPerlengkapanList.splice(idx,1); saveMasterDataToLocal(); renderMasterPerlengkapanList(); renderMasterForm(); showToast('Dihapus'); }
-    });
-}
+function renderMasterPerlengkapanList() { const container = document.getElementById('masterPerlengkapanList'); if(!container) return; if(masterPerlengkapanList.length === 0) { container.innerHTML = '<p>Belum ada daftar perlengkapan</p>'; return; } let html = '<h4>Daftar Perlengkapan:</h4>'; masterPerlengkapanList.forEach((item, idx) => { html += `<div class="field-item"><div>${escapeHtml(item)}</div><button class="btn-danger-small" onclick="confirmDeleteMasterPerlengkapan(${idx})">Hapus</button></div>`; }); container.innerHTML = html; }
+function addMasterPerlengkapan() { const newItem = document.getElementById('masterNewPerlengkapan').value.trim(); if(!newItem) { showToast('Isi nama perlengkapan!'); return; } if(masterPerlengkapanList.includes(newItem)) { showToast('Sudah ada!'); return; } masterPerlengkapanList.push(newItem); saveMasterDataToLocal(); document.getElementById('masterNewPerlengkapan').value = ''; renderMasterPerlengkapanList(); renderMasterForm(); showToast('Perlengkapan ditambahkan'); }
+function confirmDeleteMasterPerlengkapan(idx) { showConfirm(`Hapus "${masterPerlengkapanList[idx]}"?`, (confirmed) => { if(confirmed) { masterPerlengkapanList.splice(idx,1); saveMasterDataToLocal(); renderMasterPerlengkapanList(); renderMasterForm(); showToast('Dihapus'); } }); }
 
-// ==================== COPY DARI database ====================
-function copyFromJamaah() {
-    if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; }
-    document.getElementById('copyModal').classList.add('show');
-}
-function closeCopyModal() {
-    document.getElementById('copyModal').classList.remove('show');
-}
-function executeCopyFromJamaah() {
-    const category = document.getElementById('copyCategory').value;
-    const jamaahData = JSON.parse(localStorage.getItem('auva_jamaah_list')) || [];
-    if(jamaahData.length === 0) {
-        showAlert('Tidak ada data di database!');
-        closeCopyModal();
-        return;
-    }
-    let copiedCount = 0;
-    const now = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID');
-    let whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp');
-    for(const j of jamaahData) {
-        const existing = masterDataList.find(m => m.nama === j.nama_lengkap);
-        if(existing) continue;
-        let whatsappValue = '';
-        if(j.additional_fields && j.additional_fields.whatsapp) {
-            whatsappValue = j.additional_fields.whatsapp;
-        }
-        const additional = {};
-        if(whatsappField && whatsappValue) {
-            additional[whatsappField.name] = whatsappValue;
-        }
-        const kategoriField = masterDynamicFields.find(f => f.name.toLowerCase() === 'kategori');
-        if(kategoriField) {
-            additional[kategoriField.name] = category;
-        }
-        masterDataList.push({
-            id: Date.now() + copiedCount,
-            nama: j.nama_lengkap,
-            additional_fields: additional,
-            perlengkapan: [],
-            created_at: now,
-            kategori: category
-        });
-        copiedCount++;
-    }
-    if(copiedCount > 0) {
-        saveMasterDataToLocal();
-        renderMasterTable();
-        renderMasterForm();
-        showToast(`✅ Berhasil menyalin ${copiedCount} data dari database ke Multi Event dengan kategori ${category}`);
-    } else {
-        showAlert('Tidak ada data baru yang disalin. Mungkin semua data sudah ada di Multi Event.');
-    }
-    closeCopyModal();
-}
+function copyFromJamaah() { if(!isAdminMode) { showToast('Aktifkan Mode Admin dulu!'); return; } document.getElementById('copyModal').classList.add('show'); }
+function closeCopyModal() { document.getElementById('copyModal').classList.remove('show'); }
+function executeCopyFromJamaah() { const category = document.getElementById('copyCategory').value; const jamaahData = JSON.parse(localStorage.getItem('auva_jamaah_list')) || []; if(jamaahData.length === 0) { showAlert('Tidak ada data di database!'); closeCopyModal(); return; } let copiedCount = 0; const now = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID'); let whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp'); for(const j of jamaahData) { const existing = masterDataList.find(m => m.nama === j.nama_lengkap); if(existing) continue; let whatsappValue = ''; if(j.additional_fields && j.additional_fields.whatsapp) { whatsappValue = j.additional_fields.whatsapp; } const additional = {}; if(whatsappField && whatsappValue) { additional[whatsappField.name] = whatsappValue; } const kategoriField = masterDynamicFields.find(f => f.name.toLowerCase() === 'kategori'); if(kategoriField) { additional[kategoriField.name] = category; } masterDataList.push({ id: Date.now() + copiedCount, nama: j.nama_lengkap, additional_fields: additional, perlengkapan: [], created_at: now, kategori: category }); copiedCount++; } if(copiedCount > 0) { saveMasterDataToLocal(); renderMasterTable(); renderMasterForm(); showToast(`✅ Berhasil menyalin ${copiedCount} data dari database ke Multi Event dengan kategori ${category}`); } else { showAlert('Tidak ada data baru yang disalin. Mungkin semua data sudah ada di Multi Event.'); } closeCopyModal(); }
 
 function initApp() {
     setTimeout(()=>document.getElementById('splashScreen').classList.add('hidden'),1500);
@@ -1936,16 +1817,11 @@ function initApp() {
     const savedMasterJudul = localStorage.getItem('auva_master_judul');
     if(savedMasterJudul && document.getElementById('masterJudul')) document.getElementById('masterJudul').value = savedMasterJudul;
     if(document.getElementById('masterJudulHeader')) document.getElementById('masterJudulHeader').innerText = savedMasterJudul || 'Multi Event';
-    
     loadModesFromStorage();
-    setTimeout(() => {
-        renderDynamicModeSwitcher();
-    }, 200);
-    
-    // Event listener untuk FAB pembayaran
+    setTimeout(() => { renderDynamicModeSwitcher(); }, 200);
     const fabBtn = document.getElementById('paymentFabOpen');
     if (fabBtn) fabBtn.onclick = openPaymentModal;
 }
 </script>
 </body>
-    </html>
+                                                                                                                                                                                                                                                                    </html>
