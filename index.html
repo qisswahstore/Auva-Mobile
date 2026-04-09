@@ -1299,7 +1299,7 @@ function cetakInvoicePDF(jamaahId) {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(28);
     doc.setFont('helvetica', 'bold');
-    doc.text('AUVA', 105, 25, { align: 'center' });
+    doc.text('HAJI & UMROH - AUVA & TOUR', 105, 25, { align: 'center' });
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text('KBIHU Amanatul Ummah', 105, 36, { align: 'center' });
@@ -1353,7 +1353,7 @@ function cetakInvoicePDF(jamaahId) {
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.text('Terima kasih atas kepercayaan Anda.', 105, 270, { align: 'center' });
-    doc.text('Auva Mobile - Kbihu Amanatul Ummah', 105, 278, { align: 'center' });
+    doc.text('Auva & Tour - Kbihu Amanatul Ummah', 105, 278, { align: 'center' });
     doc.text(`Dicetak: ${new Date().toLocaleString('id-ID')}`, 105, 286, { align: 'center' });
     doc.save(`Invoice_${jamaah.nama_lengkap.replace(/\s/g, '_')}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.pdf`);
     showToast('PDF Invoice berhasil dibuat');
