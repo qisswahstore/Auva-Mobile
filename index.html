@@ -1462,7 +1462,7 @@ function prepareInvoice(idJamaah) {
     const totalBayar = hitungTotalBayarJamaah(idJamaah);
     let totalHargaPaket = getTotalHargaPaket(jamaah) || 0;
     const sisa = totalHargaPaket - totalBayar;
-    let text = `🏆 *INVOICE PEMBAYARAN UMROH - AUVA MOBILE* 🏆\n━━━━━━━━━━━━━━━━━━\n👤 *Nama Jamaah:* ${jamaah.nama_lengkap}\n💎 *Total Paket:* ${formatRupiah(totalHargaPaket)}\n📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}\n━━━━━━━━━━━━━━━━━━\n📋 *RINCIAN PEMBAYARAN:*\n`;
+    let text = `🏆 *INVOICE PEMBAYARAN - HAJI & UMROH - AUVA & TOUR* 🏆\n━━━━━━━━━━━━━━━━━━\n👤 *Nama Jamaah:* ${jamaah.nama_lengkap}\n💎 *Total Paket:* ${formatRupiah(totalHargaPaket)}\n📅 *Tanggal:* ${new Date().toLocaleDateString('id-ID')}\n━━━━━━━━━━━━━━━━━━\n📋 *RINCIAN PEMBAYARAN:*\n`;
     if (transaksiList.length === 0) { text += `Belum ada pembayaran tercatat.\n`; } else { transaksiList.forEach((t, i) => { text += `${i+1}. ${t.tanggal} | ${t.keterangan}\n   💰 ${formatRupiah(t.nominal)} (${t.metode})\n`; }); }
     text += `━━━━━━━━━━━━━━━━━━\n💰 *Total Dibayar:* ${formatRupiah(totalBayar)}\n📌 *Sisa Tagihan:* ${formatRupiah(sisa > 0 ? sisa : 0)}\n✅ *Status:* ${sisa <= 0 ? 'LUNAS 🎉' : 'BELUM LUNAS ⚠️'}\n━━━━━━━━━━━━━━━━━━\nTerima kasih atas kepercayaan Anda.\n_Auva Mobile - Kbihu Amanatul Ummah_`;
     currentInvoiceText = text;
@@ -1889,4 +1889,4 @@ document.addEventListener('input', function(e) {
 });
 </script>
 </body>
-    </html>
+                                                                                                                                                                                                                                                                    </html>
