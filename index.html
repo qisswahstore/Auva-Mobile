@@ -442,7 +442,7 @@
 
 <script>
 // ==================== SERVICE WORKER ====================
-const SW_CODE_STABLE = `const CACHE_NAME='auva-v24';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css','https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(async c=>{try{await c.addAll(STATIC_ASSETS);}catch(e){}}));self.skipWaiting();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>new Response('Offline mode'))));});`;
+const SW_CODE_STABLE = `const CACHE_NAME='auva-v25';const STATIC_ASSETS=['/','https://fonts.googleapis.com/css2?family=Amiri&family=Segoe+UI&display=swap','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css','https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js','https://img.icons8.com/color/96/kaaba.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(async c=>{try{await c.addAll(STATIC_ASSETS);}catch(e){}}));self.skipWaiting();});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.url.startsWith('chrome-extension://'))return;e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>new Response('Offline mode'))));});`;
 function registerServiceWorker() { if(!('serviceWorker' in navigator)) return; const blob = new Blob([SW_CODE_STABLE], { type:'application/javascript' }); navigator.serviceWorker.register(URL.createObjectURL(blob), { scope:'/' }).catch(e=>console.log(e)); }
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', registerServiceWorker); else registerServiceWorker();
 
@@ -490,8 +490,8 @@ let lastCalculatedTotalJam = 0;
 
 // ==================== KONFIGURASI PRO ====================
 let konfigurasiPro = {
-    instansi1: { nama: 'Auva Kbihu AU', alamat: 'Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya', telp: '', email: '', npwp: '', web: '', pimpinan: '', jabatan: '', logo: '' },
-    instansi2: { aktif: false, nama: 'KBIH Amanatul Ummah', alamat: '', telp: '', email: '', izin: '', pimpinan: '', jabatan: '', logo: '' },
+    instansi1: { nama: 'PT AUVA EQTENA NAHDHA', alamat: 'Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya', telp: '0858-1515-9999', email: '', npwp: '', web: '', pimpinan: 'Dr. Mauhibur Rokhman, Lc., MIRKH', jabatan: 'Pembimbing', logo: '' },
+    instansi2: { aktif: true, nama: 'KBIH Amanatul Ummah', alamat: 'Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya', telp: '0858-1515-9999', email: '', izin: '', pimpinan: 'Dr. Mauhibur Rokhman, Lc., MIRKH', jabatan: 'Pembimbing', logo: '' },
     watermark: { enabled: true, text: 'DOKUMEN RESMI', opacity: 0.15, fontsize: 60, position: 'diagonal' },
     qr: { enabled: true, text: 'Dokumen Resmi - Divalidasi oleh Sistem Auva', size: 80 },
     settings: { header_mode: 'both', ttd_mode: 'both', invoice_prefix: 'INV/AUVA' },
@@ -502,35 +502,65 @@ let konfigurasiPro = {
     }
 };
 
-// ==================== HELPER PDF DENGAN KONFIGURASI ====================
+// ==================== HELPER PDF DENGAN KONFIGURASI (DIPERBAIKI) ====================
 async function applyPDFConfig(doc, options = {}) {
     const cfg = getKonfigurasi();
     const pageWidth = options.landscape ? 297 : 210;
     const pageHeight = options.landscape ? 210 : 297;
+    const startY = options.startY || 0;
     
-    // Header instansi
+    // Header instansi (jika tidak dinonaktifkan)
     if (cfg.settings.header_mode !== 'none') {
+        // Background header
         doc.setFillColor(26, 93, 74);
-        doc.rect(0, 0, pageWidth, 38, 'F');
+        doc.rect(0, startY, pageWidth, 42, 'F');
         doc.setTextColor(255, 255, 255);
+        
+        let currentX = 10;
+        let currentY = startY + 8;
         
         // Logo instansi 1 (jika ada)
         if (cfg.instansi1.logo && cfg.instansi1.logo.startsWith('data:image')) {
             try {
-                doc.addImage(cfg.instansi1.logo, 'PNG', 10, 5, 25, 25);
+                doc.addImage(cfg.instansi1.logo, 'PNG', currentX, startY + 3, 28, 28);
+                currentX = 45; // Geser posisi teks ke kanan setelah logo
             } catch(e) { /* Abaikan error logo */ }
         }
         
+        // Nama instansi utama (baris 1)
         doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
         if (cfg.settings.header_mode === 'both' || cfg.settings.header_mode === 'instansi1') {
-            doc.text(cfg.instansi1.nama || 'Auva Kbihu AU', pageWidth/2, 18, { align: 'center' });
+            doc.text(cfg.instansi1.nama || 'Auva Kbihu AU', currentX, currentY);
+            currentY += 7;
         }
+        
+        // Nama instansi kedua (baris 2) - jika aktif
         if (cfg.settings.header_mode === 'both' && cfg.instansi2.aktif && cfg.instansi2.nama) {
-            doc.setFontSize(9);
-            doc.text(cfg.instansi2.nama, pageWidth/2, 28, { align: 'center' });
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text(cfg.instansi2.nama, currentX, currentY);
+            currentY += 6;
         }
-        if (cfg.settings.header_mode === 'instansi2' && cfg.instansi2.aktif && cfg.instansi2.nama) {
-            doc.text(cfg.instansi2.nama, pageWidth/2, 18, { align: 'center' });
+        
+        // Alamat (baris 3)
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        let alamatDisplay = cfg.instansi1.alamat || '';
+        if (cfg.settings.header_mode === 'both' && cfg.instansi2.aktif && cfg.instansi2.alamat && cfg.instansi2.alamat !== alamatDisplay) {
+            alamatDisplay = cfg.instansi2.alamat;
+        }
+        if (alamatDisplay) {
+            doc.text(alamatDisplay, currentX, currentY);
+            currentY += 5;
+        }
+        
+        // Telepon & kontak (baris 4)
+        let kontakDisplay = '';
+        if (cfg.instansi1.telp) kontakDisplay += `Telp: ${cfg.instansi1.telp}`;
+        if (cfg.instansi1.email) kontakDisplay += ` | Email: ${cfg.instansi1.email}`;
+        if (kontakDisplay) {
+            doc.text(kontakDisplay, currentX, currentY);
         }
     }
     
@@ -1750,4 +1780,4 @@ document.addEventListener('input', function(e) {
 });
 </script>
 </body>
-        </html>
+                                                </html>
