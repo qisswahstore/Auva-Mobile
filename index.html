@@ -17,16 +17,16 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
         :root { --primary: #1a5d4a; --accent: #c9a227; --bg: #f4f7f6; --white: #ffffff; --red: #e74c3c; --green: #2ecc71; --dark: #2c3e50; --blue: #3498db; --orange: #e67e22; --purple: #9b59b6; --teal: #1abc9c; --wa: #25d366; }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; padding-bottom: 80px; }
         
-        /* PERBAIKAN: padding-bottom lebih besar agar tombol navigasi tidak menindih */
         .page { display: none; min-height: 100vh; padding: 10px; padding-bottom: 85px; }
         .page.active { display: block; }
         
-        /* ========== PERBAIKAN GRID MENU UTAMA: 4 KOLOM x 2 BARIS ========== */
+        /* Menu Grid 4 Kolom x 3 Baris (untuk 9 menu) */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -54,7 +54,7 @@
         .admin-mode .edit-badge { display: block; }
         .admin-mode .menu-card { border: 2px dashed var(--accent); }
         
-        /* ========== BOTTOM NAVIGATION ========== */
+        /* Bottom Navigation */
         .bottom-nav { 
             position: fixed; 
             bottom: 0; 
@@ -68,24 +68,14 @@
         .nav-item { flex: 1; text-align: center; color: #888; font-size: 0.7rem; cursor: pointer; transition: all 0.3s; }
         .nav-active { color: var(--primary); font-weight: bold; }
         
-        /* ========== PERBAIKAN LAYERING: ELEMEN MODAL & TOAST HARUS PALING DEPAN ========== */
-        .modal, .modal-confirm, .modal-alert {
-            z-index: 9999 !important;
-        }
-        .payment-modal {
-            z-index: 9999 !important;
-        }
-        .toast, .payment-toast {
-            z-index: 10000 !important;
-        }
-        .fab, .payment-fab {
-            z-index: 9998 !important;
-        }
-        .batch-floating-bar {
-            z-index: 9999 !important;
-        }
+        /* Modal & Toast */
+        .modal, .modal-confirm, .modal-alert { z-index: 9999 !important; }
+        .payment-modal { z-index: 9999 !important; }
+        .toast, .payment-toast { z-index: 10000 !important; }
+        .fab, .payment-fab { z-index: 9998 !important; }
+        .batch-floating-bar { z-index: 9999 !important; }
         
-        /* ========== STYLE LAINNYA (DARI FILE A) ========== */
+        /* Header & Card */
         .header-main { background: var(--primary); color: white; padding: 30px 20px; text-align: center; border-bottom: 4px solid var(--accent); border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin-bottom: 20px; }
         .page-header { background: var(--primary); color: white; padding: 15px 20px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 15px 15px; margin: -10px -10px 15px -10px; }
         .back-btn { font-size: 1.5rem; cursor: pointer; width: 40px; background: none; border: none; color: white; }
@@ -237,131 +227,25 @@
         .btn-delete-mass { background: var(--red) !important; }
         .btn-delete-selected { background: var(--orange) !important; }
 
-        /* ========== STYLE MENU PEMBAYARAN (DARI FILE B) ========== */
-        .payment-dashboard-card {
-            background: linear-gradient(145deg, var(--primary), #0d4a3a);
-            color: white;
-            padding: 20px;
-            border-radius: 28px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 25px rgba(13, 93, 78, 0.25);
-            position: relative;
-            overflow: hidden;
-        }
-        .payment-stats-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .payment-stat-item {
-            flex: 1;
-            background: rgba(255,255,255,0.12);
-            padding: 12px;
-            border-radius: 20px;
-            text-align: center;
-            backdrop-filter: blur(4px);
-        }
-        .payment-stat-item h4 {
-            margin: 0;
-            font-size: 11px;
-            opacity: 0.9;
-        }
-        .payment-stat-item .payment-value {
-            font-size: 20px;
-            font-weight: 800;
-            margin-top: 5px;
-        }
-        .payment-jamaah-card {
-            background: white;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 6px solid;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .payment-jamaah-info h4 {
-            margin: 0 0 6px 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: #1e2a32;
-        }
-        .payment-price-detail {
-            font-size: 12px;
-            color: #5a6e7c;
-        }
-        .payment-sisa-badge {
-            font-weight: 800;
-            font-size: 13px;
-        }
-        .payment-btn-bayar {
-            background: rgba(13, 93, 78, 0.1);
-            border: none;
-            color: var(--primary);
-            padding: 10px 18px;
-            border-radius: 40px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .payment-btn-bayar:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.02);
-        }
-        .payment-btn-invoice {
-            background: rgba(37, 99, 235, 0.08);
-            color: #2563eb;
-            margin-left: 8px;
-        }
-        .payment-btn-invoice:hover {
-            background: #2563eb;
-            color: white;
-        }
-        .payment-btn-edit-harga {
-            background: rgba(243, 156, 18, 0.1);
-            color: #f39c12;
-            margin-left: 6px;
-        }
-        .payment-btn-edit-harga:hover {
-            background: #f39c12;
-            color: white;
-        }
-        .payment-btn-pdf {
-            background: rgba(231, 76, 60, 0.1);
-            color: #e74c3c;
-            margin-left: 6px;
-        }
-        .payment-btn-pdf:hover {
-            background: #e74c3c;
-            color: white;
-        }
-        .payment-fab {
-            position: fixed;
-            bottom: 80px;
-            right: 24px;
-            background: linear-gradient(135deg, var(--primary), #0d4a3a);
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(13, 93, 78, 0.5);
-            border: none;
-            cursor: pointer;
-            font-size: 28px;
-            transition: all 0.2s;
-            z-index: 9998;
-        }
+        /* Payment Module Styles */
+        .payment-dashboard-card { background: linear-gradient(145deg, var(--primary), #0d4a3a); color: white; padding: 20px; border-radius: 28px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(13, 93, 78, 0.25); position: relative; overflow: hidden; }
+        .payment-stats-row { display: flex; justify-content: space-between; gap: 12px; }
+        .payment-stat-item { flex: 1; background: rgba(255,255,255,0.12); padding: 12px; border-radius: 20px; text-align: center; backdrop-filter: blur(4px); }
+        .payment-stat-item h4 { margin: 0; font-size: 11px; opacity: 0.9; }
+        .payment-stat-item .payment-value { font-size: 20px; font-weight: 800; margin-top: 5px; }
+        .payment-jamaah-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 6px solid; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .payment-jamaah-info h4 { margin: 0 0 6px 0; font-size: 16px; font-weight: 700; color: #1e2a32; }
+        .payment-price-detail { font-size: 12px; color: #5a6e7c; }
+        .payment-sisa-badge { font-weight: 800; font-size: 13px; }
+        .payment-btn-bayar { background: rgba(13, 93, 78, 0.1); border: none; color: var(--primary); padding: 10px 18px; border-radius: 40px; font-weight: 700; cursor: pointer; font-size: 12px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .payment-btn-bayar:hover { background: var(--primary); color: white; transform: scale(1.02); }
+        .payment-btn-invoice { background: rgba(37, 99, 235, 0.08); color: #2563eb; margin-left: 8px; }
+        .payment-btn-invoice:hover { background: #2563eb; color: white; }
+        .payment-btn-edit-harga { background: rgba(243, 156, 18, 0.1); color: #f39c12; margin-left: 6px; }
+        .payment-btn-edit-harga:hover { background: #f39c12; color: white; }
+        .payment-btn-pdf { background: rgba(231, 76, 60, 0.1); color: #e74c3c; margin-left: 6px; }
+        .payment-btn-pdf:hover { background: #e74c3c; color: white; }
+        .payment-fab { position: fixed; bottom: 80px; right: 24px; background: linear-gradient(135deg, var(--primary), #0d4a3a); color: white; width: 60px; height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(13, 93, 78, 0.5); border: none; cursor: pointer; font-size: 28px; transition: all 0.2s; z-index: 9998; }
         .payment-fab:active { transform: scale(0.94); }
         .payment-modal { display: none; position: fixed; bottom: 0; left: 0; right: 0; top: 0; background: rgba(0,0,0,0.6); align-items: flex-end; z-index: 9999; backdrop-filter: blur(4px); }
         .payment-modal-content { background: white; width: 100%; padding: 28px 24px; border-radius: 36px 36px 0 0; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease; }
@@ -375,33 +259,28 @@
         .payment-toast { position: fixed; bottom: 100px; left: 20px; right: 20px; background: #1e2a32; color: white; text-align: center; padding: 12px; border-radius: 60px; font-size: 14px; z-index: 10000; animation: fadeInOut 2.5s ease forwards; }
         @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(20px); } 15% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(20px); visibility: hidden; } }
         
-        .payment-filter-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .payment-filter-row input, .payment-filter-row select {
-            flex: 1;
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .payment-transaction-item {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .payment-filter-row { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .payment-filter-row input, .payment-filter-row select { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ddd; }
+        .payment-transaction-item { background: #f8f9fa; border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .payment-transaction-info { flex: 1; }
         .payment-transaction-date { font-size: 11px; color: #888; }
         .payment-transaction-nominal { font-weight: bold; color: var(--primary); }
         .payment-transaction-actions button { background: none; border: none; font-size: 18px; cursor: pointer; padding: 5px 8px; margin-left: 5px; }
+        
+        /* Konfigurasi Pro Styles */
+        .config-section { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); }
+        .config-section h3 { color: var(--primary); margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .config-row { margin-bottom: 15px; }
+        .config-row label { font-weight: 600; margin-bottom: 6px; display: block; color: #2c3e50; }
+        .config-row input, .config-row select, .config-row textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
+        .opacity-slider { display: flex; align-items: center; gap: 12px; }
+        .opacity-slider input { flex: 1; }
+        .logo-preview { max-width: 100px; max-height: 60px; margin-top: 8px; border-radius: 8px; object-fit: contain; border: 1px solid #eee; }
+        .qr-preview { text-align: center; margin-top: 15px; }
+        .qr-preview canvas { border: 1px solid #ddd; border-radius: 12px; padding: 8px; background: white; }
+        .preview-btn { background: var(--gray-light); border: 1px dashed var(--gray-border); padding: 10px; border-radius: 12px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 600; color: var(--primary); text-align: center; }
+        .template-variables { font-size: 11px; color: #64748b; margin-top: 5px; }
+        .template-variables code { background: #f1f5f9; padding: 2px 6px; border-radius: 6px; margin: 0 3px; }
         
         @supports (-webkit-touch-callout: none) {
             .payment-jamaah-card { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -419,10 +298,13 @@
     <div id="confirmModal" class="modal-confirm"><div class="modal-confirm-content"><h3>⚠️ KONFIRMASI</h3><p id="confirmMessage">Apakah Anda yakin?</p><div class="modal-confirm-buttons"><button class="btn-confirm-cancel" id="confirmCancelBtn">BATAL</button><button class="btn-confirm-ok" id="confirmOkBtn">OKE</button></div></div></div>
     <div id="alertModal" class="modal-alert"><div class="modal-alert-content"><h3>⚠️ PEMBERITAHUAN</h3><p id="alertMessage"></p><button id="alertOkBtn">OKE</button></div></div>
 
+    <!-- HOME PAGE -->
     <div id="page-home" class="page active"><div class="header-main"><div style="font-size:50px;">🕋</div><h2>AUVA KBIHU AU</h2><p style="color:var(--accent); font-weight:bold;">by Kbihu Amanatul Ummah</p></div><div class="menu-grid" id="menuGrid"></div></div>
 
+    <!-- ESTIMASI PAGE -->
     <div id="page-estimasi" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Cuan Plan Umroh</h2><div style="width:40px;"></div></div><div class="card"><div class="logo-box"><img src="https://img.icons8.com/color/96/kaaba.png" style="width:60px;"></div><p class="subtitle">Auva Kbihu AU</p><div class="section-title">Data Rombongan</div><div class="input-group"><label>Nama Paket / Lokasi</label><input type="text" id="lokasiPaket" value="Umroh Syawal - Auva Kbihu AU"></div><div class="row"><div class="input-group"><label>Total Pax</label><input type="number" id="totJam" value="35"></div><div class="input-group"><label>Gratis</label><input type="number" id="jamGratis" value="1"></div><div class="input-group"><label>Jumlah TL</label><input type="number" id="numTL" value="1"></div></div><div class="section-title">Komponen Biaya</div><div class="row"><div class="input-group"><label>Tiket</label><input type="text" id="cTiket" class="money-input" value="15.450.000"></div><div class="input-group"><label>LA / Hotel</label><input type="text" id="cLA" class="money-input" value="14.450.000"></div></div><div class="row"><div class="input-group"><label>Asuransi</label><input type="text" id="cAsuransi" class="money-input" value="60.000"></div><div class="input-group"><label>Handling</label><input type="text" id="cHandling" class="money-input" value="100.000"></div></div><div class="row"><div class="input-group"><label>Perlengkapan</label><input type="text" id="cAlat" class="money-input" value="1.000.000"></div><div class="input-group"><label>Aplikasi</label><input type="text" id="cAplikasi" class="money-input" value="60.000"></div></div><div class="row"><div class="input-group"><label>Diskon/PIC</label><input type="text" id="cPIC" class="money-input" value="0"></div><div class="input-group"><label>Lain-lain</label><input type="text" id="cLain" class="money-input" value="0"></div></div><div class="section-title">Margin</div><div class="input-group"><label>Profit (%)</label><input type="number" id="profitPct" value="5"></div><button class="btn" onclick="hitungUmroh()"><i class="fas fa-calculator"></i> HITUNG ESTIMASI</button><button class="btn btn-reset-default" onclick="resetEstimasiToDefault()"><i class="fas fa-undo-alt"></i> RESET KE DEFAULT</button></div><div id="hasilEstimasi" class="res-card"></div></div>
 
+    <!-- KAS PAGE -->
     <div id="page-kas" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Uang Kas</h2><div style="width:40px;"></div></div><div class="card"><div class="section-title">Kegiatan / Nama Rombongan</div><div class="input-group"><input type="text" id="kegiatan" placeholder="Contoh: Umroh Syawal 2026" value="Umroh Syawal 2026"></div><div class="section-title">Input Transaksi</div><div class="input-group"><input type="text" id="ketReal" placeholder="Keterangan detail transaksi"></div><div class="row"><div style="flex:2"><input id="nomReal" type="text" class="money-input" placeholder="Nominal Rp"></div><div style="flex:1"><select id="tipeReal"><option value="masuk">Masuk</option><option value="keluar">Keluar</option></select></div></div><button class="btn" onclick="tambahTransaksi()" style="background:var(--accent)"><i class="fas fa-plus-circle"></i> TAMBAH TRANSAKSI</button><button class="btn btn-teal" onclick="buatLaporanWA()"><i class="fab fa-whatsapp"></i> BUAT LAPORAN WA</button><div class="summary-real" id="summaryKas"></div><div class="table-container">
         <table id="kasTable" style="width:100%; border-collapse:collapse;">
             <thead id="kasTableHead">
@@ -432,41 +314,29 @@
         </table>
     </div><div id="hasilWA" class="res-card"></div><div class="section-title">Backup & Restore Data Kas</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore data transaksi kas</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupKasData()" style="flex:1"><i class="fas fa-download"></i> BACKUP KAS</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreKasFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE KAS</button></div><input type="file" id="restoreKasFile" accept=".json" style="display:none" onchange="restoreKasData(this)"><div class="section-title">Export Laporan Kas</div><div class="row"><button class="btn btn-purple btn-small" onclick="exportKasPDFWithSpinner()" style="flex:1"><i class="fas fa-file-pdf"></i> PDF</button><button class="btn btn-small" onclick="exportKasExcelWithSpinner()" style="flex:1; background:#27ae60;"><i class="fas fa-file-excel"></i> EXCEL</button></div><button class="btn btn-danger" onclick="confirmResetKas()" style="font-size:12px"><i class="fas fa-trash-alt"></i> KOSONGKAN BUKU KAS</button></div></div>
 
+    <!-- JAMAAH PAGE -->
     <div id="page-jamaah" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>database</h2><div style="width:40px;"></div></div><div class="card"><div id="jamaahAdminPanel" class="admin-panel" style="display:none"><h3>🔧 Panel Admin Jamaah</h3><button class="btn-admin" onclick="openTambahJamaahModal()">📝 + Tambah database</button><button class="btn-admin" onclick="openManageFieldsModal()">⚙️ Kelola Field Dinamis</button><button class="btn-admin" onclick="exportJamaahToExcel()">📊 Export ke Excel</button><button class="btn-admin" onclick="document.getElementById('importExcelFile').click()">📥 IMPORT EXCEL</button><input type="file" id="importExcelFile" accept=".xlsx,.xls" style="display:none" onchange="importJamaahFromExcel(this)"><button class="btn-admin btn-delete-all" onclick="confirmDeleteAllJamaah()">🗑️ HAPUS SEMUA database</button></div><div class="section-title">DAFTAR JAMAAH</div><div class="search-box"><input type="text" id="searchJamaahInput" placeholder="🔍 Cari nama jamaah..." onkeyup="filterJamaahList()"><select id="sortJamaahSelect" onchange="sortJamaahList()"><option value="urutan_asli">Urutan asli (sesuai input)</option><option value="nama_asc">Nama A-Z</option><option value="nama_desc">Nama Z-A</option><option value="tgl_asc">Tanggal lama ke baru</option><option value="tgl_desc">Tanggal baru ke lama</option></select><button onclick="resetJamaahFilter()">Reset</button></div><div class="sort-buttons"><span style="font-size:12px; color:#666;">Jumlah per halaman:</span><select id="perPageJamaah" onchange="changePerPage()"><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="all">Semua</option></select></div><div id="jamaahListContainer"></div><div id="paginationContainer" class="pagination"></div><button class="btn btn-wa" onclick="shareAllJamaahToWA()"><i class="fab fa-whatsapp"></i> SHARE SEMUA JAMAAH KE WA</button><div class="section-title" style="margin-top:20px;">Backup & Restore database</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore database dan field dinamis</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupJamaahData()" style="flex:1"><i class="fas fa-download"></i> BACKUP JAMAAH</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreJamaahFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE JAMAAH</button></div><input type="file" id="restoreJamaahFile" accept=".json" style="display:none" onchange="restoreJamaahData(this)"></div></div>
 
+    <!-- JAMAAH KITA PAGE -->
     <div id="page-jamaahkita" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Jamaah on proses</h2><div style="width:40px;"></div></div><div class="card"><div id="jamaahKitaAdminPanel" class="admin-panel" style="display:none"><h3>🔧 Pengaturan Jamaah on proses</h3><button class="btn-admin" onclick="openJamaahKitaFieldModal()">⚙️ Kelola Field Dinamis (Kamar/Bus/dll)</button></div><div class="section-title">TAMBAH database KITA</div><div class="input-group"><label>Pilih Jamaah dari database</label><select id="pilihJamaahKita"></select></div><div id="jamaahKitaDynamicFields"></div><button class="btn" onclick="tambahJamaahKita()" style="background:var(--accent)"><i class="fas fa-plus-circle"></i> TAMBAHKAN KE Jamaah on proses</button><div class="section-title">DAFTAR Jamaah on proses</div><div id="jamaahKitaListContainer"></div><button class="btn btn-wa" onclick="shareAllJamaahKitaToWA()"><i class="fab fa-whatsapp"></i> SHARE SEMUA Jamaah on proses KE WA</button><button class="btn print-group-btn" onclick="printGroupedPDF()"><i class="fas fa-print"></i> 📄 CETAK PDF PER KELOMPOK (KAMAR/BUS/KELAS)</button><div class="section-title">Backup & Restore database Kita</div><div class="backup-info"><i class="fas fa-info-circle"></i> Backup & Restore database kita</div><div class="row"><button class="btn btn-blue btn-small" onclick="backupJamaahKitaData()" style="flex:1"><i class="fas fa-download"></i> BACKUP Jamaah on proses</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreJamaahKitaFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE Jamaah on proses</button></div><input type="file" id="restoreJamaahKitaFile" accept=".json" style="display:none" onchange="restoreJamaahKitaData(this)"></div></div>
 
+    <!-- CATATAN PAGE -->
     <div id="page-catatan" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Catatan</h2><button class="back-btn" onclick="openTambahCatatan()" style="font-size:1.2rem;">+</button></div><div class="container" style="padding:15px; max-width:500px; margin:0 auto;"><div id="catatanListContainer"></div></div></div>
 
+    <!-- ZAKAT PAGE -->
     <div id="page-zakat" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Kalkulator Zakat</h2><div style="width:40px;"></div></div><div class="card"><div class="logo-box"><div style="font-size:40px;">📊</div></div><p class="subtitle">Auva Kbihu AU</p><div class="section-title">Pengaturan Umum</div><div class="row"><div class="input-group"><label>Jenis Zakat</label><select id="jenisZakat" onchange="toggleZakatInput()"><option value="mal">Zakat Mal (Harta/Uang)</option><option value="pertanian">Zakat Pertanian</option><option value="perdagangan">Zakat Perdagangan</option></select></div></div><div id="zakatGlobalInput"><div class="input-group"><label>Harga Emas per Gram (Rp)</label><input type="text" id="hargaEmas" class="money-input" value="1.200.000"></div></div><div class="section-title">Sumber Harta</div><div id="sumberHartaContainer"></div><button class="btn" onclick="tambahSumberHarta()" style="background:var(--accent); margin-top:10px;"><i class="fas fa-plus-circle"></i> + TAMBAH SUMBER HARTA</button><button class="btn" onclick="hitungZakat()"><i class="fas fa-calculator"></i> HITUNG ZAKAT</button></div><div id="hasilZakat" class="res-card"></div></div>
 
-    <!-- MENU KE-8: MANAJEMEN PEMBAYARAN JAMAAH & INVOICE (DARI FILE B YANG DISEMPURNAKAN) -->
+    <!-- PEMBAYARAN PAGE -->
     <div id="page-pembayaran" class="page">
-        <div class="page-header">
-            <button class="back-btn" onclick="showPage('home')">←</button>
-            <h2>Pembayaran Jamaah</h2>
-            <div style="width:40px;"></div>
-        </div>
+        <div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Pembayaran Jamaah</h2><div style="width:40px;"></div></div>
         <div class="card">
-            <!-- Dashboard Ringkasan -->
             <div class="payment-dashboard-card">
-                <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-file-invoice-dollar" style="font-size: 24px;"></i>
-                    <span style="font-weight: 700; font-size: 18px;">Manajemen Pembayaran</span>
-                </div>
+                <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-file-invoice-dollar" style="font-size: 24px;"></i><span style="font-weight: 700; font-size: 18px;">Manajemen Pembayaran</span></div>
                 <div class="payment-stats-row">
-                    <div class="payment-stat-item">
-                        <h4>💰 Total Uang Masuk</h4>
-                        <div class="payment-value" id="paymentTotalMasuk">Rp 0</div>
-                    </div>
-                    <div class="payment-stat-item">
-                        <h4>📋 Total Piutang</h4>
-                        <div class="payment-value" id="paymentTotalPiutang">Rp 0</div>
-                    </div>
+                    <div class="payment-stat-item"><h4>💰 Total Uang Masuk</h4><div class="payment-value" id="paymentTotalMasuk">Rp 0</div></div>
+                    <div class="payment-stat-item"><h4>📋 Total Piutang</h4><div class="payment-value" id="paymentTotalPiutang">Rp 0</div></div>
                 </div>
             </div>
-
-            <!-- Filter Laporan -->
             <div class="payment-filter-row">
                 <input type="date" id="paymentFilterStart" placeholder="Dari tanggal">
                 <input type="date" id="paymentFilterEnd" placeholder="Sampai tanggal">
@@ -477,201 +347,115 @@
                 <button class="btn-small btn-purple" onclick="exportPaymentPDF()"><i class="fas fa-file-pdf"></i> PDF Laporan</button>
                 <button class="btn-small" onclick="exportPaymentExcel()" style="background:#27ae60;"><i class="fas fa-file-excel"></i> Excel Laporan</button>
             </div>
-
-            <!-- Daftar Tagihan Jamaah -->
-            <div class="section-title">
-                <i class="fas fa-users" style="margin-right: 5px;"></i> Daftar Tagihan Jamaah
-            </div>
-            <div id="paymentJamaahListContainer">
-                <div style="text-align:center; padding:20px; color:#94a3b8;">Memuat data jamaah...</div>
-            </div>
-
-            <!-- Tombol Tambah Pembayaran (FAB) -->
-            <button class="payment-fab" id="paymentFabOpen">
-                <i class="fas fa-plus"></i>
-            </button>
+            <div class="section-title"><i class="fas fa-users" style="margin-right: 5px;"></i> Daftar Tagihan Jamaah</div>
+            <div id="paymentJamaahListContainer"><div style="text-align:center; padding:20px; color:#94a3b8;">Memuat data jamaah...</div></div>
+            <button class="payment-fab" id="paymentFabOpen"><i class="fas fa-plus"></i></button>
         </div>
     </div>
 
-    <!-- Modal Input Pembayaran -->
-    <div class="payment-modal" id="paymentModal">
-        <div class="payment-modal-content">
-            <h3 style="margin-top:0; font-size: 22px;">💸 Input Pembayaran</h3>
-            <div class="payment-form-group">
-                <label>📅 Tanggal</label>
-                <input type="date" id="paymentTanggal" class="payment-form-control">
-            </div>
-            <div class="payment-form-group">
-                <label>👤 Nama Jamaah *</label>
-                <select id="paymentJamaahSelect" class="payment-form-control" required>
-                    <option value="">-- Pilih Jamaah --</option>
-                </select>
-            </div>
-            <div class="payment-form-group">
-                <label>💵 Nominal (Rp)</label>
-                <input type="number" id="paymentNominal" class="payment-form-control" placeholder="Contoh: 5000000">
-            </div>
-            <div class="payment-form-group">
-                <label>🏦 Metode</label>
-                <select id="paymentMetode" class="payment-form-control">
-                    <option value="Transfer">Transfer Bank</option>
-                    <option value="Cash">Cash Tunai</option>
-                    <option value="QRIS">QRIS</option>
-                </select>
-            </div>
-            <div class="payment-form-group">
-                <label>📝 Keterangan</label>
-                <input type="text" id="paymentKeterangan" class="payment-form-control" placeholder="DP / Cicilan 1 / Pelunasan">
-            </div>
-            <div class="payment-modal-actions">
-                <button class="payment-btn-cancel" onclick="closePaymentModal()">Batal</button>
-                <button class="payment-btn-save" onclick="simpanPembayaran()">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Konfirmasi Invoice WA -->
-    <div class="payment-modal" id="invoiceConfirmModal">
-        <div class="payment-modal-content">
-            <h3 style="margin-top:0; color: var(--primary);">📱 Konfirmasi Kirim Invoice</h3>
-            <p>Akan dikirim ke nomor WhatsApp:</p>
-            <p id="invoiceWANumber" style="font-weight:bold; font-size:18px; background:#f0f0f0; padding:10px; border-radius:10px;"></p>
-            <p id="invoiceWAName" style="color:#666;"></p>
-            <div class="payment-modal-actions" style="margin-top:20px;">
-                <button class="payment-btn-cancel" onclick="closeInvoiceConfirmModal()">Batal</button>
-                <button class="payment-btn-save" onclick="sendInvoiceWA()" style="background:var(--wa);">Kirim via WA</button>
-                <button class="payment-btn-save" onclick="copyInvoiceText()" style="background:var(--orange);">Salin Teks</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Edit Harga -->
-    <div class="payment-modal" id="editHargaModal">
-        <div class="payment-modal-content">
-            <h3 style="margin-top:0; color: var(--primary);">✏️ Edit Harga Paket</h3>
-            <p id="editHargaNama" style="font-weight:bold;"></p>
-            <div class="payment-form-group">
-                <label>💰 Total Harga Paket (Rp)</label>
-                <input type="number" id="editHargaValue" class="payment-form-control" placeholder="Contoh: 35000000">
-            </div>
-            <div class="payment-modal-actions">
-                <button class="payment-btn-cancel" onclick="closeEditHargaModal()">Batal</button>
-                <button class="payment-btn-save" onclick="saveEditHarga()">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Detail Transaksi & Riwayat -->
-    <div class="payment-modal" id="riwayatModal">
-        <div class="payment-modal-content">
-            <h3 style="margin-top:0; color: var(--primary);">📋 Riwayat Pembayaran</h3>
-            <p id="riwayatNama" style="font-weight:bold;"></p>
-            <div id="riwayatListContainer" style="max-height:400px; overflow-y:auto;"></div>
-            <div class="payment-modal-actions">
-                <button class="payment-btn-cancel" onclick="closeRiwayatModal()">Tutup</button>
-                <button class="payment-btn-save" onclick="printRiwayatPDF()" style="background:var(--purple);"><i class="fas fa-file-pdf"></i> Cetak PDF</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- MULTI EVENT PAGE -->
     <div id="page-datamaster" class="page">
-        <div class="page-header">
-            <button class="back-btn" onclick="showPage('home')">←</button>
-            <h2 id="masterJudulHeader">Multi Event</h2>
-            <button class="back-btn" onclick="openMasterSetting()" style="font-size:1rem;">⚙️</button>
-        </div>
+        <div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2 id="masterJudulHeader">Multi Event</h2><button class="back-btn" onclick="openMasterSetting()" style="font-size:1rem;">⚙️</button></div>
         <div class="card">
             <div id="masterAdminPanel" style="display:none; background:#f0f7f4; padding:12px; border-radius:12px; margin-bottom:15px;">
                 <div class="input-group"><label>📝 Judul Halaman / Laporan</label><input type="text" id="masterJudul" placeholder="Contoh: BADAL HAJI 2026 atau DATA SISWA 2026"></div>
-                <div class="row">
-                    <button class="btn btn-small btn-blue" onclick="openMasterFieldModal()" style="flex:1">➕ Kelola Field Dinamis</button>
-                    <button class="btn btn-small btn-teal" onclick="openMasterPerlengkapanModal()" style="flex:1">☑️ Kelola Perlengkapan</button>
-                </div>
-                <div class="row" style="margin-top:10px;">
-                    <button class="btn btn-small btn-purple" onclick="copyFromJamaah()" style="flex:1">📋 Copy dari database</button>
-                    <button class="btn btn-small" onclick="openModeManager()" style="flex:1; background:#9b59b6;"><i class="fas fa-sliders-h"></i> ⚙️ Kelola Mode</button>
-                </div>
-                <div class="row" style="margin-top:10px;">
-                    <button class="btn btn-small btn-delete-mass" onclick="confirmDeleteAllMasterData()" style="flex:1"><i class="fas fa-trash-alt"></i> 🗑️ HAPUS SEMUA</button>
-                    <button class="btn btn-small btn-delete-selected" onclick="deleteSelectedMasterData()" style="flex:1"><i class="fas fa-trash-alt"></i> 🗑️ HAPUS TERPILIH</button>
-                </div>
+                <div class="row"><button class="btn btn-small btn-blue" onclick="openMasterFieldModal()" style="flex:1">➕ Kelola Field Dinamis</button><button class="btn btn-small btn-teal" onclick="openMasterPerlengkapanModal()" style="flex:1">☑️ Kelola Perlengkapan</button></div>
+                <div class="row" style="margin-top:10px;"><button class="btn btn-small btn-purple" onclick="copyFromJamaah()" style="flex:1">📋 Copy dari database</button><button class="btn btn-small" onclick="openModeManager()" style="flex:1; background:#9b59b6;"><i class="fas fa-sliders-h"></i> ⚙️ Kelola Mode</button></div>
+                <div class="row" style="margin-top:10px;"><button class="btn btn-small btn-delete-mass" onclick="confirmDeleteAllMasterData()" style="flex:1"><i class="fas fa-trash-alt"></i> 🗑️ HAPUS SEMUA</button><button class="btn btn-small btn-delete-selected" onclick="deleteSelectedMasterData()" style="flex:1"><i class="fas fa-trash-alt"></i> 🗑️ HAPUS TERPILIH</button></div>
             </div>
             <div id="modeSwitcherContainer"></div>
             <div class="section-title" id="masterFormTitle">TAMBAH DATA</div>
             <div id="masterFormContainer"></div>
             <button class="btn" onclick="saveMasterData()" style="background:var(--accent); margin-top:5px;"><i class="fas fa-save"></i> SIMPAN DATA</button>
-            <div class="action-buttons" style="margin-top:15px;">
-                <button class="btn btn-small btn-purple" onclick="exportMasterPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
-                <button class="btn btn-small" onclick="exportMasterExcel()" style="background:#27ae60;"><i class="fas fa-file-excel"></i> EXCEL</button>
-                <button class="btn btn-small btn-wa" onclick="shareAllMasterToWA()"><i class="fab fa-whatsapp"></i> SHARE ALL</button>
-            </div>
-            <div class="master-grid-container">
-                <table class="master-grid-table" id="masterTable">
-                    <thead id="masterTableHead"></thead>
-                    <tbody id="masterTableBody"></tbody>
-                </table>
-            </div>
+            <div class="action-buttons" style="margin-top:15px;"><button class="btn btn-small btn-purple" onclick="exportMasterPDF()"><i class="fas fa-file-pdf"></i> PDF</button><button class="btn btn-small" onclick="exportMasterExcel()" style="background:#27ae60;"><i class="fas fa-file-excel"></i> EXCEL</button><button class="btn btn-small btn-wa" onclick="shareAllMasterToWA()"><i class="fab fa-whatsapp"></i> SHARE ALL</button></div>
+            <div class="master-grid-container"><table class="master-grid-table" id="masterTable"><thead id="masterTableHead"></thead><tbody id="masterTableBody"></tbody></table></div>
             <div class="section-title" style="margin-top:20px;">Backup & Restore</div>
-            <div class="row"><button class="btn btn-blue btn-small" onclick="backupMasterData()" style="flex:1"><i class="fas fa-download"></i> BACKUP</button>
-            <button class="btn btn-orange btn-small" onclick="document.getElementById('restoreMasterFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE</button></div>
+            <div class="row"><button class="btn btn-blue btn-small" onclick="backupMasterData()" style="flex:1"><i class="fas fa-download"></i> BACKUP</button><button class="btn btn-orange btn-small" onclick="document.getElementById('restoreMasterFile').click()" style="flex:1"><i class="fas fa-upload"></i> RESTORE</button></div>
             <input type="file" id="restoreMasterFile" accept=".json" style="display:none" onchange="restoreMasterData(this)">
         </div>
     </div>
 
-    <div id="batchFloatingBar" class="batch-floating-bar">
-        <span id="batchCount" class="batch-count">0 dipilih</span>
-        <button class="btn-batch-wa" onclick="runBatchWA()"><i class="fab fa-whatsapp"></i> Kirim WA Massal</button>
-        <button class="btn-batch-cancel" onclick="clearBatchSelection()">✖</button>
+    <!-- ==================== HALAMAN KONFIGURASI BARU (MENU KE-9) ==================== -->
+    <div id="page-konfigurasi" class="page">
+        <div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>⚙️ Konfigurasi Pro</h2><div style="width:40px;"></div></div>
+        <div class="card">
+            <!-- Data Instansi Utama -->
+            <div class="config-section">
+                <h3><i class="fas fa-building"></i> Data Instansi Utama</h3>
+                <div class="config-row"><label>Logo Instansi</label><input type="file" id="cfg_logo1" accept="image/*" onchange="previewLogo(this, 'previewLogo1')"><img id="previewLogo1" class="logo-preview"></div>
+                <div class="config-row"><label>Nama Instansi</label><input type="text" id="cfg_nama1" placeholder="PT AUVA EQTENA NAHDHA"></div>
+                <div class="config-row"><label>Alamat Lengkap</label><textarea id="cfg_alamat1" rows="2" placeholder="Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya"></textarea></div>
+                <div class="row"><div class="config-row"><label>Telepon</label><input type="text" id="cfg_telp1"></div><div class="config-row"><label>Email</label><input type="email" id="cfg_email1"></div></div>
+                <div class="row"><div class="config-row"><label>NPWP</label><input type="text" id="cfg_npwp1"></div><div class="config-row"><label>Website</label><input type="text" id="cfg_web1"></div></div>
+                <div class="row"><div class="config-row"><label>Pimpinan</label><input type="text" id="cfg_pimpinan1"></div><div class="config-row"><label>Jabatan</label><input type="text" id="cfg_jabatan1"></div></div>
+            </div>
+
+            <!-- Data Instansi Kedua (opsional) -->
+            <div class="config-section">
+                <h3><i class="fas fa-mosque"></i> Data Instansi Kedua</h3>
+                <div class="config-row" style="display:flex; justify-content:space-between; align-items:center;"><label>Aktifkan Instansi Kedua</label><label class="switch"><input type="checkbox" id="cfg_instansi2_aktif"><span class="slider"></span></label></div>
+                <div class="config-row"><label>Logo</label><input type="file" id="cfg_logo2" accept="image/*" onchange="previewLogo(this, 'previewLogo2')"><img id="previewLogo2" class="logo-preview"></div>
+                <div class="config-row"><label>Nama Instansi</label><input type="text" id="cfg_nama2" placeholder="KBIH Amanatul Ummah"></div>
+                <div class="config-row"><label>Alamat</label><textarea id="cfg_alamat2" rows="2"></textarea></div>
+                <div class="row"><div class="config-row"><label>Telepon</label><input type="text" id="cfg_telp2"></div><div class="config-row"><label>Email</label><input type="email" id="cfg_email2"></div></div>
+                <div class="row"><div class="config-row"><label>No. Izin</label><input type="text" id="cfg_izin2"></div><div class="config-row"><label>Pimpinan</label><input type="text" id="cfg_pimpinan2"></div></div>
+                <div class="config-row"><label>Jabatan</label><input type="text" id="cfg_jabatan2"></div>
+            </div>
+
+            <!-- Watermark -->
+            <div class="config-section">
+                <h3><i class="fas fa-watermark"></i> Watermark</h3>
+                <div class="config-row" style="display:flex; justify-content:space-between; align-items:center;"><label>Aktifkan Watermark</label><label class="switch"><input type="checkbox" id="cfg_watermark_enabled" checked><span class="slider"></span></label></div>
+                <div class="config-row"><label>Teks Watermark</label><input type="text" id="cfg_watermark_text" value="DOKUMEN RESMI"></div>
+                <div class="config-row"><label>Opacity</label><div class="opacity-slider"><input type="range" id="cfg_watermark_opacity" min="0.05" max="0.4" step="0.05" value="0.15"><span id="opacityValue">0.15</span></div></div>
+                <div class="row"><div class="config-row"><label>Ukuran Font</label><select id="cfg_watermark_fontsize"><option value="40">Kecil (40)</option><option value="60" selected>Sedang (60)</option><option value="80">Besar (80)</option></select></div>
+                <div class="config-row"><label>Posisi</label><select id="cfg_watermark_position"><option value="diagonal" selected>Diagonal</option><option value="center">Tengah</option><option value="tile">Ulangi (Tile)</option></select></div></div>
+                <div class="preview-btn" onclick="previewWatermark()"><i class="fas fa-eye"></i> Preview Watermark</div>
+            </div>
+
+            <!-- QR Code -->
+            <div class="config-section">
+                <h3><i class="fas fa-qrcode"></i> QR Code</h3>
+                <div class="config-row" style="display:flex; justify-content:space-between; align-items:center;"><label>Aktifkan QR Code</label><label class="switch"><input type="checkbox" id="cfg_qr_enabled" checked><span class="slider"></span></label></div>
+                <div class="config-row"><label>Teks QR</label><textarea id="cfg_qr_text" rows="2" placeholder="Dokumen Resmi - Divalidasi oleh Sistem Auva"></textarea></div>
+                <div class="config-row"><label>Ukuran QR</label><select id="cfg_qr_size"><option value="60">Kecil (60px)</option><option value="80" selected>Sedang (80px)</option><option value="100">Besar (100px)</option></select></div>
+                <div id="qrPreviewContainer" class="qr-preview hidden"><canvas id="qrPreviewCanvas" width="100" height="100"></canvas></div>
+                <div class="preview-btn" onclick="generateQRPreview()"><i class="fas fa-qrcode"></i> Generate QR Preview</div>
+            </div>
+
+            <!-- Pengaturan Laporan -->
+            <div class="config-section">
+                <h3><i class="fas fa-file-pdf"></i> Pengaturan Laporan</h3>
+                <div class="row"><div class="config-row"><label>Header PDF</label><select id="cfg_header_mode"><option value="both">Keduanya</option><option value="instansi1">Instansi 1 saja</option><option value="instansi2">Instansi 2 saja</option></select></div>
+                <div class="config-row"><label>Tanda Tangan</label><select id="cfg_ttd_mode"><option value="both">Dua Pihak</option><option value="single">Satu Pihak</option></select></div></div>
+                <div class="config-row"><label>Prefix Invoice / No. Dokumen</label><input type="text" id="cfg_invoice_prefix" value="INV/AUVA"></div>
+            </div>
+
+            <!-- Template WA -->
+            <div class="config-section">
+                <h3><i class="fab fa-whatsapp"></i> Template WhatsApp</h3>
+                <div class="config-row"><label>Template Tagihan Cicilan</label><textarea id="cfg_wa_cicilan" rows="3"></textarea><div class="template-variables">Variabel: <code>[nama]</code> <code>[sisa]</code> <code>[tanggal]</code> <code>[nominal]</code></div></div>
+                <div class="config-row"><label>Template Titipan</label><textarea id="cfg_wa_titipan" rows="3"></textarea><div class="template-variables">Variabel: <code>[penerima]</code> <code>[penitip]</code> <code>[nominal]</code> <code>[tanggal]</code> <code>[keterangan]</code></div></div>
+                <div class="config-row"><label>Template Laporan Kas</label><textarea id="cfg_wa_laporan" rows="3"></textarea><div class="template-variables">Variabel: <code>[saldo]</code> <code>[masuk]</code> <code>[keluar]</code></div></div>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="row" style="margin-top:20px;">
+                <button class="btn btn-primary" onclick="saveKonfigurasiPro()" style="flex:2;"><i class="fas fa-save"></i> SIMPAN KONFIGURASI</button>
+                <button class="btn btn-danger" onclick="resetKonfigurasiPro()" style="flex:1;"><i class="fas fa-undo-alt"></i> Reset</button>
+            </div>
+            <div class="row" style="margin-top:10px;">
+                <button class="btn btn-blue" onclick="exportKonfigurasiPro()" style="flex:1;"><i class="fas fa-download"></i> Export</button>
+                <button class="btn btn-orange" onclick="document.getElementById('importConfigFile').click()" style="flex:1;"><i class="fas fa-upload"></i> Import</button>
+            </div>
+            <input type="file" id="importConfigFile" accept=".json" style="display:none" onchange="importKonfigurasiPro(this)">
+        </div>
     </div>
 
-    <div id="masterFieldModal" class="modal"><div class="modal-content"><h3>Kelola Field Dinamis</h3>
-        <div class="dynamic-field"><label>Nama Field</label><input type="text" id="masterNewFieldName" placeholder="contoh: alamat, no_hp"></div>
-        <div class="dynamic-field"><label>Label Field</label><input type="text" id="masterNewFieldLabel" placeholder="Contoh: Alamat, No HP"></div>
-        <div class="dynamic-field"><label>Tipe</label><select id="masterNewFieldType"><option value="text">Text</option><option value="date">Tanggal</option><option value="tel">Telepon</option><option value="textarea">Text Area</option></select></div>
-        <button class="btn-submit" onclick="addMasterDynamicField()">➕ TAMBAH FIELD</button>
-        <div id="masterFieldsList" style="margin-top:15px;"></div>
-        <button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeMasterFieldModal()">TUTUP</button>
-    </div></div>
-
-    <div id="masterPerlengkapanModal" class="modal"><div class="modal-content"><h3>Kelola Daftar Perlengkapan</h3>
-        <div class="row"><div class="input-group"><label>Nama Perlengkapan</label><input type="text" id="masterNewPerlengkapan" placeholder="Contoh: Kain Ihram"></div>
-        <button class="btn-small" onclick="addMasterPerlengkapan()" style="background:var(--primary); color:white; padding:0 15px;">+ Tambah</button></div>
-        <div id="masterPerlengkapanList" style="margin-top:15px;"></div>
-        <button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeMasterPerlengkapanModal()">TUTUP</button>
-    </div></div>
-
-    <div id="copyModal" class="modal"><div class="modal-content"><h3>📋 Copy dari database</h3>
-        <div class="dynamic-field"><label>Pilih Kategori</label>
-            <select id="copyCategory">
-                <option value="Haji">🕋 Haji</option>
-                <option value="Toko">🛒 Toko</option>
-                <option value="Sekolah">🎓 Sekolah</option>
-                <option value="Umroh">🕋 Umroh</option>
-                <option value="Donasi">💰 Donasi</option>
-            </select>
-        </div>
-        <p style="font-size:12px; color:#666; margin:10px 0;">⚠️ Data yang sudah ada di Multi Event tidak akan dihapus. Data baru akan ditambahkan.</p>
-        <div class="row">
-            <button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeCopyModal()">BATAL</button>
-            <button class="btn" style="background:var(--primary); margin-top:10px;" onclick="executeCopyFromJamaah()">COPY SEKARANG</button>
-        </div>
-    </div></div>
-
-    <div id="modeManagerModal" class="modal"><div class="modal-content"><h3><i class="fas fa-sliders-h"></i> Kelola Mode Switcher</h3>
-        <p style="font-size:12px; color:#666; margin-bottom:15px;">Centang mode yang ingin ditampilkan. Hapus centang untuk menyembunyikan.</p>
-        <div id="modeManagerList" style="margin-bottom:20px;"></div>
-        <div class="row">
-            <div class="input-group" style="flex:3"><input type="text" id="newModeName" placeholder="Nama mode baru (contoh: Wisata)"></div>
-            <button class="btn-small" onclick="addNewMode()" style="background:var(--primary); color:white; padding:0 15px; margin-top:0;">+ TAMBAH</button>
-        </div>
-        <div class="row" style="margin-top:15px;">
-            <button class="btn" style="background:var(--red);" onclick="closeModeManager()">BATAL</button>
-            <button class="btn" style="background:var(--primary);" onclick="saveModes()">💾 SIMPAN PERUBAHAN</button>
-        </div>
-    </div></div>
-
+    <!-- SETTING PAGE (asli) -->
     <div id="page-setting" class="page"><div class="page-header"><button class="back-btn" onclick="showPage('home')">←</button><h2>Pengaturan</h2><div style="width:40px;"></div></div><div class="container" style="padding:15px; max-width:500px; margin:0 auto;"><div class="setting-box"><div class="setting-row"><span>🔧 Mode Admin (Edit Konten & Menu)</span><label class="switch"><input type="checkbox" id="adminMode" onchange="toggleAdminMode()"><span class="slider"></span></label></div></div><div class="setting-box"><h4 style="margin-bottom:10px">🎨 Warna Tema</h4><div class="color-options" id="colorOptions"></div></div><div class="setting-box"><h4 style="margin-bottom:10px">📋 Atur Tampilan Menu</h4><div id="menuSettingsContainer"></div></div><button class="btn btn-danger" onclick="confirmResetAllData()">🔄 RESET SEMUA DATA</button></div></div>
 
+    <!-- MODALS -->
     <div id="jamaahModal" class="modal"><div class="modal-content"><h3 id="jamaahModalTitle">Tambah database</h3><div id="jamaahFormContainer"></div><button class="btn-submit" onclick="saveJamaah()">💾 SIMPAN</button><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeJamaahModal()">BATAL</button></div></div>
     <div id="fieldModal" class="modal"><div class="modal-content"><h3>Tambah Field Dinamis</h3><div class="dynamic-field"><label>Nama Field <span class="required-star">*</span></label><input type="text" id="newFieldName" placeholder="Contoh: tanggal_lahir, pekerjaan, no_hp"><div class="error-message" id="fieldNameError">Hanya huruf kecil, angka, dan underscore (_)</div></div><div class="dynamic-field"><label>Label Field <span class="required-star">*</span></label><input type="text" id="newFieldLabel" placeholder="Contoh: Tanggal Lahir, Pekerjaan, No HP"></div><div class="dynamic-field"><label>Tipe Field</label><select id="newFieldType"><option value="text">Text</option><option value="date">Tanggal</option><option value="tel">Telepon</option><option value="textarea">Text Area</option></select></div><button class="btn-submit" onclick="addDynamicFieldJamaah()">➕ TAMBAH FIELD</button><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeFieldModal()">BATAL</button></div></div>
     <div id="manageFieldsModal" class="modal"><div class="modal-content"><h3>Kelola Field Dinamis</h3><button class="btn-admin" style="background:var(--primary); color:white; margin-bottom:15px;" onclick="closeManageFieldsModal(); openFieldModal();">+ Tambah Field Baru</button><div id="fieldsListContainer"></div><button class="btn" style="background:var(--primary); margin-top:15px;" onclick="closeManageFieldsModal()">TUTUP</button></div></div>
@@ -679,7 +463,20 @@
     <div id="entryModal" class="modal"><div class="modal-content"><h3 id="entryModalTitle">Tambah Catatan</h3><input type="text" id="entryJudul" placeholder="Judul" style="margin-bottom:10px;"><textarea id="entryIsi" rows="10" placeholder="Isi..."></textarea><button class="btn-submit" onclick="saveCatatanEntry()">💾 SIMPAN</button><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeEntryModal()">BATAL</button></div></div>
     <div id="detailModal" class="modal"><div class="modal-content"><h3 id="detailJudul"></h3><div id="detailIsi" style="margin:15px 0; white-space:pre-wrap;"></div><button class="btn btn-wa" onclick="shareDetailToWA()">💬 KIRIM KE WA</button><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeDetailModal()">TUTUP</button></div></div>
 
+    <!-- Payment Modals -->
+    <div class="payment-modal" id="paymentModal"><div class="payment-modal-content"><h3 style="margin-top:0; font-size: 22px;">💸 Input Pembayaran</h3><div class="payment-form-group"><label>📅 Tanggal</label><input type="date" id="paymentTanggal" class="payment-form-control"></div><div class="payment-form-group"><label>👤 Nama Jamaah *</label><select id="paymentJamaahSelect" class="payment-form-control"><option value="">-- Pilih Jamaah --</option></select></div><div class="payment-form-group"><label>💵 Nominal (Rp)</label><input type="number" id="paymentNominal" class="payment-form-control" placeholder="Contoh: 5000000"></div><div class="payment-form-group"><label>🏦 Metode</label><select id="paymentMetode" class="payment-form-control"><option value="Transfer">Transfer Bank</option><option value="Cash">Cash Tunai</option><option value="QRIS">QRIS</option></select></div><div class="payment-form-group"><label>📝 Keterangan</label><input type="text" id="paymentKeterangan" class="payment-form-control" placeholder="DP / Cicilan 1 / Pelunasan"></div><div class="payment-modal-actions"><button class="payment-btn-cancel" onclick="closePaymentModal()">Batal</button><button class="payment-btn-save" onclick="simpanPembayaran()">Simpan</button></div></div></div>
+    <div class="payment-modal" id="invoiceConfirmModal"><div class="payment-modal-content"><h3 style="margin-top:0; color: var(--primary);">📱 Konfirmasi Kirim Invoice</h3><p>Akan dikirim ke nomor WhatsApp:</p><p id="invoiceWANumber" style="font-weight:bold; font-size:18px; background:#f0f0f0; padding:10px; border-radius:10px;"></p><p id="invoiceWAName" style="color:#666;"></p><div class="payment-modal-actions" style="margin-top:20px;"><button class="payment-btn-cancel" onclick="closeInvoiceConfirmModal()">Batal</button><button class="payment-btn-save" onclick="sendInvoiceWA()" style="background:var(--wa);">Kirim via WA</button><button class="payment-btn-save" onclick="copyInvoiceText()" style="background:var(--orange);">Salin Teks</button></div></div></div>
+    <div class="payment-modal" id="editHargaModal"><div class="payment-modal-content"><h3 style="margin-top:0; color: var(--primary);">✏️ Edit Harga Paket</h3><p id="editHargaNama" style="font-weight:bold;"></p><div class="payment-form-group"><label>💰 Total Harga Paket (Rp)</label><input type="number" id="editHargaValue" class="payment-form-control" placeholder="Contoh: 35000000"></div><div class="payment-modal-actions"><button class="payment-btn-cancel" onclick="closeEditHargaModal()">Batal</button><button class="payment-btn-save" onclick="saveEditHarga()">Simpan</button></div></div></div>
+    <div class="payment-modal" id="riwayatModal"><div class="payment-modal-content"><h3 style="margin-top:0; color: var(--primary);">📋 Riwayat Pembayaran</h3><p id="riwayatNama" style="font-weight:bold;"></p><div id="riwayatListContainer" style="max-height:400px; overflow-y:auto;"></div><div class="payment-modal-actions"><button class="payment-btn-cancel" onclick="closeRiwayatModal()">Tutup</button><button class="payment-btn-save" onclick="printRiwayatPDF()" style="background:var(--purple);"><i class="fas fa-file-pdf"></i> Cetak PDF</button></div></div></div>
+
+    <div id="masterFieldModal" class="modal"><div class="modal-content"><h3>Kelola Field Dinamis</h3><div class="dynamic-field"><label>Nama Field</label><input type="text" id="masterNewFieldName" placeholder="contoh: alamat, no_hp"></div><div class="dynamic-field"><label>Label Field</label><input type="text" id="masterNewFieldLabel" placeholder="Contoh: Alamat, No HP"></div><div class="dynamic-field"><label>Tipe</label><select id="masterNewFieldType"><option value="text">Text</option><option value="date">Tanggal</option><option value="tel">Telepon</option><option value="textarea">Text Area</option></select></div><button class="btn-submit" onclick="addMasterDynamicField()">➕ TAMBAH FIELD</button><div id="masterFieldsList" style="margin-top:15px;"></div><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeMasterFieldModal()">TUTUP</button></div></div>
+    <div id="masterPerlengkapanModal" class="modal"><div class="modal-content"><h3>Kelola Daftar Perlengkapan</h3><div class="row"><div class="input-group"><label>Nama Perlengkapan</label><input type="text" id="masterNewPerlengkapan" placeholder="Contoh: Kain Ihram"></div><button class="btn-small" onclick="addMasterPerlengkapan()" style="background:var(--primary); color:white; padding:0 15px;">+ Tambah</button></div><div id="masterPerlengkapanList" style="margin-top:15px;"></div><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeMasterPerlengkapanModal()">TUTUP</button></div></div>
+    <div id="copyModal" class="modal"><div class="modal-content"><h3>📋 Copy dari database</h3><div class="dynamic-field"><label>Pilih Kategori</label><select id="copyCategory"><option value="Haji">🕋 Haji</option><option value="Toko">🛒 Toko</option><option value="Sekolah">🎓 Sekolah</option><option value="Umroh">🕋 Umroh</option><option value="Donasi">💰 Donasi</option></select></div><p style="font-size:12px; color:#666; margin:10px 0;">⚠️ Data yang sudah ada di Multi Event tidak akan dihapus. Data baru akan ditambahkan.</p><div class="row"><button class="btn" style="background:var(--red); margin-top:10px;" onclick="closeCopyModal()">BATAL</button><button class="btn" style="background:var(--primary); margin-top:10px;" onclick="executeCopyFromJamaah()">COPY SEKARANG</button></div></div></div>
+    <div id="modeManagerModal" class="modal"><div class="modal-content"><h3><i class="fas fa-sliders-h"></i> Kelola Mode Switcher</h3><p style="font-size:12px; color:#666; margin-bottom:15px;">Centang mode yang ingin ditampilkan. Hapus centang untuk menyembunyikan.</p><div id="modeManagerList" style="margin-bottom:20px;"></div><div class="row"><div class="input-group" style="flex:3"><input type="text" id="newModeName" placeholder="Nama mode baru (contoh: Wisata)"></div><button class="btn-small" onclick="addNewMode()" style="background:var(--primary); color:white; padding:0 15px; margin-top:0;">+ TAMBAH</button></div><div class="row" style="margin-top:15px;"><button class="btn" style="background:var(--red);" onclick="closeModeManager()">BATAL</button><button class="btn" style="background:var(--primary);" onclick="saveModes()">💾 SIMPAN PERUBAHAN</button></div></div></div>
+
     <div class="bottom-nav"><div class="nav-item nav-active" onclick="showPage('home')">🏠<br>Home</div><div class="nav-item" onclick="showPage('estimasi')">📊<br>Estimasi</div><div class="nav-item" onclick="showPage('kas')">💰<br>Kas</div><div class="nav-item" onclick="showPage('jamaah')">👥<br>Jamaah</div><div class="nav-item" onclick="showPage('setting')">⚙️<br>Setting</div></div>
+
+    <div id="batchFloatingBar" class="batch-floating-bar"><span id="batchCount" class="batch-count">0 dipilih</span><button class="btn-batch-wa" onclick="runBatchWA()"><i class="fab fa-whatsapp"></i> Kirim WA Massal</button><button class="btn-batch-cancel" onclick="clearBatchSelection()">✖</button></div>
 
 <script>
 // ==================== SERVICE WORKER ====================
@@ -692,7 +489,7 @@ let confirmCallback = null;
 let isAdminMode = false;
 let deferredPrompt = null;
 
-// Data dari File A
+// Data dari File A (asli)
 let dataKas = [];
 let lastWAText = '';
 let jamaahList = [];
@@ -726,6 +523,221 @@ let currentInvoiceText = '';
 let currentEditJamaahId = null;
 let currentRiwayatJamaahId = null;
 
+// ==================== KONFIGURASI PRO (FITUR BARU) ====================
+let konfigurasiPro = {
+    instansi1: { nama: '', alamat: '', telp: '', email: '', npwp: '', web: '', pimpinan: '', jabatan: '', logo: '' },
+    instansi2: { aktif: false, nama: '', alamat: '', telp: '', email: '', izin: '', pimpinan: '', jabatan: '', logo: '' },
+    watermark: { enabled: true, text: 'DOKUMEN RESMI', opacity: 0.15, fontsize: 60, position: 'diagonal' },
+    qr: { enabled: true, text: 'Dokumen Resmi - Divalidasi oleh Sistem Auva', size: 80 },
+    settings: { header_mode: 'both', ttd_mode: 'both', invoice_prefix: 'INV/AUVA' },
+    wa_template: {
+        cicilan: '📋 *TAGIHAN CICILAN*\nYth. [nama],\nSisa: [sisa]\nJatuh Tempo: [tanggal]\nNominal: [nominal]\nMohon segera dibayar.',
+        titipan: '💼 *TITIPAN*\nYth. [penerima],\nDari: [penitip]\nNominal: [nominal]\nTanggal: [tanggal]\nKeterangan: [keterangan]\nSilakan ambil.',
+        laporan: '🏢 *LAPORAN KAS KANTOR*\n\n💰 Saldo: [saldo]\n📥 Pemasukan: [masuk]\n📤 Pengeluaran: [keluar]\n\nTerima kasih.'
+    }
+};
+
+function loadKonfigurasiPro() {
+    const saved = localStorage.getItem('auva_konfigurasi_pro');
+    if(saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            konfigurasiPro = { ...konfigurasiPro, ...parsed };
+        } catch(e) {}
+    }
+    // Isi form
+    document.getElementById('cfg_nama1').value = konfigurasiPro.instansi1.nama || '';
+    document.getElementById('cfg_alamat1').value = konfigurasiPro.instansi1.alamat || '';
+    document.getElementById('cfg_telp1').value = konfigurasiPro.instansi1.telp || '';
+    document.getElementById('cfg_email1').value = konfigurasiPro.instansi1.email || '';
+    document.getElementById('cfg_npwp1').value = konfigurasiPro.instansi1.npwp || '';
+    document.getElementById('cfg_web1').value = konfigurasiPro.instansi1.web || '';
+    document.getElementById('cfg_pimpinan1').value = konfigurasiPro.instansi1.pimpinan || '';
+    document.getElementById('cfg_jabatan1').value = konfigurasiPro.instansi1.jabatan || '';
+    if(konfigurasiPro.instansi1.logo) document.getElementById('previewLogo1').src = konfigurasiPro.instansi1.logo;
+    
+    document.getElementById('cfg_instansi2_aktif').checked = konfigurasiPro.instansi2.aktif || false;
+    document.getElementById('cfg_nama2').value = konfigurasiPro.instansi2.nama || '';
+    document.getElementById('cfg_alamat2').value = konfigurasiPro.instansi2.alamat || '';
+    document.getElementById('cfg_telp2').value = konfigurasiPro.instansi2.telp || '';
+    document.getElementById('cfg_email2').value = konfigurasiPro.instansi2.email || '';
+    document.getElementById('cfg_izin2').value = konfigurasiPro.instansi2.izin || '';
+    document.getElementById('cfg_pimpinan2').value = konfigurasiPro.instansi2.pimpinan || '';
+    document.getElementById('cfg_jabatan2').value = konfigurasiPro.instansi2.jabatan || '';
+    if(konfigurasiPro.instansi2.logo) document.getElementById('previewLogo2').src = konfigurasiPro.instansi2.logo;
+    
+    document.getElementById('cfg_watermark_enabled').checked = konfigurasiPro.watermark.enabled !== false;
+    document.getElementById('cfg_watermark_text').value = konfigurasiPro.watermark.text || 'DOKUMEN RESMI';
+    document.getElementById('cfg_watermark_opacity').value = konfigurasiPro.watermark.opacity || 0.15;
+    document.getElementById('opacityValue').innerText = (konfigurasiPro.watermark.opacity || 0.15).toFixed(2);
+    document.getElementById('cfg_watermark_fontsize').value = konfigurasiPro.watermark.fontsize || 60;
+    document.getElementById('cfg_watermark_position').value = konfigurasiPro.watermark.position || 'diagonal';
+    
+    document.getElementById('cfg_qr_enabled').checked = konfigurasiPro.qr.enabled !== false;
+    document.getElementById('cfg_qr_text').value = konfigurasiPro.qr.text || 'Dokumen Resmi - Divalidasi oleh Sistem Auva';
+    document.getElementById('cfg_qr_size').value = konfigurasiPro.qr.size || 80;
+    
+    document.getElementById('cfg_header_mode').value = konfigurasiPro.settings.header_mode || 'both';
+    document.getElementById('cfg_ttd_mode').value = konfigurasiPro.settings.ttd_mode || 'both';
+    document.getElementById('cfg_invoice_prefix').value = konfigurasiPro.settings.invoice_prefix || 'INV/AUVA';
+    
+    document.getElementById('cfg_wa_cicilan').value = konfigurasiPro.wa_template.cicilan || '';
+    document.getElementById('cfg_wa_titipan').value = konfigurasiPro.wa_template.titipan || '';
+    document.getElementById('cfg_wa_laporan').value = konfigurasiPro.wa_template.laporan || '';
+}
+
+function saveKonfigurasiPro() {
+    konfigurasiPro.instansi1 = {
+        nama: document.getElementById('cfg_nama1').value,
+        alamat: document.getElementById('cfg_alamat1').value,
+        telp: document.getElementById('cfg_telp1').value,
+        email: document.getElementById('cfg_email1').value,
+        npwp: document.getElementById('cfg_npwp1').value,
+        web: document.getElementById('cfg_web1').value,
+        pimpinan: document.getElementById('cfg_pimpinan1').value,
+        jabatan: document.getElementById('cfg_jabatan1').value,
+        logo: document.getElementById('previewLogo1').src || ''
+    };
+    konfigurasiPro.instansi2 = {
+        aktif: document.getElementById('cfg_instansi2_aktif').checked,
+        nama: document.getElementById('cfg_nama2').value,
+        alamat: document.getElementById('cfg_alamat2').value,
+        telp: document.getElementById('cfg_telp2').value,
+        email: document.getElementById('cfg_email2').value,
+        izin: document.getElementById('cfg_izin2').value,
+        pimpinan: document.getElementById('cfg_pimpinan2').value,
+        jabatan: document.getElementById('cfg_jabatan2').value,
+        logo: document.getElementById('previewLogo2').src || ''
+    };
+    konfigurasiPro.watermark = {
+        enabled: document.getElementById('cfg_watermark_enabled').checked,
+        text: document.getElementById('cfg_watermark_text').value,
+        opacity: parseFloat(document.getElementById('cfg_watermark_opacity').value),
+        fontsize: parseInt(document.getElementById('cfg_watermark_fontsize').value),
+        position: document.getElementById('cfg_watermark_position').value
+    };
+    konfigurasiPro.qr = {
+        enabled: document.getElementById('cfg_qr_enabled').checked,
+        text: document.getElementById('cfg_qr_text').value,
+        size: parseInt(document.getElementById('cfg_qr_size').value)
+    };
+    konfigurasiPro.settings = {
+        header_mode: document.getElementById('cfg_header_mode').value,
+        ttd_mode: document.getElementById('cfg_ttd_mode').value,
+        invoice_prefix: document.getElementById('cfg_invoice_prefix').value
+    };
+    konfigurasiPro.wa_template = {
+        cicilan: document.getElementById('cfg_wa_cicilan').value,
+        titipan: document.getElementById('cfg_wa_titipan').value,
+        laporan: document.getElementById('cfg_wa_laporan').value
+    };
+    localStorage.setItem('auva_konfigurasi_pro', JSON.stringify(konfigurasiPro));
+    showToast('✅ Konfigurasi berhasil disimpan!');
+}
+
+function resetKonfigurasiPro() {
+    showConfirm('Reset semua konfigurasi ke default?', (confirmed) => {
+        if(confirmed) {
+            localStorage.removeItem('auva_konfigurasi_pro');
+            loadKonfigurasiPro();
+            showToast('✅ Konfigurasi direset ke default');
+        }
+    });
+}
+
+function exportKonfigurasiPro() {
+    const blob = new Blob([JSON.stringify(konfigurasiPro, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `auva_konfigurasi_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    showToast('📤 Konfigurasi diexport');
+}
+
+function importKonfigurasiPro(input) {
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const imported = JSON.parse(e.target.result);
+            konfigurasiPro = { ...konfigurasiPro, ...imported };
+            localStorage.setItem('auva_konfigurasi_pro', JSON.stringify(konfigurasiPro));
+            loadKonfigurasiPro();
+            showToast('📥 Konfigurasi diimport!');
+        } catch(err) {
+            showAlert('File tidak valid!');
+        }
+        input.value = '';
+    };
+    reader.readAsText(file);
+}
+
+function previewLogo(input, previewId) {
+    if(input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => document.getElementById(previewId).src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function previewWatermark() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 400;
+    canvas.height = 300;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, 400, 300);
+    ctx.strokeStyle = '#1a5d4a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(2, 2, 396, 296);
+    ctx.save();
+    ctx.globalAlpha = parseFloat(document.getElementById('cfg_watermark_opacity').value);
+    const fontSize = parseInt(document.getElementById('cfg_watermark_fontsize').value);
+    ctx.font = `bold ${fontSize}px "Segoe UI"`;
+    ctx.fillStyle = '#888';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const position = document.getElementById('cfg_watermark_position').value;
+    const text = document.getElementById('cfg_watermark_text').value;
+    if(position === 'diagonal') {
+        ctx.translate(200, 150);
+        ctx.rotate(-45 * Math.PI / 180);
+        ctx.fillText(text, 0, 0);
+    } else if(position === 'center') {
+        ctx.fillText(text, 200, 150);
+    } else if(position === 'tile') {
+        ctx.font = `bold ${fontSize * 0.6}px "Segoe UI"`;
+        for(let x = 0; x < 400; x += 100) {
+            for(let y = 0; y < 300; y += 60) {
+                ctx.fillText(text, x, y);
+            }
+        }
+    }
+    ctx.restore();
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;';
+    modal.innerHTML = `<div style="background:white; padding:24px; border-radius:24px; max-width:90%;"><h3 style="margin-bottom:16px;">Preview Watermark</h3><img src="${canvas.toDataURL()}" style="max-width:100%; border-radius:12px;"><button onclick="this.closest('div').parentElement.remove()" style="margin-top:20px; padding:12px 24px; background:var(--primary); color:white; border:none; border-radius:40px; width:100%;">Tutup</button></div>`;
+    document.body.appendChild(modal);
+}
+
+async function generateQRPreview() {
+    const text = document.getElementById('cfg_qr_text').value;
+    const size = parseInt(document.getElementById('cfg_qr_size').value);
+    const canvas = document.getElementById('qrPreviewCanvas');
+    canvas.width = size;
+    canvas.height = size;
+    try {
+        await QRCode.toCanvas(canvas, text, { width: size });
+        document.getElementById('qrPreviewContainer').classList.remove('hidden');
+        showToast('✅ QR Code digenerate!');
+    } catch(e) {
+        showToast('❌ Gagal generate QR');
+    }
+}
+
+function getKonfigurasi() { return konfigurasiPro; }
+
 // ==================== FUNGSI UMUM ====================
 function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3000); }
 function showAlert(message) { document.getElementById('alertMessage').innerText = message; document.getElementById('alertModal').classList.add('show'); }
@@ -756,10 +768,11 @@ function showPage(pageId) {
     if(pageId==='zakat') { if(sumberHartaList.length===0) tambahSumberHarta(); renderSumberHartaList(); }
     if(pageId==='datamaster') { loadMasterData(); const panel = document.getElementById('masterAdminPanel'); if(panel) panel.style.display = isAdminMode ? 'block' : 'none'; const judulInput = document.getElementById('masterJudul'); if(judulInput && !judulInput.value) judulInput.value = localStorage.getItem('auva_master_judul') || 'Multi Event'; setTimeout(() => { loadModesFromStorage(); renderDynamicModeSwitcher(); }, 150); }
     if(pageId==='pembayaran') { renderPaymentDashboard(); renderPaymentJamaahList(); populatePaymentJamaahDropdown(); loadPaymentData(); }
+    if(pageId==='konfigurasi') { loadKonfigurasiPro(); }
 }
 function loadKegiatanToInput() { const saved = localStorage.getItem('auva_kegiatan'); if(saved) document.getElementById('kegiatan').value = saved; }
 
-// ==================== MENU GRID (4 KOLOM x 2 BARIS) ====================
+// ==================== MENU GRID (4 KOLOM x 3 BARIS untuk 9 menu) ====================
 const menuItems = [
     { id: 'estimasi', icon: '💰', label: 'Cuan Plan', default: true },
     { id: 'kas', icon: '📊', label: 'Uang Kas', default: true },
@@ -768,7 +781,8 @@ const menuItems = [
     { id: 'catatan', icon: '📝', label: 'Catatan', default: true },
     { id: 'zakat', icon: '📊', label: 'Zakat', default: true },
     { id: 'pembayaran', icon: '💰', label: 'Pembayaran', default: true },
-    { id: 'datamaster', icon: '🔄', label: 'Multi Event', default: true }
+    { id: 'datamaster', icon: '🔄', label: 'Multi Event', default: true },
+    { id: 'konfigurasi', icon: '⚙️', label: 'Konfigurasi', default: true }
 ];
 function renderMenuGrid() {
     const container = document.getElementById('menuGrid');
@@ -908,7 +922,9 @@ function cetakEstimasiPDF() {
     if(!lastCalculatedPrice) { showAlert('Silakan hitung estimasi terlebih dahulu!'); return; }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const cfg = getKonfigurasi();
     const f = n => "Rp " + Math.round(n).toLocaleString('id-ID');
+    // Header
     doc.setFillColor(26,93,74); doc.rect(0,0,210,40,'F');
     doc.setTextColor(255,255,255); doc.setFontSize(18);
     doc.text('RINCIAN HARGA PAKET', 105, 25, { align: 'center' });
@@ -919,7 +935,8 @@ function cetakEstimasiPDF() {
     doc.text(`HARGA PER PAX: ${f(lastCalculatedPrice)}`, 20, 85);
     doc.setFontSize(10); doc.setTextColor(100,100,100);
     doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, 20, 270);
-    doc.text('Generated by Auva Kbihu AU', 105, 280, { align: 'center' });
+    if(cfg.instansi1.nama) doc.text(cfg.instansi1.nama, 105, 280, { align: 'center' });
+    else doc.text('Generated by Auva Kbihu AU', 105, 280, { align: 'center' });
     doc.save(`Estimasi_Harga_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`);
     showToast('PDF berhasil dibuat');
 }
@@ -942,7 +959,7 @@ function renderKasTable() {
             <td style="vertical-align:middle; padding:10px 5px;">${escapeHtml(i.ket)}</td>
             <td class="${i.tipe==='masuk'?'txt-in':'txt-out'}" style="vertical-align:middle; padding:10px 5px;">Rp ${i.nom.toLocaleString('id-ID')}</td>
             <td style="vertical-align:middle; padding:10px 5px;"><button class="btn-del" onclick="confirmHapusTransaksi(${i.id})">🗑️</button></td>
-           </tr>`; 
+        </tr>`; 
     }); 
     const summary = document.getElementById('summaryKas'); 
     if(summary) summary.innerHTML = `<b>Saldo Akhir: Rp ${(masuk-keluar).toLocaleString('id-ID')}</b>`; 
@@ -961,20 +978,24 @@ function exportKasPDFWithSpinner() {
     setTimeout(() => {
         try {
             const { jsPDF } = window.jspdf;
+            const cfg = getKonfigurasi();
             const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
             const judul = document.getElementById('kegiatan').value.trim() || "Laporan Kas";
+            // Header dengan konfigurasi
             doc.setFillColor(26,93,74);
-            doc.rect(0,0,297,35,'F');
+            doc.rect(0,0,297,40,'F');
             doc.setTextColor(255,255,255);
+            doc.setFontSize(14);
+            if(cfg.instansi1.nama) doc.text(cfg.instansi1.nama, 148.5, 18, { align: 'center' });
             doc.setFontSize(16);
-            doc.text(judul + " - LAPORAN KAS", 148.5, 20, { align: 'center' });
+            doc.text(judul + " - LAPORAN KAS", 148.5, 30, { align: 'center' });
             doc.setTextColor(0,0,0);
             doc.setFontSize(9);
-            doc.text(`Tanggal cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 45);
+            doc.text(`Tanggal cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 50);
             let masuk=0, keluar=0;
             dataKas.forEach(i=>{ if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom; });
             const tableData = dataKas.map(i=>[i.tgl, i.kegiatan || '-', i.ket.length > 30 ? i.ket.substring(0,27)+'...' : i.ket, i.tipe==='masuk' ? 'MASUK' : 'KELUAR', `Rp ${i.nom.toLocaleString('id-ID')}`]);
-            doc.autoTable({ startY: 55, head: [['Tgl', 'Kegiatan', 'Keterangan', 'Tipe', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74], textColor: [255,255,255], fontSize: 9 }, styles: { fontSize: 8, cellPadding: 2 }, margin: { left: 10, right: 10 } });
+            doc.autoTable({ startY: 60, head: [['Tgl', 'Kegiatan', 'Keterangan', 'Tipe', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74], textColor: [255,255,255], fontSize: 9 }, styles: { fontSize: 8, cellPadding: 2 }, margin: { left: 10, right: 10 } });
             let finalY = doc.lastAutoTable.finalY + 10;
             doc.setFontSize(10);
             doc.setTextColor(0,0,0);
@@ -1844,6 +1865,7 @@ function initApp() {
     loadPaymentData();
     loadTheme();
     loadEstimasiData();
+    loadKonfigurasiPro();
     const savedAdmin = localStorage.getItem('auva_admin_mode') === 'true';
     document.getElementById('adminMode').checked = savedAdmin;
     if(savedAdmin) toggleAdminMode();
@@ -1886,7 +1908,11 @@ document.addEventListener('input', function(e) {
         localStorage.setItem('auva_master_judul', e.target.value); 
         document.getElementById('masterJudulHeader').innerText = e.target.value || 'Multi Event'; 
     }
+    // Slider opacity live display
+    if(e.target.id === 'cfg_watermark_opacity') {
+        document.getElementById('opacityValue').innerText = parseFloat(e.target.value).toFixed(2);
+    }
 });
 </script>
 </body>
-    </html>
+                                                                                                                                                                             </html>
