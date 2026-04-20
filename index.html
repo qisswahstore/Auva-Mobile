@@ -18,7 +18,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <!-- PERBAIKAN: Menambahkan library html2canvas yang hilang -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -40,15 +39,113 @@
             --gray: #64748B;
             --gray-light: #F1F5F9;
         }
+        
+        /* Dark Mode Variables */
+        body.dark-mode {
+            --bg: #121212;
+            --white: #1E1E2E;
+            --dark: #E2E2E2;
+            --gray: #A0A0A0;
+            --gray-light: #2D2D3D;
+            --card-bg: #2A2A3A;
+        }
+        body.dark-mode .card-premium,
+        body.dark-mode .setting-card,
+        body.dark-mode .stat-mini-card,
+        body.dark-mode .jamaah-card,
+        body.dark-mode .dokumen-card,
+        body.dark-mode .folder-card,
+        body.dark-mode .catatan-card,
+        body.dark-mode .payment-jamaah-card,
+        body.dark-mode .rekap-card,
+        body.dark-mode .fitur-card,
+        body.dark-mode .tiket-card,
+        body.dark-mode .reminder-card,
+        body.dark-mode .modal-content,
+        body.dark-mode .config-section {
+            background: #2A2A3A;
+            color: #E2E2E2;
+            border-color: #3D3D4D;
+        }
+        body.dark-mode .header-premium {
+            background: linear-gradient(135deg, #1a5d4a 0%, #0d3d31 100%);
+        }
+        body.dark-mode input, 
+        body.dark-mode select, 
+        body.dark-mode textarea {
+            background: #3D3D4D;
+            border-color: #4D4D5D;
+            color: #E2E2E2;
+        }
+        body.dark-mode .btn-primary {
+            background: #0D5C4A;
+        }
+        body.dark-mode .menu-card-premium {
+            background: #2A2A3A;
+            border-color: #3D3D4D;
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 80px; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--dark); padding-bottom: 80px; transition: background 0.3s ease, color 0.3s ease; }
         .page { display: none; animation: fadeIn 0.25s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .header-premium { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); padding: 28px 24px 48px 24px; border-radius: 0 0 32px 32px; margin-bottom: -20px; position: relative; overflow: hidden; }
+        
+        /* Header Premium */
+        .header-premium {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 28px 24px 48px 24px;
+            border-radius: 0 0 32px 32px;
+            margin-bottom: -20px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
         .header-premium::before { content: ""; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: rgba(212, 175, 55, 0.08); border-radius: 50%; }
         .header-premium-small { padding: 20px 24px; margin-bottom: 0; }
         .header-premium-small::before { display: none; }
+        
+        /* Header dengan Dark Mode Toggle */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 2;
+        }
+        .dark-mode-toggle {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+            color: white;
+        }
+        .dark-mode-toggle:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+        }
+        .admin-toggle-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.7rem;
+            text-decoration: none;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .admin-toggle-link:hover {
+            background: rgba(255,255,255,0.25);
+            color: white;
+        }
+        
         .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; position: relative; z-index: 2; }
         .logo-icon { font-size: 42px; background: rgba(255,255,255,0.12); width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 20px; backdrop-filter: blur(4px); }
         .logo-text h1 { color: white; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
@@ -56,14 +153,17 @@
         .greeting { position: relative; z-index: 2; }
         .greeting h2 { color: white; font-size: 1rem; font-weight: 500; margin-bottom: 4px; }
         .greeting p { color: rgba(255,255,255,0.6); font-size: 0.7rem; }
+        
         .back-header { display: flex; align-items: center; gap: 12px; position: relative; z-index: 2; }
         .back-header i { color: white; font-size: 20px; cursor: pointer; }
         .back-header h2 { color: white; font-size: 1.2rem; font-weight: 600; flex: 1; }
+        
         .stats-row { display: flex; gap: 12px; padding: 0 20px; margin-top: -20px; margin-bottom: 28px; position: relative; z-index: 3; }
         .stat-mini-card { flex: 1; background: white; padding: 12px 10px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; transition: all 0.2s; }
         .stat-mini-card i { font-size: 18px; color: var(--primary); margin-bottom: 6px; }
         .stat-mini-card .stat-label { font-size: 0.6rem; color: var(--gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
         .stat-mini-card .stat-number { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-top: 4px; }
+        
         .menu-container { padding: 0 16px; }
         .section-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 0 8px; }
         .section-title span { font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -76,19 +176,24 @@
         .menu-badge { font-size: 0.6rem; color: var(--gray); background: var(--gray-light); display: inline-block; padding: 2px 8px; border-radius: 20px; }
         .admin-mode .menu-card-premium { border: 1.5px dashed var(--accent); position: relative; }
         .edit-badge { position: absolute; top: 6px; right: 10px; background: var(--accent); color: white; font-size: 8px; padding: 2px 6px; border-radius: 20px; font-weight: bold; }
+        
         .bottom-nav-premium { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 10px 16px 18px; border-top: 1px solid rgba(13, 92, 74, 0.1); box-shadow: 0 -4px 12px rgba(0,0,0,0.02); z-index: 100; }
+        body.dark-mode .bottom-nav-premium { background: rgba(30,30,46,0.96); border-top-color: rgba(255,255,255,0.05); }
         .nav-item-premium { text-align: center; cursor: pointer; padding: 6px 12px; border-radius: 40px; transition: all 0.2s; }
         .nav-item-premium i { font-size: 20px; color: #94A3B8; display: block; margin-bottom: 4px; }
         .nav-item-premium span { font-size: 0.6rem; color: #94A3B8; font-weight: 500; }
         .nav-item-premium.active { background: rgba(13, 92, 74, 0.08); }
         .nav-item-premium.active i, .nav-item-premium.active span { color: var(--primary); }
-        .card-premium { background: white; border-radius: 24px; padding: 20px; margin: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); }
+        
+        .card-premium { background: white; border-radius: 24px; padding: 20px; margin: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); transition: background 0.3s ease; }
+        
         .input-group { margin-bottom: 16px; }
         label { display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 6px; color: var(--gray); }
         input, select, textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #E2E8F0; border-radius: 16px; font-size: 14px; font-family: inherit; background: white; transition: all 0.2s; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13, 92, 74, 0.1); }
         .row { display: flex; gap: 12px; margin-bottom: 12px; }
         .row > div { flex: 1; }
+        
         .btn { width: 100%; padding: 14px; border: none; border-radius: 40px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); color: white; }
@@ -100,27 +205,132 @@
         .btn-teal { background: var(--teal); color: white; }
         .btn-wa { background: var(--wa); color: white; }
         .btn-small { padding: 10px; font-size: 12px; }
+        
         .res-card { background: var(--primary); color: white; padding: 20px; border-radius: 24px; margin: 16px; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .res-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .highlight { color: var(--accent); font-weight: bold; font-size: 1.2rem; }
+        
         .summary-real { background: var(--primary); color: white; padding: 15px; border-radius: 16px; margin: 15px 0; text-align: center; font-weight: bold; }
+        
         .toast-premium { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--dark); color: white; padding: 10px 20px; border-radius: 40px; font-size: 13px; opacity: 0; transition: all 0.3s; z-index: 1000; white-space: nowrap; }
         .toast-premium.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .setting-card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--gray-light); }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(20px); }
-        .color-options { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
-        .color-opt { width: 44px; height: 44px; border-radius: 16px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .color-opt:hover { transform: scale(1.05); }
+        
+        /* Setting Page Styles - RAPI SEPERTI APLIKASI LAMA */
+        .setting-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: background 0.3s ease;
+        }
+        .setting-card h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+        /* Toggle Switch Premium */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #CBD5E1;
+            transition: 0.25s ease;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.25s ease;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        /* Color Options */
+        .color-options {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .color-opt {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .color-opt:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .color-opt.active {
+            border-color: var(--dark);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        /* Menu Setting Items */
+        .menu-setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        .menu-setting-item:last-child {
+            border-bottom: none;
+        }
+        .menu-setting-item span {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
         .modal.show { display: flex; }
-        .modal-content { background: white; border-radius: 28px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 24px; }
+        .modal-content { background: white; border-radius: 28px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 24px; transition: background 0.3s ease; }
+        
+        /* Other Styles (Jamaah, Payment, etc) */
         .jamaah-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .jamaah-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .jamaah-nama { font-size: 1rem; font-weight: bold; color: var(--primary); }
@@ -131,15 +341,18 @@
         .btn-share-wa { color: var(--wa); }
         .btn-edit-jamaah { color: var(--blue); }
         .btn-delete-jamaah { color: var(--red); }
+        
         .table-container { overflow-x: auto; margin: 16px 0; border-radius: 20px; background: white; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
         th { background: var(--primary); color: white; padding: 12px 10px; text-align: left; }
         td { padding: 12px 10px; border-bottom: 1px solid #F1F5F9; }
+        
         .search-box { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
         .pagination { display: flex; justify-content: center; gap: 8px; margin: 16px 0; flex-wrap: wrap; }
         .pagination button { padding: 8px 12px; border: none; background: var(--primary); color: white; border-radius: 12px; cursor: pointer; }
         .pagination button.active { background: var(--accent); color: var(--primary-dark); }
         .sort-buttons { display: flex; gap: 8px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; }
+        
         .txt-in { color: var(--green); font-weight: bold; }
         .txt-out { color: var(--red); font-weight: bold; }
         .btn-del { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--red); }
@@ -148,14 +361,17 @@
         .btn-danger-small { background: var(--red); color: white; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
         .dynamic-field { margin-bottom: 15px; }
         .error-message { font-size: 11px; color: var(--red); margin-top: 4px; }
+        
         .zakat-sumber-item { background: var(--gray-light); padding: 16px; border-radius: 20px; margin-bottom: 16px; border-left: 4px solid var(--primary); }
         .sumber-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .btn-remove-sumber { background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
+        
         .payment-dashboard-card { background: linear-gradient(145deg, var(--primary), var(--primary-dark)); border-radius: 28px; padding: 20px; margin-bottom: 20px; color: white; }
         .payment-stats-row { display: flex; gap: 12px; margin-top: 12px; }
         .payment-stat-item { flex: 1; background: rgba(255,255,255,0.12); padding: 14px; border-radius: 20px; text-align: center; backdrop-filter: blur(4px); }
         .payment-stat-item h4 { font-size: 11px; opacity: 0.9; margin-bottom: 6px; }
         .payment-stat-item .payment-value { font-size: 1.2rem; font-weight: 800; }
+        
         .rekap-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 20px; border: 1px solid #E2E8F0; }
         .rekap-title { font-size: 14px; font-weight: bold; color: var(--primary); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
         .rekap-dua-kolom { display: flex; gap: 12px; margin-bottom: 16px; }
@@ -167,8 +383,10 @@
         .total-rekap-item { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; }
         .persen-bar { background: #E2E8F0; border-radius: 10px; height: 8px; margin-top: 8px; overflow: hidden; }
         .persen-fill { background: var(--green); height: 100%; border-radius: 10px; width: 0%; transition: width 0.3s ease; }
+        
         .filter-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
         .filter-dropdown { flex: 1; padding: 10px 12px; border: 1px solid #E2E8F0; border-radius: 16px; background: white; }
+        
         .payment-jamaah-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 6px solid; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .payment-jamaah-info h4 { margin: 0 0 6px 0; font-size: 15px; font-weight: 700; }
         .payment-price-detail { font-size: 12px; color: var(--gray); }
@@ -176,15 +394,18 @@
         .payment-btn-bayar { background: rgba(13, 92, 74, 0.1); border: none; color: var(--primary); padding: 8px 14px; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 12px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
         .payment-btn-bayar:hover { background: var(--primary); color: white; }
         .payment-fab { position: fixed; bottom: 90px; right: 20px; background: var(--primary); color: white; width: 56px; height: 56px; border-radius: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: none; cursor: pointer; font-size: 24px; z-index: 99; }
+        
         .mode-switcher-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; flex-wrap: wrap; }
         .mode-btn { padding: 8px 16px; border-radius: 40px; border: 1px solid var(--primary); background: white; color: var(--primary); cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; white-space: nowrap; }
         .mode-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(13, 92, 74, 0.3); }
+        
         .master-grid-container { overflow-x: auto; margin-top: 16px; border-radius: 20px; background: white; }
         .master-grid-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 500px; }
         .master-grid-table th { background: var(--primary); color: white; padding: 12px 10px; text-align: left; font-weight: 600; }
         .master-grid-table td { padding: 12px 10px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
         .master-badge { background: var(--teal); color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; display: inline-block; margin: 2px; }
         .checkbox-col { width: 40px; text-align: center; }
+        
         .custom-checkbox-group { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
         .custom-checkbox { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; }
         .custom-checkbox input { position: absolute; opacity: 0; width: 0; height: 0; }
@@ -192,7 +413,8 @@
         .custom-checkbox input:checked + .checkmark { background: var(--primary); border-color: var(--primary); }
         .custom-checkbox input:checked + .checkmark:after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 14px; font-weight: bold; }
         .custom-checkbox:hover .checkmark { border-color: var(--primary); }
-        .config-section { background: white; border-radius: 24px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
+        
+        .config-section { background: white; border-radius: 24px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary); transition: background 0.3s ease; }
         .config-section h3 { color: var(--primary); margin-bottom: 15px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
         .config-row { margin-bottom: 15px; }
         .config-row label { font-weight: 600; margin-bottom: 6px; display: block; color: var(--dark); font-size: 0.75rem; }
@@ -204,17 +426,20 @@
         .preview-btn { background: var(--gray-light); border: 1px solid #E2E8F0; padding: 10px; border-radius: 16px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 600; color: var(--primary); text-align: center; }
         .template-variables { font-size: 11px; color: var(--gray); margin-top: 5px; }
         .template-variables code { background: var(--gray-light); padding: 2px 6px; border-radius: 6px; margin: 0 3px; }
+        
         .catatan-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .catatan-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .catatan-judul { font-size: 1rem; font-weight: bold; color: var(--primary); }
         .catatan-tgl { font-size: 0.7rem; color: var(--gray); }
         .catatan-isi { font-size: 0.8rem; color: var(--dark); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--gray-light); white-space: pre-wrap; }
         .catatan-actions button { background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 5px; border-radius: 6px; }
+        
         .text-center { text-align: center; }
         .mt-2 { margin-top: 8px; }
         .mb-2 { margin-bottom: 8px; }
+        
         /* Upload Dokumen Styles */
-        .dokumen-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
+        .dokumen-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--primary); transition: background 0.3s ease; }
         .dokumen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
         .dokumen-jamaah { font-weight: bold; font-size: 1rem; color: var(--primary); }
         .dokumen-status-badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; }
@@ -229,29 +454,30 @@
         .btn-upload-doc { background: none; border: none; color: var(--primary); font-size: 16px; cursor: pointer; margin-top: 6px; }
         .btn-preview-doc { background: none; border: none; color: var(--blue); font-size: 14px; cursor: pointer; margin-top: 6px; margin-right: 6px; }
         .btn-delete-doc { background: none; border: none; color: var(--red); font-size: 14px; cursor: pointer; margin-top: 6px; margin-left: 4px; }
+        
         .fitur-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 16px; }
         .fitur-card { background: white; border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; border: 1px solid rgba(13,92,74,0.1); transition: all 0.2s; }
         .fitur-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
         .fitur-icon { font-size: 40px; margin-bottom: 10px; }
         .fitur-title { font-weight: 700; font-size: 0.9rem; color: var(--primary); margin-bottom: 6px; }
         .fitur-desc { font-size: 0.7rem; color: var(--gray); }
-        /* Folder Virtual Styles */
+        
         .folder-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--accent); cursor: pointer; transition: all 0.2s; }
         .folder-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .folder-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .folder-name { font-weight: bold; font-size: 1rem; color: var(--primary); }
         .folder-stats { font-size: 0.7rem; color: var(--gray); }
         .folder-actions button { background: none; border: none; font-size: 1rem; cursor: pointer; padding: 5px; margin-left: 5px; }
-        /* Label / Sticker Styles */
+        
         .label-preview { background: white; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; border: 1px dashed var(--primary); }
         .label-name { font-size: 18px; font-weight: bold; color: var(--primary); text-transform: uppercase; }
         .label-detail { font-size: 12px; color: var(--gray); margin-top: 8px; }
-        /* E-Tiket Styles */
+        
         .tiket-card { background: linear-gradient(135deg, white, #F8FAFC); border-radius: 24px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--primary); position: relative; overflow: hidden; }
         .tiket-header { border-bottom: 2px dashed var(--gray-light); padding-bottom: 12px; margin-bottom: 12px; }
         .tiket-title { font-weight: bold; font-size: 18px; color: var(--primary); }
         .tiket-qr { text-align: center; margin: 15px 0; }
-        /* Reminder WA Styles */
+        
         .reminder-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; }
         .reminder-jamaah { font-weight: bold; margin-bottom: 8px; }
     </style>
@@ -261,11 +487,17 @@
 <div id="toastPremium" class="toast-premium"></div>
 <div id="splashScreen" style="position:fixed; inset:0; background:linear-gradient(135deg, var(--primary) 0%, #0a3d31 100%); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition:opacity 0.5s ease;"><div style="width:120px; height:120px; background:white; border-radius:30px; display:flex; align-items:center; justify-content:center; margin-bottom:30px; animation:pulse 2s infinite;"><div style="font-size:70px;">🕋</div></div><div style="color:white; font-size:28px; font-weight:bold;">Auva</div><div style="color:rgba(255,255,255,0.8); font-size:14px;">Kbihu AU - Mobile</div><div style="width:200px; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; margin-top:40px; overflow:hidden;"><div style="height:100%; width:100%; background:var(--accent); border-radius:2px;"></div></div></div>
 
-<!-- ==================== SEMUA HALAMAN ==================== -->
 <!-- HOME PAGE -->
 <div id="page-home" class="page active">
     <div class="header-premium">
-        <div class="logo-area"><div class="logo-icon">🕋</div><div class="logo-text"><h1>Auva</h1><p>Kbihu Amanatul Ummah</p></div></div>
+        <div class="header-top">
+            <div></div>
+            <div style="display: flex; gap: 8px;">
+                <button id="darkModeToggle" class="dark-mode-toggle" style="background: rgba(255,255,255,0.15); border: none; width: 40px; height: 40px; border-radius: 20px; cursor: pointer; font-size: 20px;">🌙</button>
+                <a href="#" id="adminModeToggleBtn" class="admin-toggle-link"><i class="fas fa-shield-alt"></i> Mode Admin</a>
+            </div>
+        </div>
+        <div class="logo-area"><div class="logo-icon">🕋</div><div class="logo-text"><h1>PT AUVA EQTENA NAHDHA </h1><p>Kbihu Amanatul Ummah</p></div></div>
         <div class="greeting"><h2>Selamat datang, Admin</h2><p id="homeDate">Memuat...</p></div>
     </div>
     <div class="stats-row">
@@ -274,7 +506,7 @@
         <div class="stat-mini-card"><i class="fas fa-hand-holding-heart"></i><div class="stat-label">Zakat</div><div class="stat-number" id="homeStatZakat">Rp 0</div></div>
     </div>
     <div class="menu-container">
-        <div class="section-title"><span><i class="fas fa-th-large"></i> Menu Utama</span><a href="#" id="adminModeToggleBtn" style="cursor:pointer; font-size:0.7rem; color:var(--primary);"><i class="fas fa-shield-alt"></i> Mode Admin</a></div>
+        <div class="section-title"><span><i class="fas fa-th-large"></i> Menu Utama</span></div>
         <div class="menu-grid-premium" id="menuGridPremium"></div>
     </div>
 </div>
@@ -451,16 +683,16 @@
             <div class="config-row"><label>Logo Instansi</label><input type="file" id="cfg_logo1" accept="image/*" onchange="previewLogo(this, 'previewLogo1')"><img id="previewLogo1" class="logo-preview"></div>
             <div class="config-row"><label>Nama Instansi</label><input type="text" id="cfg_nama1" placeholder="PT AUVA EQTENA NAHDHA"></div>
             <div class="config-row"><label>Alamat Lengkap</label><textarea id="cfg_alamat1" rows="2" placeholder="Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya"></textarea></div>
-            <div class="row"><div class="config-row"><label>Telepon</label><input type="text" id="cfg_telp1" placeholder="0858-1515-9999"></div><div class="config-row"><label>Email</label><input type="email" id="cfg_email1"></div></div>
+            <div class="row"><div class="config-row"><label>Telepon</label><input type="text" id="cfg_telp1" placeholder="081391485440"></div><div class="config-row"><label>Email</label><input type="email" id="cfg_email1"></div></div>
             <div class="row"><div class="config-row"><label>NPWP</label><input type="text" id="cfg_npwp1"></div><div class="config-row"><label>Website</label><input type="text" id="cfg_web1"></div></div>
-            <div class="row"><div class="config-row"><label>Pimpinan</label><input type="text" id="cfg_pimpinan1" placeholder="Dr. Mauhibur Rokhmah"></div><div class="config-row"><label>Jabatan</label><input type="text" id="cfg_jabatan1" placeholder="Pembimbing"></div></div>
+            <div class="row"><div class="config-row"><label>Pimpinan</label><input type="text" id="cfg_pimpinan1" placeholder="Ali mashar"></div><div class="config-row"><label>Jabatan</label><input type="text" id="cfg_jabatan1" placeholder="Admin"></div></div>
         </div>
         <div class="config-section"><h3><i class="fas fa-mosque"></i> Data Instansi Kedua</h3>
             <div class="config-row" style="display:flex; justify-content:space-between; align-items:center;"><label>Aktifkan Instansi Kedua</label><label class="switch"><input type="checkbox" id="cfg_instansi2_aktif"><span class="slider"></span></label></div>
             <div class="config-row"><label>Logo</label><input type="file" id="cfg_logo2" accept="image/*" onchange="previewLogo(this, 'previewLogo2')"><img id="previewLogo2" class="logo-preview"></div>
             <div class="config-row"><label>Nama Instansi</label><input type="text" id="cfg_nama2" placeholder="KBIH Amanatul Ummah"></div>
             <div class="config-row"><label>Alamat</label><textarea id="cfg_alamat2" rows="2" placeholder="Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya"></textarea></div>
-            <div class="row"><div class="config-row"><label>Telepon</label><input type="text" id="cfg_telp2" placeholder="0858-1515-9999"></div><div class="config-row"><label>Email</label><input type="email" id="cfg_email2"></div></div>
+            <div class="row"><div class="config-row"><label>Telepon</label><input type="text" id="cfg_telp2"></div><div class="config-row"><label>Email</label><input type="email" id="cfg_email2"></div></div>
             <div class="row"><div class="config-row"><label>No. Izin</label><input type="text" id="cfg_izin2"></div><div class="config-row"><label>Pimpinan</label><input type="text" id="cfg_pimpinan2"></div></div>
             <div class="config-row"><label>Jabatan</label><input type="text" id="cfg_jabatan2"></div>
         </div>
@@ -491,13 +723,27 @@
     </div>
 </div>
 
-<!-- SETTING PAGE -->
+<!-- SETTING PAGE (DIPERBAIKI - RAPI SEPERTI APLIKASI LAMA) -->
 <div id="page-setting" class="page">
     <div class="header-premium header-premium-small"><div class="back-header"><i class="fas fa-arrow-left" onclick="showPage('home')"></i><h2>Pengaturan</h2><div style="width:30px;"></div></div></div>
     <div class="container">
-        <div class="setting-card"><div class="setting-row"><span><i class="fas fa-user-shield"></i> 🔧 Mode Admin</span><label class="switch"><input type="checkbox" id="adminMode" onchange="toggleAdminMode()"><span class="slider"></span></label></div></div>
-        <div class="setting-card"><h4>🎨 Warna Tema</h4><div class="color-options" id="colorOptions"></div></div>
-        <div class="setting-card"><h4>📋 Atur Tampilan Menu</h4><div id="menuSettingsContainer"></div></div>
+        <div class="setting-card">
+            <div class="setting-row">
+                <span><i class="fas fa-user-shield"></i> 🔧 Mode Admin</span>
+                <label class="switch">
+                    <input type="checkbox" id="adminMode" onchange="toggleAdminMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div class="setting-card">
+            <h4>🎨 Warna Tema</h4>
+            <div class="color-options" id="colorOptions"></div>
+        </div>
+        <div class="setting-card">
+            <h4>📋 Atur Tampilan Menu</h4>
+            <div id="menuSettingsContainer"></div>
+        </div>
         <button class="btn btn-danger" onclick="confirmResetAllData()">🔄 RESET SEMUA DATA</button>
     </div>
 </div>
@@ -612,7 +858,8 @@
 function showToast(msg) { const toast = document.getElementById('toastPremium'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    document.getElementById(`page-${pageId}`).classList.add('active');
+    const activePage = document.getElementById(`page-${pageId}`);
+    if (activePage) activePage.classList.add('active');
     document.querySelectorAll('.nav-item-premium').forEach(nav => { nav.classList.remove('active'); if (nav.getAttribute('data-page') === pageId) nav.classList.add('active'); });
     if (pageId === 'kas') { renderKasTable(); updateSaldoKas(); }
     if (pageId === 'jamaah') { loadJamaahData(); renderJamaahListWithPagination(); }
@@ -637,10 +884,35 @@ function updateHomeStats() {
     document.getElementById('homeStatKas').innerHTML = 'Rp ' + totalKas.toLocaleString('id-ID');
     const jamaahData = JSON.parse(localStorage.getItem('auva_jamaah_list') || '[]');
     document.getElementById('homeStatJamaah').innerHTML = jamaahData.length;
+    const lastZakatTotal = localStorage.getItem('auva_last_zakat_total');
+    if (lastZakatTotal && lastZakatTotal !== '0') {
+        document.getElementById('homeStatZakat').innerHTML = 'Rp ' + formatRupiah(parseInt(lastZakatTotal));
+    } else {
+        document.getElementById('homeStatZakat').innerHTML = 'Rp 0';
+    }
 }
 function escapeHtml(text) { if(!text) return ''; return text.replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; }); }
 function formatRupiah(angka) { if(!angka && angka!==0) return '0'; return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
 function parseRupiah(str) { if(!str) return 0; let cleaned = str.toString().replace(/\./g, '').replace(/[^0-9]/g, ''); let num = parseInt(cleaned,10); return isNaN(num)?0:num; }
+
+// ==================== DARK MODE ====================
+function initDarkMode() {
+    const darkMode = localStorage.getItem('auva_dark_mode') === 'true';
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        const toggleBtn = document.getElementById('darkModeToggle');
+        if (toggleBtn) toggleBtn.innerHTML = '☀️';
+    }
+    const toggleBtn = document.getElementById('darkModeToggle');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('auva_dark_mode', isDark);
+            this.innerHTML = isDark ? '☀️' : '🌙';
+        });
+    }
+}
 
 // ==================== MENU GRID ====================
 const menuItemsPremium = [
@@ -706,48 +978,113 @@ function applyThemePremium(primary) { document.documentElement.style.setProperty
 function renderColorOptionsPremium() { const container = document.getElementById('colorOptions'); if(!container) return; let html=''; themesPremium.forEach(t=>{ html+=`<div class="color-opt" style="background:${t.primary}" title="${t.name}" onclick="applyThemePremium('${t.primary}')"></div>`; }); container.innerHTML=html; }
 function loadThemePremium() { const saved = localStorage.getItem('premium_theme_primary'); if(saved) applyThemePremium(saved); }
 
-// ==================== FUNGSI PDF ====================
+// ==================== FUNGSI PDF DENGAN KONFIGURASI PRO & KOMPRES LOGO ====================
+async function kompresLogo(base64Data, maxWidth = 80) {
+    return new Promise((resolve) => {
+        if (!base64Data || !base64Data.startsWith('data:image')) { resolve(null); return; }
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            if (width > maxWidth) {
+                height = (height * maxWidth) / width;
+                width = maxWidth;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.onerror = () => resolve(null);
+        img.src = base64Data;
+    });
+}
+
 async function applyPDFConfig(doc, options = {}) {
     const cfg = getKonfigurasiProData();
     const pageWidth = options.landscape ? 297 : 210;
     const pageHeight = options.landscape ? 210 : 297;
+    let startY = options.startY || 0;
+    
     if (cfg.settings.header_mode !== 'none') {
         doc.setFillColor(26, 93, 74);
-        doc.rect(0, 0, pageWidth, 38, 'F');
+        doc.rect(0, startY, pageWidth, 50, 'F');
         doc.setTextColor(255, 255, 255);
-        let yPos = 10;
+        let currentY = startY + 12;
+        
+        // Logo kiri (jika ada, setelah dikompres)
+        let logoToAdd = null;
         if (cfg.settings.header_mode === 'both' || cfg.settings.header_mode === 'instansi1') {
-            doc.setFontSize(12); doc.setFont('helvetica', 'bold');
-            doc.text(cfg.instansi1.nama || 'Auva Kbihu AU', 105, yPos, { align: 'center' });
-            yPos += 8;
+            logoToAdd = cfg.instansi1.logo;
+        } else if (cfg.settings.header_mode === 'instansi2' && cfg.instansi2.logo) {
+            logoToAdd = cfg.instansi2.logo;
+        }
+        if (logoToAdd && logoToAdd.startsWith('data:image')) {
+            const kompresLogoData = await kompresLogo(logoToAdd, 60);
+            if (kompresLogoData) {
+                try {
+                    doc.addImage(kompresLogoData, 'JPEG', 12, startY + 6, 30, 30);
+                } catch(e) {}
+            }
+        }
+        
+        // Teks header rata tengah
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        if (cfg.settings.header_mode === 'both' || cfg.settings.header_mode === 'instansi1') {
+            doc.text(cfg.instansi1.nama || 'Auva Kbihu AU', pageWidth/2, currentY, { align: 'center' });
+            currentY += 7;
         }
         if (cfg.settings.header_mode === 'both' && cfg.instansi2.aktif && cfg.instansi2.nama) {
             doc.setFontSize(10);
-            doc.text(cfg.instansi2.nama, 105, yPos, { align: 'center' });
-            yPos += 7;
+            doc.text(cfg.instansi2.nama, pageWidth/2, currentY, { align: 'center' });
+            currentY += 6;
         }
-        doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
         let alamatDisplay = cfg.instansi1.alamat || '';
         if (cfg.settings.header_mode === 'both' && cfg.instansi2.aktif && cfg.instansi2.alamat && cfg.instansi2.alamat !== alamatDisplay) {
             alamatDisplay = cfg.instansi2.alamat;
         }
-        if (alamatDisplay) doc.text(alamatDisplay, 105, yPos, { align: 'center' });
+        if (alamatDisplay) {
+            doc.text(alamatDisplay, pageWidth/2, currentY, { align: 'center' });
+            currentY += 5;
+        }
+        // Telepon, Email, NPWP, Website
+        let kontakInfo = [];
+        if (cfg.instansi1.telp) kontakInfo.push(`Telp: ${cfg.instansi1.telp}`);
+        if (cfg.instansi1.email) kontakInfo.push(`Email: ${cfg.instansi1.email}`);
+        if (cfg.instansi1.npwp) kontakInfo.push(`NPWP: ${cfg.instansi1.npwp}`);
+        if (cfg.instansi1.web) kontakInfo.push(`Web: ${cfg.instansi1.web}`);
+        if (kontakInfo.length > 0) {
+            doc.text(kontakInfo.join(' | '), pageWidth/2, currentY, { align: 'center' });
+        }
     }
+    
+    // Watermark
     if (cfg.watermark.enabled && cfg.watermark.text) {
         doc.saveGraphicsState();
         doc.setGState(new doc.GState({ opacity: cfg.watermark.opacity || 0.15 }));
         doc.setFontSize(cfg.watermark.fontsize || 60);
         doc.setTextColor(150, 150, 150);
         doc.setFont('helvetica', 'bold');
-        if (cfg.watermark.position === 'diagonal') doc.text(cfg.watermark.text, pageWidth/2, pageHeight/2, { align: 'center', angle: -45 });
-        else if (cfg.watermark.position === 'center') doc.text(cfg.watermark.text, pageWidth/2, pageHeight/2, { align: 'center' });
+        if (cfg.watermark.position === 'diagonal') {
+            doc.text(cfg.watermark.text, pageWidth/2, pageHeight/2, { align: 'center', angle: -45 });
+        } else if (cfg.watermark.position === 'center') {
+            doc.text(cfg.watermark.text, pageWidth/2, pageHeight/2, { align: 'center' });
+        }
         doc.restoreGraphicsState();
     }
+    
+    // QR Code
     if (cfg.qr.enabled && cfg.qr.text && typeof QRCode !== 'undefined') {
         const qrSize = cfg.qr.size || 80;
         try {
             const canvas = document.createElement('canvas');
-            canvas.width = qrSize; canvas.height = qrSize;
+            canvas.width = qrSize;
+            canvas.height = qrSize;
             await QRCode.toCanvas(canvas, cfg.qr.text, { width: qrSize });
             const qrDataUrl = canvas.toDataURL();
             doc.addImage(qrDataUrl, 'PNG', pageWidth - qrSize - 10, pageHeight - qrSize - 10, qrSize, qrSize);
@@ -755,10 +1092,21 @@ async function applyPDFConfig(doc, options = {}) {
     }
     return doc;
 }
+
 function getKonfigurasiProData() {
     const saved = localStorage.getItem('auva_konfigurasi_pro');
-    if(saved) { try { return JSON.parse(saved); } catch(e) {} }
-    return { instansi1: { nama: 'PT AUVA EQTENA NAHDHA', alamat: 'Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya' }, instansi2: { aktif: true, nama: 'KBIH Amanatul Ummah' }, watermark: { enabled: true, text: 'DOKUMEN RESMI', opacity: 0.15, fontsize: 60, position: 'diagonal' }, qr: { enabled: true, text: 'Dokumen Resmi - Divalidasi oleh Sistem Auva', size: 80 }, settings: { header_mode: 'both', ttd_mode: 'both', invoice_prefix: 'INV/AUVA' } };
+    if(saved) {
+        try {
+            return JSON.parse(saved);
+        } catch(e) {}
+    }
+    return {
+        instansi1: { nama: 'PT AUVA EQTENA NAHDHA', alamat: 'Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya', telp: '081391485440', email: '', npwp: '', web: '', pimpinan: 'Ali mashar', jabatan: 'Admin', logo: '' },
+        instansi2: { aktif: true, nama: 'KBIH Amanatul Ummah', alamat: 'Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya' },
+        watermark: { enabled: true, text: 'DOKUMEN RESMI', opacity: 0.15, fontsize: 60, position: 'diagonal' },
+        qr: { enabled: true, text: 'Dokumen Resmi - Divalidasi oleh Sistem Auva', size: 80 },
+        settings: { header_mode: 'both', ttd_mode: 'both', invoice_prefix: 'INV/AUVA' }
+    };
 }
 
 // ==================== CUAN PLAN ====================
@@ -767,7 +1115,7 @@ function saveEstimasiData() { const estimasiData={ lokasiPaket:document.getEleme
 function loadEstimasiData() { const saved=localStorage.getItem('auva_estimasi_data'); if(saved){ const data=JSON.parse(saved); if(data.lokasiPaket) document.getElementById('lokasiPaket').value=data.lokasiPaket; if(data.totJam) document.getElementById('totJam').value=data.totJam; if(data.jamGratis) document.getElementById('jamGratis').value=data.jamGratis; if(data.numTL) document.getElementById('numTL').value=data.numTL; if(data.cTiket) document.getElementById('cTiket').value=data.cTiket; if(data.cLA) document.getElementById('cLA').value=data.cLA; if(data.cAsuransi) document.getElementById('cAsuransi').value=data.cAsuransi; if(data.cHandling) document.getElementById('cHandling').value=data.cHandling; if(data.cAlat) document.getElementById('cAlat').value=data.cAlat; if(data.cAplikasi) document.getElementById('cAplikasi').value=data.cAplikasi; if(data.cPIC) document.getElementById('cPIC').value=data.cPIC; if(data.cLain) document.getElementById('cLain').value=data.cLain; if(data.profitPct) document.getElementById('profitPct').value=data.profitPct; } }
 function hitungUmroh() { saveEstimasiData(); const nJam=parseInt(document.getElementById('totJam').value)||0; if(nJam<=0) return showToast("Isi jamaah!"); const ids=['cTiket','cLA','cAsuransi','cHandling','cPIC','cAlat','cAplikasi','cLain']; const sub=ids.map(id=>parseRupiah(document.getElementById(id).value)).reduce((a,b)=>a+b,0); const nFoc=parseInt(document.getElementById('jamGratis').value)||0; const nTL=parseInt(document.getElementById('numTL').value)||0; const pPct=(parseFloat(document.getElementById('profitPct').value)||0)/100; const profitKotor=(sub*nJam)*pPct; const biayaTL=sub*nTL; const bersih=profitKotor-biayaTL; const profitPerPax=bersih/(nJam-nFoc); const jual=((sub*nJam)+profitKotor)/(nJam-nFoc); const totalOmzet=jual*(nJam-nFoc); const f=n=>"Rp "+Math.round(n).toLocaleString('id-ID'); const lokasi=document.getElementById('lokasiPaket').value; const garis="━━━━━━━━━━━━━━━━━━"; lastCalculatedText=`🧾 *Ringkasan Estimasi Paket*\n${garis}\n📍 *${lokasi}*\n👥 *Total Jamaah:* ${nJam}\n💰 *Harga per Pax:* *${f(jual)}*\n${garis}\n📞 *Silakan hubungi admin untuk detail.*`; lastCalculatedPrice=jual; lastCalculatedPaket=lokasi; lastCalculatedTotalJam=nJam; let hasil=document.getElementById('hasilEstimasi'); hasil.innerHTML=`<div class="res-item"><span>Modal Pokok / Pax</span><b>${f(sub)}</b></div><div class="res-item"><span>Total Omzet Grup</span><b>${f(totalOmzet)}</b></div><div class="res-item"><span>Profit Kotor Grup</span><span>${f(profitKotor)}</span></div><div class="res-item"><span>Biaya TL</span><span>${f(biayaTL)}</span></div><div class="res-item"><span>Profit Per Pax</span><span>${f(profitPerPax)}</span></div><div class="res-item" style="color:#2ecc71"><span>PROFIT BERSIH</span><b>${f(bersih)}</b></div><div class="res-item" style="border-top:2px solid var(--accent); margin-top:10px; padding-top:10px; flex-direction:column; align-items:center;"><span style="font-weight:bold">HARGA BROSUR</span><span class="highlight">${f(jual)}</span><p style="font-size:10px; margin-top:5px;">*Berdasarkan ${nJam-nFoc} jamaah bayar dan ${nFoc} gratis</p></div><div class="action-buttons" style="display:flex; gap:10px; margin-top:15px;"><button class="btn" onclick="salinRingkasan()" style="background:#34495e; margin-top:0; flex:1;">SALIN RINGKASAN HARGA</button><button class="btn" onclick="cetakEstimasiPDF()" style="background:var(--orange); margin-top:0; flex:1;"><i class="fas fa-file-pdf"></i> CETAK PDF</button></div>`; hasil.style.display='block'; hasil.scrollIntoView({behavior:"smooth"}); }
 function salinRingkasan() { if(lastCalculatedText) { navigator.clipboard.writeText(lastCalculatedText).then(()=>showToast("✅ Ringkasan tersalin!")).catch(()=>showToast("❌ Gagal menyalin")); } else { showToast('Silakan hitung estimasi dulu!'); } }
-async function cetakEstimasiPDF() { if(!lastCalculatedPrice) { showToast('Silakan hitung estimasi dulu!'); return; } showToast('Membuat PDF...'); try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); const f=n=>"Rp "+Math.round(n).toLocaleString('id-ID'); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('RINCIAN HARGA PAKET', 105, 55, { align: 'center' }); doc.setFontSize(11); doc.setTextColor(0,0,0); doc.text(`Paket: ${lastCalculatedPaket}`, 20, 75); doc.text(`Total Jamaah: ${lastCalculatedTotalJam} orang`, 20, 85); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(`HARGA PER PAX: ${f(lastCalculatedPrice)}`, 20, 105); doc.save(`Estimasi_Harga_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e){ showToast('Gagal PDF: '+e.message); } }
+async function cetakEstimasiPDF() { if(!lastCalculatedPrice) { showToast('Silakan hitung estimasi dulu!'); return; } showToast('Membuat PDF...'); try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); const f=n=>"Rp "+Math.round(n).toLocaleString('id-ID'); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('RINCIAN HARGA PAKET', 105, 65, { align: 'center' }); doc.setFontSize(11); doc.setTextColor(0,0,0); doc.text(`Paket: ${lastCalculatedPaket}`, 20, 85); doc.text(`Total Jamaah: ${lastCalculatedTotalJam} orang`, 20, 95); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(`HARGA PER PAX: ${f(lastCalculatedPrice)}`, 20, 115); doc.save(`Estimasi_Harga_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e){ showToast('Gagal PDF: '+e.message); } }
 function resetEstimasiToDefault() { if(confirm('Reset semua data estimasi ke nilai default?')) { document.getElementById('lokasiPaket').value="Program 9 HARI"; document.getElementById('totJam').value="21"; document.getElementById('jamGratis').value="1"; document.getElementById('numTL').value="1"; document.getElementById('cTiket').value="15.450.000"; document.getElementById('cLA').value="14.450.000"; document.getElementById('cAsuransi').value="60.000"; document.getElementById('cHandling').value="100.000"; document.getElementById('cAlat').value="1.000.000"; document.getElementById('cAplikasi').value="60.000"; document.getElementById('cPIC').value="0"; document.getElementById('cLain').value="0"; document.getElementById('profitPct').value="5"; saveEstimasiData(); showToast('Data estimasi direset ke default'); hitungUmroh(); } }
 
 // ==================== UANG KAS ====================
@@ -782,7 +1130,7 @@ function buatLaporanWA() { if(dataKas.length===0) return showToast("Tidak ada da
 function salinLaporanWA() { if(lastWAText) { navigator.clipboard.writeText(lastWAText).then(()=>showToast("✅ Laporan tersalin!")).catch(()=>showToast("❌ Gagal menyalin")); } else { showToast('Buat laporan dulu!'); } }
 function backupKasData() { if(dataKas.length===0) return showToast("Tidak ada data!"); const backup={app:"Auva Kbihu AU - Kas", version:"1.0", created:new Date().toISOString(), kegiatan:document.getElementById('kegiatan').value, data:dataKas}; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'})); a.download=`Auva_Kas_Backup_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.json`; a.click(); showToast('Backup kas berhasil'); }
 function restoreKasData(input) { const file=input.files[0]; if(!file) return; input.value=''; if(confirm("Timpa data kas yang ada?")) { const reader=new FileReader(); reader.onload=e=>{ try{ const backup=JSON.parse(e.target.result); if(backup.data&&Array.isArray(backup.data)){ dataKas=backup.data; if(backup.kegiatan) document.getElementById('kegiatan').value=backup.kegiatan; saveKasData(); showToast(`Restore ${dataKas.length} transaksi berhasil`); } else showToast("File backup tidak valid!"); } catch(err){ showToast("File backup tidak valid!"); } }; reader.readAsText(file); } }
-async function exportKasPDF() { if(dataKas.length===0) return showToast("Tidak ada data!"); showToast('Membuat PDF...'); setTimeout(async()=>{ try{ const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'}); await applyPDFConfig(doc, { landscape: true }); const judul=document.getElementById('kegiatan').value.trim()||"Laporan Kas"; let masuk=0,keluar=0; dataKas.forEach(i=>{ if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom; }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(judul + " - LAPORAN KAS", 148.5, 55, { align: 'center' }); const tableData=dataKas.map(i=>[i.tgl,i.kegiatan||'-',i.ket.length>30?i.ket.substring(0,27)+'...':i.ket,i.tipe==='masuk'?'MASUK':'KELUAR',`Rp ${i.nom.toLocaleString('id-ID')}`]); doc.autoTable({startY:70,head:[['Tgl','Kegiatan','Keterangan','Tipe','Nominal']],body:tableData,theme:'striped',headStyles:{fillColor:[26,93,74]},styles:{fontSize:8,lineWidth:0.1}}); let finalY=doc.lastAutoTable.finalY+10; doc.text(`Total Pemasukan: Rp ${masuk.toLocaleString('id-ID')}`,14,finalY); doc.text(`Total Pengeluaran: Rp ${keluar.toLocaleString('id-ID')}`,14,finalY+7); doc.setTextColor(26,93,74); doc.setFont('helvetica','bold'); doc.text(`SALDO AKHIR: Rp ${(masuk-keluar).toLocaleString('id-ID')}`,14,finalY+14); doc.save(`${judul.replace(/\s+/g,'_')}_Laporan_Kas.pdf`); showToast('PDF berhasil di-export'); } catch(e){ showToast('Gagal export PDF: '+e.message); } },100); }
+async function exportKasPDF() { if(dataKas.length===0) return showToast("Tidak ada data!"); showToast('Membuat PDF...'); setTimeout(async()=>{ try{ const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'}); await applyPDFConfig(doc, { landscape: true }); const judul=document.getElementById('kegiatan').value.trim()||"Laporan Kas"; let masuk=0,keluar=0; dataKas.forEach(i=>{ if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom; }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(judul + " - LAPORAN KAS", 148.5, 65, { align: 'center' }); const tableData=dataKas.map(i=>[i.tgl,i.kegiatan||'-',i.ket.length>30?i.ket.substring(0,27)+'...':i.ket,i.tipe==='masuk'?'MASUK':'KELUAR',`Rp ${i.nom.toLocaleString('id-ID')}`]); doc.autoTable({startY:80,head:[['Tgl','Kegiatan','Keterangan','Tipe','Nominal']],body:tableData,theme:'striped',headStyles:{fillColor:[26,93,74]},styles:{fontSize:8,lineWidth:0.1}}); let finalY=doc.lastAutoTable.finalY+10; doc.text(`Total Pemasukan: Rp ${masuk.toLocaleString('id-ID')}`,14,finalY); doc.text(`Total Pengeluaran: Rp ${keluar.toLocaleString('id-ID')}`,14,finalY+7); doc.setTextColor(26,93,74); doc.setFont('helvetica','bold'); doc.text(`SALDO AKHIR: Rp ${(masuk-keluar).toLocaleString('id-ID')}`,14,finalY+14); doc.save(`${judul.replace(/\s+/g,'_')}_Laporan_Kas.pdf`); showToast('PDF berhasil di-export'); } catch(e){ showToast('Gagal export PDF: '+e.message); } },100); }
 function exportKasExcel() { if(dataKas.length===0) return showToast("Tidak ada data!"); showToast('Membuat Excel...'); setTimeout(()=>{ try{ const judul=document.getElementById('kegiatan').value.trim()||"Laporan_Kas"; let masuk=0,keluar=0; dataKas.forEach(i=>{ if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom; }); const wsData=dataKas.map(i=>({Tanggal:i.tgl,Kegiatan:i.kegiatan,Keterangan:i.ket,Tipe:i.tipe.toUpperCase(),Nominal:i.nom})); wsData.push({Tanggal:'',Kegiatan:'',Keterangan:'TOTAL PEMASUKAN',Tipe:'',Nominal:masuk}); wsData.push({Tanggal:'',Kegiatan:'',Keterangan:'TOTAL PENGELUARAN',Tipe:'',Nominal:keluar}); wsData.push({Tanggal:'',Kegiatan:'',Keterangan:'SALDO AKHIR',Tipe:'',Nominal:masuk-keluar}); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(wsData),"Transaksi Kas"); XLSX.writeFile(wb,`${judul.replace(/\s+/g,'_')}.xlsx`); showToast('Excel berhasil di-export'); } catch(e){ showToast('Gagal export Excel: '+e.message); } },100); }
 function confirmResetKas() { if(confirm('Kosongkan semua transaksi kas? Data akan hilang!')) { dataKas=[]; saveKasData(); const hasilWA=document.getElementById('hasilWA'); if(hasilWA){ hasilWA.style.display='none'; hasilWA.innerHTML=''; } lastWAText=''; showToast('Buku kas dikosongkan'); } }
 
@@ -847,7 +1195,7 @@ function confirmDeleteJamaahKitaDynamicField(idx){ if(confirm(`Hapus field "${dy
 function confirmDeleteAllJamaahKita(){ if(jamaahKitaList.length===0){ showToast('Tidak ada data Jamaah on proses!'); return; } if(confirm(`⚠️ PERINGATAN: Semua ${jamaahKitaList.length} data Jamaah on proses akan dihapus PERMANEN! Lanjutkan?`)){ jamaahKitaList=[]; saveJamaahKitaData(); renderJamaahKitaList(); showToast('✅ Semua data Jamaah on proses telah dihapus'); } }
 function printGroupedPDF(){ if(jamaahKitaList.length===0){ showToast('Tidak ada data di Jamaah on proses.'); return; } const groupFields=dynamicFieldsJamaahKita.filter(f=>f.type!=='tel'); if(groupFields.length===0){ showToast('Belum ada field dinamis untuk kelompok.'); return; } let fieldOptions='<option value="">-- Pilih field untuk pengelompokan --</option>'; groupFields.forEach(f=>{ fieldOptions+=`<option value="${f.name}">${escapeHtml(f.label)}</option>`; }); const modalHtml=`<div id="groupPrintModal" class="modal" style="display:flex;"><div class="modal-content"><h3>📄 Cetak PDF Per Kelompok</h3><div class="dynamic-field"><label>Pilih Field Kelompok</label><select id="groupFieldSelect">${fieldOptions}</select></div><div class="dynamic-field"><label>Judul Laporan</label><input type="text" id="reportTitle" value="Daftar Kelompok Jamaah"></div><button class="btn btn-primary" onclick="generateGroupedPDF()">CETAK PDF</button><button class="btn btn-danger mt-2" onclick="closeGroupPrintModal()">BATAL</button></div></div>`; document.body.insertAdjacentHTML('beforeend', modalHtml); }
 function closeGroupPrintModal(){ const modal=document.getElementById('groupPrintModal'); if(modal) modal.remove(); }
-async function generateGroupedPDF(){ const fieldName=document.getElementById('groupFieldSelect').value; if(!fieldName){ showToast('Pilih field untuk pengelompokan!'); return; } const reportTitle=document.getElementById('reportTitle').value.trim()||'Daftar Kelompok Jamaah'; closeGroupPrintModal(); showToast('Membuat PDF...'); setTimeout(async()=>{ try{ const groups={}; jamaahKitaList.forEach(jk=>{ let groupValue=jk.additional_fields?.[fieldName]||'Tidak diisi'; groupValue=groupValue.replace(/[^\w\s\d\-]/g,'').trim(); if(!groups[groupValue]) groups[groupValue]=[]; groups[groupValue].push(jk); }); const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}); await applyPDFConfig(doc, { landscape: false }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(reportTitle,105,55,{align:'center'}); let y=70; const sortedGroups=Object.keys(groups).sort((a,b)=>{ if(a==='Tidak diisi') return 1; if(b==='Tidak diisi') return -1; return a.localeCompare(b); }); for(const groupName of sortedGroups){ const members=groups[groupName]; if(y>250){ doc.addPage(); y=20; } doc.setFontSize(12); doc.setTextColor(26,93,74); const labelClean=fieldName.replace(/[^\w\s]/g,'').toUpperCase(); const groupClean=groupName.replace(/[^\w\s\d\-]/g,'').trim(); doc.text(`${labelClean}: ${groupClean} (${members.length} orang)`,14,y); y+=8; const tableData=members.map((jk,idx)=>[idx+1, jk.nama_lengkap]); doc.autoTable({startY:y,head:[['No','Nama Lengkap']],body:tableData,theme:'striped',headStyles:{fillColor:[26,93,74],textColor:[255,255,255],fontSize:10},styles:{fontSize:9,cellPadding:3,lineWidth:0.1},margin:{left:14,right:14}}); y=doc.lastAutoTable.finalY+10; } doc.save(`Kelompok_${fieldName}_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e){ showToast('Gagal membuat PDF: '+e.message); } },100); }
+async function generateGroupedPDF(){ const fieldName=document.getElementById('groupFieldSelect').value; if(!fieldName){ showToast('Pilih field untuk pengelompokan!'); return; } const reportTitle=document.getElementById('reportTitle').value.trim()||'Daftar Kelompok Jamaah'; closeGroupPrintModal(); showToast('Membuat PDF...'); setTimeout(async()=>{ try{ const groups={}; jamaahKitaList.forEach(jk=>{ let groupValue=jk.additional_fields?.[fieldName]||'Tidak diisi'; groupValue=groupValue.replace(/[^\w\s\d\-]/g,'').trim(); if(!groups[groupValue]) groups[groupValue]=[]; groups[groupValue].push(jk); }); const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}); await applyPDFConfig(doc, { landscape: false }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(reportTitle,105,65,{align:'center'}); let y=80; const sortedGroups=Object.keys(groups).sort((a,b)=>{ if(a==='Tidak diisi') return 1; if(b==='Tidak diisi') return -1; return a.localeCompare(b); }); for(const groupName of sortedGroups){ const members=groups[groupName]; if(y>250){ doc.addPage(); y=20; } doc.setFontSize(12); doc.setTextColor(26,93,74); const labelClean=fieldName.replace(/[^\w\s]/g,'').toUpperCase(); const groupClean=groupName.replace(/[^\w\s\d\-]/g,'').trim(); doc.text(`${labelClean}: ${groupClean} (${members.length} orang)`,14,y); y+=8; const tableData=members.map((jk,idx)=>[idx+1, jk.nama_lengkap]); doc.autoTable({startY:y,head:[['No','Nama Lengkap']],body:tableData,theme:'striped',headStyles:{fillColor:[26,93,74],textColor:[255,255,255],fontSize:10},styles:{fontSize:9,cellPadding:3,lineWidth:0.1},margin:{left:14,right:14}}); y=doc.lastAutoTable.finalY+10; } doc.save(`Kelompok_${fieldName}_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e){ showToast('Gagal membuat PDF: '+e.message); } },100); }
 
 // ==================== ZAKAT ====================
 let sumberHartaList=[];
@@ -857,7 +1205,7 @@ function hapusSumberHarta(id){ sumberHartaList=sumberHartaList.filter(s=>s.id!==
 function updateSumberHarta(id,field,value){ const sumber=sumberHartaList.find(s=>s.id===id); if(sumber){ if(field==='nama') sumber.nama=value; if(field==='jumlah') sumber.jumlah=parseRupiah(value); if(field==='persen') sumber.persen=parseFloat(value)||0; } }
 function renderSumberHartaList(){ const container=document.getElementById('sumberHartaContainer'); if(!container) return; if(sumberHartaList.length===0){ container.innerHTML='<p style="text-align:center; padding:20px;">Belum ada sumber harta</p>'; return; } let html=''; sumberHartaList.forEach(s=>{ let jumlahTampil=s.jumlah>0?s.jumlah.toLocaleString('id-ID'):''; html+=`<div class="zakat-sumber-item"><div class="sumber-header"><strong>Sumber Harta</strong><button class="btn-remove-sumber" onclick="hapusSumberHarta(${s.id})">Hapus</button></div><div class="dynamic-field"><label>Nama Sumber</label><input type="text" value="${escapeHtml(s.nama)}" placeholder="Contoh: Tabungan, Dagangan, Pertanian" onchange="updateSumberHarta(${s.id}, 'nama', this.value)"></div><div class="row"><div class="dynamic-field"><label>Jumlah Harta (Rp)</label><input type="text" class="money-input" value="${jumlahTampil}" onchange="updateSumberHarta(${s.id}, 'jumlah', this.value)"></div><div class="dynamic-field"><label>Persentase Zakat (%)</label><input type="number" step="0.1" value="${s.persen}" onchange="updateSumberHarta(${s.id}, 'persen', this.value)"></div></div></div>`; }); container.innerHTML=html; }
 function toggleZakatInput(){ const jenis=document.getElementById('jenisZakat').value; const globalDiv=document.getElementById('zakatGlobalInput'); if(jenis==='pertanian'){ globalDiv.innerHTML=`<div class="input-group"><label>Harga Beras per Kg (Rp)</label><input type="text" id="hargaBeras" class="money-input" value="15.000"></div>`; } else { globalDiv.innerHTML=`<div class="input-group"><label>Harga Emas per Gram (Rp)</label><input type="text" id="hargaEmas" class="money-input" value="1.200.000"></div>`; } }
-function hitungZakat(){ if(sumberHartaList.length===0) return showToast('Tambah sumber harta terlebih dahulu!'); const jenis=document.getElementById('jenisZakat').value; let nisab=0, nisabGram=0, satuan=''; if(jenis==='pertanian'){ const hargaBeras=parseRupiah(document.getElementById('hargaBeras')?.value||'15000'); nisabGram=653; nisab=nisabGram*hargaBeras; satuan='kg beras'; } else { const hargaEmas=parseRupiah(document.getElementById('hargaEmas')?.value||'1200000'); nisabGram=85; nisab=nisabGram*hargaEmas; satuan='gram emas'; } let totalHarta=0, totalZakat=0; const detailZakat=[]; for(const s of sumberHartaList){ if(s.jumlah>0 && s.persen>0){ const zakat=(s.jumlah*s.persen)/100; totalHarta+=s.jumlah; totalZakat+=zakat; const namaSumber=s.nama||'Sumber'; detailZakat.push(`${namaSumber}: Rp ${s.jumlah.toLocaleString('id-ID')} x ${s.persen}% = Rp ${zakat.toLocaleString('id-ID')}`); } } const status=totalHarta>=nisab?'WAJIB ZAKAT':'TIDAK WAJIB ZAKAT'; const bersih=totalHarta-totalZakat; const f=n=>"Rp "+n.toLocaleString('id-ID'); const garis="━━━━━━━━━━━━━━━━━━"; lastZakatText=`📊 *KALKULATOR ZAKAT*\n${garis}\n📌 *Jenis Zakat:* ${jenis==='mal'?'Zakat Mal':(jenis==='pertanian'?'Zakat Pertanian':'Zakat Perdagangan')}\n💰 *Total Harta:* ${f(totalHarta)}\n⚖️ *Nisab:* ${f(nisab)}\n📋 *Status:* ${status}\n${garis}\n💵 *Total Zakat:* ${f(totalZakat)}\n✨ *Bersih:* ${f(bersih)}\n${garis}\n#AuvaKbihuAU`; let detailHtml=''; for(const d of detailZakat){ detailHtml+=`<div class="res-item"><span>📌</span><span>${d}</span></div>`; } const hasil=document.getElementById('hasilZakat'); hasil.innerHTML=`<div class="res-item"><span>Total Harta</span><b>${f(totalHarta)}</b></div><div class="res-item"><span>Nisab</span><b>${f(nisab)}</b></div><div class="res-item"><span>Status</span><b style="color:${status==='WAJIB ZAKAT'?'#2ecc71':'#e74c3c'}">${status}</b></div><div class="res-item" style="border-top:1px solid rgba(255,255,255,0.2); margin-top:5px; padding-top:10px;"><span>TOTAL ZAKAT</span><span class="highlight">${f(totalZakat)}</span></div><div class="res-item"><span>Bersih</span><b>${f(bersih)}</b></div>${detailHtml.length>0?`<div class="res-item" style="border-top:1px solid rgba(255,255,255,0.2); margin-top:5px; padding-top:10px; flex-direction:column;"><span style="margin-bottom:5px;">📋 DETAIL</span>${detailHtml}</div>`:''}<button class="btn" onclick="salinRingkasanZakat()" style="background:#34495e; margin-top:15px;">SALIN RINGKASAN ZAKAT</button>`; hasil.style.display='block'; hasil.scrollIntoView({behavior:"smooth"}); }
+function hitungZakat(){ if(sumberHartaList.length===0) return showToast('Tambah sumber harta terlebih dahulu!'); const jenis=document.getElementById('jenisZakat').value; let nisab=0, nisabGram=0, satuan=''; if(jenis==='pertanian'){ const hargaBeras=parseRupiah(document.getElementById('hargaBeras')?.value||'15000'); nisabGram=653; nisab=nisabGram*hargaBeras; satuan='kg beras'; } else { const hargaEmas=parseRupiah(document.getElementById('hargaEmas')?.value||'1200000'); nisabGram=85; nisab=nisabGram*hargaEmas; satuan='gram emas'; } let totalHarta=0, totalZakat=0; const detailZakat=[]; for(const s of sumberHartaList){ if(s.jumlah>0 && s.persen>0){ const zakat=(s.jumlah*s.persen)/100; totalHarta+=s.jumlah; totalZakat+=zakat; const namaSumber=s.nama||'Sumber'; detailZakat.push(`${namaSumber}: Rp ${s.jumlah.toLocaleString('id-ID')} x ${s.persen}% = Rp ${zakat.toLocaleString('id-ID')}`); } } const status=totalHarta>=nisab?'WAJIB ZAKAT':'TIDAK WAJIB ZAKAT'; const bersih=totalHarta-totalZakat; const f=n=>"Rp "+n.toLocaleString('id-ID'); const garis="━━━━━━━━━━━━━━━━━━"; lastZakatText=`📊 *KALKULATOR ZAKAT*\n${garis}\n📌 *Jenis Zakat:* ${jenis==='mal'?'Zakat Mal':(jenis==='pertanian'?'Zakat Pertanian':'Zakat Perdagangan')}\n💰 *Total Harta:* ${f(totalHarta)}\n⚖️ *Nisab:* ${f(nisab)}\n📋 *Status:* ${status}\n${garis}\n💵 *Total Zakat:* ${f(totalZakat)}\n✨ *Bersih:* ${f(bersih)}\n${garis}\n#AuvaKbihuAU`; let detailHtml=''; for(const d of detailZakat){ detailHtml+=`<div class="res-item"><span>📌</span><span>${d}</span></div>`; } const hasil=document.getElementById('hasilZakat'); hasil.innerHTML=`<div class="res-item"><span>Total Harta</span><b>${f(totalHarta)}</b></div><div class="res-item"><span>Nisab</span><b>${f(nisab)}</b></div><div class="res-item"><span>Status</span><b style="color:${status==='WAJIB ZAKAT'?'#2ecc71':'#e74c3c'}">${status}</b></div><div class="res-item" style="border-top:1px solid rgba(255,255,255,0.2); margin-top:5px; padding-top:10px;"><span>TOTAL ZAKAT</span><span class="highlight">${f(totalZakat)}</span></div><div class="res-item"><span>Bersih</span><b>${f(bersih)}</b></div>${detailHtml.length>0?`<div class="res-item" style="border-top:1px solid rgba(255,255,255,0.2); margin-top:5px; padding-top:10px; flex-direction:column;"><span style="margin-bottom:5px;">📋 DETAIL</span>${detailHtml}</div>`:''}<button class="btn" onclick="salinRingkasanZakat()" style="background:#34495e; margin-top:15px;">SALIN RINGKASAN ZAKAT</button>`; hasil.style.display='block'; hasil.scrollIntoView({behavior:"smooth"}); localStorage.setItem('auva_last_zakat_total', totalZakat); }
 function salinRingkasanZakat(){ if(lastZakatText){ navigator.clipboard.writeText(lastZakatText).then(()=>showToast("✅ Ringkasan zakat tersalin!")).catch(()=>showToast("❌ Gagal menyalin")); } else { showToast('Silakan hitung zakat dulu!'); } }
 
 // ==================== PEMBAYARAN ====================
@@ -884,16 +1232,16 @@ function prepareInvoice(idJamaah) { currentInvoiceJamaahId = idJamaah; const jam
 function closeInvoiceConfirmModal() { document.getElementById('invoiceConfirmModal').classList.remove('show'); }
 function sendInvoiceWA() { if (currentInvoiceText) window.open(`https://wa.me/${document.getElementById('invoiceWANumber').innerText}?text=${encodeURIComponent(currentInvoiceText)}`, '_blank'); closeInvoiceConfirmModal(); }
 function copyInvoiceText() { if (currentInvoiceText) { navigator.clipboard.writeText(currentInvoiceText); showToast('✅ Teks invoice tersalin!'); } closeInvoiceConfirmModal(); }
-async function cetakInvoicePDF(jamaahId) { const jamaah = jamaahList.find(j => j.id == jamaahId); if (!jamaah) { showToast('Data jamaah tidak ditemukan'); return; } showToast('Membuat PDF...'); try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); const transaksiList = paymentTransaksiList.filter(t => t.id_jamaah == jamaahId).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal)); const totalBayar = hitungTotalBayarJamaah(jamaahId); let totalHargaPaket = getTotalHargaPaket(jamaah) || 0; const sisa = totalHargaPaket - totalBayar; const prefix = getKonfigurasiProData().settings.invoice_prefix || 'INV/AUVA'; doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('INVOICE PEMBAYARAN', 105, 55, { align: 'center' }); doc.setFontSize(10); doc.setTextColor(100,100,100); doc.text(`No: ${prefix}/${jamaah.id}/${new Date().toLocaleDateString('id-ID').replace(/\//g,'')}`, 105, 62, { align: 'center' }); doc.setFontSize(11); doc.setTextColor(0,0,0); doc.text(`Nama Jamaah: ${jamaah.nama_lengkap}`, 20, 75); doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, 20, 85); doc.text(`Total Paket: ${formatRupiah(totalHargaPaket)}`, 20, 95); const tableData = transaksiList.map((t, i) => [i+1, t.tanggal, t.keterangan, t.metode, formatRupiah(t.nominal)]); if (tableData.length > 0) { doc.autoTable({ startY: 110, head: [['No','Tanggal','Keterangan','Metode','Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9, lineWidth: 0.1 } }); } let finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 120; doc.text(`Total Dibayar: ${formatRupiah(totalBayar)}`, 20, finalY); doc.text(`Sisa Tagihan: ${formatRupiah(sisa > 0 ? sisa : 0)}`, 20, finalY+10); doc.setTextColor(sisa <= 0 ? '#2ecc71' : '#e74c3c'); doc.text(`Status: ${sisa <= 0 ? 'LUNAS ✓' : 'BELUM LUNAS'}`, 20, finalY+20); doc.save(`Invoice_${jamaah.nama_lengkap.replace(/\s/g, '_')}.pdf`); showToast('PDF Invoice berhasil dibuat'); } catch(e) { showToast('Gagal PDF: ' + e.message); } }
+async function cetakInvoicePDF(jamaahId) { const jamaah = jamaahList.find(j => j.id == jamaahId); if (!jamaah) { showToast('Data jamaah tidak ditemukan'); return; } showToast('Membuat PDF...'); try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); const transaksiList = paymentTransaksiList.filter(t => t.id_jamaah == jamaahId).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal)); const totalBayar = hitungTotalBayarJamaah(jamaahId); let totalHargaPaket = getTotalHargaPaket(jamaah) || 0; const sisa = totalHargaPaket - totalBayar; const prefix = getKonfigurasiProData().settings.invoice_prefix || 'INV/AUVA'; doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('INVOICE PEMBAYARAN', 105, 65, { align: 'center' }); doc.setFontSize(10); doc.setTextColor(100,100,100); doc.text(`No: ${prefix}/${jamaah.id}/${new Date().toLocaleDateString('id-ID').replace(/\//g,'')}`, 105, 72, { align: 'center' }); doc.setFontSize(11); doc.setTextColor(0,0,0); doc.text(`Nama Jamaah: ${jamaah.nama_lengkap}`, 20, 85); doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, 20, 95); doc.text(`Total Paket: ${formatRupiah(totalHargaPaket)}`, 20, 105); const tableData = transaksiList.map((t, i) => [i+1, t.tanggal, t.keterangan, t.metode, formatRupiah(t.nominal)]); if (tableData.length > 0) { doc.autoTable({ startY: 120, head: [['No','Tanggal','Keterangan','Metode','Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9, lineWidth: 0.1 } }); } let finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 130; doc.text(`Total Dibayar: ${formatRupiah(totalBayar)}`, 20, finalY); doc.text(`Sisa Tagihan: ${formatRupiah(sisa > 0 ? sisa : 0)}`, 20, finalY+10); doc.setTextColor(sisa <= 0 ? '#2ecc71' : '#e74c3c'); doc.text(`Status: ${sisa <= 0 ? 'LUNAS ✓' : 'BELUM LUNAS'}`, 20, finalY+20); doc.save(`Invoice_${jamaah.nama_lengkap.replace(/\s/g, '_')}.pdf`); showToast('PDF Invoice berhasil dibuat'); } catch(e) { showToast('Gagal PDF: ' + e.message); } }
 function openEditHargaModal(jamaahId) { const jamaah = jamaahList.find(j => j.id == jamaahId); if (!jamaah) return; currentEditJamaahId = jamaahId; let currentHarga = getTotalHargaPaket(jamaah) || 0; document.getElementById('editHargaNama').innerText = jamaah.nama_lengkap; document.getElementById('editHargaValue').value = currentHarga; document.getElementById('editHargaModal').classList.add('show'); }
 function closeEditHargaModal() { document.getElementById('editHargaModal').classList.remove('show'); }
 function saveEditHarga() { const newHarga = parseInt(document.getElementById('editHargaValue').value); if (isNaN(newHarga) || newHarga <= 0) { showToast('❌ Masukkan harga yang valid!'); return; } const jamaah = jamaahList.find(j => j.id == currentEditJamaahId); if (jamaah) { let targetField = null; for (const field of dynamicFieldsJamaah) { const label = field.label.toLowerCase(); if (label.includes('harga') || label.includes('paket') || label.includes('tagihan') || label.includes('total')) { targetField = field; break; } } if (!targetField) { dynamicFieldsJamaah.push({ name: 'total_harga_paket', label: 'Total Harga Paket', type: 'text' }); saveDynamicFieldsJamaah(); targetField = dynamicFieldsJamaah[dynamicFieldsJamaah.length - 1]; } if (!jamaah.additional_fields) jamaah.additional_fields = {}; jamaah.additional_fields[targetField.name] = newHarga.toLocaleString('id-ID'); saveJamaahData(); renderPaymentJamaahList(); renderPaymentDashboard(); showToast(`✅ Harga paket diatur ke ${formatRupiah(newHarga)}`); } closeEditHargaModal(); }
 function openRiwayatModal(jamaahId) { const jamaah = jamaahList.find(j => j.id == jamaahId); if (!jamaah) return; const transaksi = paymentTransaksiList.filter(t => t.id_jamaah == jamaahId).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal)); document.getElementById('riwayatNama').innerHTML = `${jamaah.nama_lengkap} <span style="font-size:12px;">(Total: ${formatRupiah(transaksi.reduce((s,t)=>s+t.nominal,0))})</span>`; let html = ''; transaksi.forEach((t) => { html += `<div style="background:var(--gray-light); border-radius:12px; padding:12px; margin-bottom:8px;"><div><div style="font-size:12px; color:var(--gray);">📅 ${t.tanggal} | ${t.metode}</div><div><strong>${escapeHtml(t.keterangan)}</strong></div></div><div style="font-weight:bold; color:var(--primary);">${formatRupiah(t.nominal)}</div><div><button onclick="deletePaymentTransaction('${t.id}')" style="background:none; border:none; color:var(--red); font-size:18px;">🗑️</button></div></div>`; }); if (transaksi.length === 0) html = '<div style="text-align:center; padding:20px;">Belum ada transaksi</div>'; document.getElementById('riwayatListContainer').innerHTML = html; currentRiwayatJamaahId = jamaahId; document.getElementById('riwayatModal').classList.add('show'); }
 function closeRiwayatModal() { document.getElementById('riwayatModal').classList.remove('show'); }
 function deletePaymentTransaction(trxId) { if (confirm('Hapus transaksi ini?')) { paymentTransaksiList = paymentTransaksiList.filter(t => t.id != trxId); savePaymentData(); if (currentRiwayatJamaahId) openRiwayatModal(currentRiwayatJamaahId); renderPaymentDashboard(); renderPaymentJamaahList(); showToast('✅ Transaksi dihapus'); } }
-async function printRiwayatPDF() { const jamaah = jamaahList.find(j => j.id == currentRiwayatJamaahId); if (!jamaah) return; const transaksi = paymentTransaksiList.filter(t => t.id_jamaah == currentRiwayatJamaahId).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal)); const totalBayar = transaksi.reduce((s,t)=>s+t.nominal,0); const totalHarga = getTotalHargaPaket(jamaah) || 0; try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('RIWAYAT PEMBAYARAN', 105, 55, { align: 'center' }); doc.setFontSize(11); doc.setTextColor(0,0,0); doc.text(`Nama: ${jamaah.nama_lengkap}`, 20, 70); doc.text(`Total Paket: ${formatRupiah(totalHarga)}`, 20, 80); doc.text(`Total Dibayar: ${formatRupiah(totalBayar)}`, 20, 90); doc.text(`Sisa: ${formatRupiah(totalHarga - totalBayar)}`, 20, 100); const tableData = transaksi.map((t, i) => [i+1, t.tanggal, t.keterangan, t.metode, formatRupiah(t.nominal)]); doc.autoTable({ startY: 115, head: [['No', 'Tanggal', 'Keterangan', 'Metode', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9, lineWidth: 0.1 } }); doc.save(`Riwayat_${jamaah.nama_lengkap.replace(/\s/g,'_')}.pdf`); showToast('PDF riwayat berhasil dibuat'); } catch(e) { showToast('Gagal PDF: ' + e.message); } }
+async function printRiwayatPDF() { const jamaah = jamaahList.find(j => j.id == currentRiwayatJamaahId); if (!jamaah) return; const transaksi = paymentTransaksiList.filter(t => t.id_jamaah == currentRiwayatJamaahId).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal)); const totalBayar = transaksi.reduce((s,t)=>s+t.nominal,0); const totalHarga = getTotalHargaPaket(jamaah) || 0; try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('RIWAYAT PEMBAYARAN', 105, 65, { align: 'center' }); doc.setFontSize(11); doc.setTextColor(0,0,0); doc.text(`Nama: ${jamaah.nama_lengkap}`, 20, 80); doc.text(`Total Paket: ${formatRupiah(totalHarga)}`, 20, 90); doc.text(`Total Dibayar: ${formatRupiah(totalBayar)}`, 20, 100); doc.text(`Sisa: ${formatRupiah(totalHarga - totalBayar)}`, 20, 110); const tableData = transaksi.map((t, i) => [i+1, t.tanggal, t.keterangan, t.metode, formatRupiah(t.nominal)]); doc.autoTable({ startY: 125, head: [['No', 'Tanggal', 'Keterangan', 'Metode', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9, lineWidth: 0.1 } }); doc.save(`Riwayat_${jamaah.nama_lengkap.replace(/\s/g,'_')}.pdf`); showToast('PDF riwayat berhasil dibuat'); } catch(e) { showToast('Gagal PDF: ' + e.message); } }
 function filterPaymentJamaahList() { currentPaymentFilter = document.getElementById('paymentStatusFilter').value; currentPaymentSearch = document.getElementById('paymentSearchNama').value.toLowerCase(); renderPaymentJamaahList(); }
-function exportPaymentPDF() { if (paymentTransaksiList.length === 0) { showToast('Tidak ada data transaksi!'); return; } showToast('Membuat PDF...'); setTimeout(async () => { try { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }); await applyPDFConfig(doc, { landscape: true }); let totalMasuk = paymentTransaksiList.reduce((s,t)=>s+t.nominal,0); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('LAPORAN PEMBAYARAN JAMAAH', 148.5, 55, { align: 'center' }); const tableData = paymentTransaksiList.map((t, i) => [i+1, t.tanggal, t.nama_jamaah, t.keterangan, t.metode, formatRupiah(t.nominal)]); doc.autoTable({ startY: 70, head: [['No', 'Tanggal', 'Jamaah', 'Keterangan', 'Metode', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 8, lineWidth: 0.1 } }); let finalY = doc.lastAutoTable.finalY + 10; doc.text(`TOTAL PEMASUKAN: ${formatRupiah(totalMasuk)}`, 14, finalY); doc.save(`Laporan_Pembayaran_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF laporan berhasil dibuat'); } catch(e) { showToast('Gagal PDF: '+e.message); } }, 100); }
+function exportPaymentPDF() { if (paymentTransaksiList.length === 0) { showToast('Tidak ada data transaksi!'); return; } showToast('Membuat PDF...'); setTimeout(async () => { try { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }); await applyPDFConfig(doc, { landscape: true }); let totalMasuk = paymentTransaksiList.reduce((s,t)=>s+t.nominal,0); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('LAPORAN PEMBAYARAN JAMAAH', 148.5, 65, { align: 'center' }); const tableData = paymentTransaksiList.map((t, i) => [i+1, t.tanggal, t.nama_jamaah, t.keterangan, t.metode, formatRupiah(t.nominal)]); doc.autoTable({ startY: 80, head: [['No', 'Tanggal', 'Jamaah', 'Keterangan', 'Metode', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 8, lineWidth: 0.1 } }); let finalY = doc.lastAutoTable.finalY + 10; doc.text(`TOTAL PEMASUKAN: ${formatRupiah(totalMasuk)}`, 14, finalY); doc.save(`Laporan_Pembayaran_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF laporan berhasil dibuat'); } catch(e) { showToast('Gagal PDF: '+e.message); } }, 100); }
 function exportPaymentExcel() { if (paymentTransaksiList.length === 0) { showToast('Tidak ada data transaksi!'); return; } const totalMasuk = paymentTransaksiList.reduce((s,t)=>s+t.nominal,0); const wsData = paymentTransaksiList.map(t => ({ Tanggal: t.tanggal, Jamaah: t.nama_jamaah, Keterangan: t.keterangan, Metode: t.metode, Nominal: t.nominal })); wsData.push({ Tanggal: '', Jamaah: '', Keterangan: 'TOTAL', Metode: '', Nominal: totalMasuk }); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(wsData), "Laporan Pembayaran"); XLSX.writeFile(wb, `Laporan_Pembayaran_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.xlsx`); showToast('Excel berhasil di-export'); }
 
 // ==================== MULTI EVENT ====================
@@ -911,7 +1259,7 @@ function renderMasterForm() { const container = document.getElementById('masterF
 function getSelectedItems() { const selected = []; document.querySelectorAll('.master-item-cb:checked').forEach(cb => selected.push(cb.value)); return selected; }
 function setSelectedItems(selectedArray) { const selected = selectedArray || []; document.querySelectorAll('.master-item-cb').forEach(cb => { cb.checked = selected.includes(cb.value); }); }
 function saveMasterData() { const nama = document.getElementById('masterNama')?.value.trim(); if(!nama) { showToast('Nama lengkap wajib diisi!'); return; } const additional = {}; for(const field of masterDynamicFields) { const input = document.getElementById(`masterField_${field.name}`); if(input) additional[field.name] = input.value.trim(); } const items = getSelectedItems(); const now = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID'); if(editingMasterId !== null) { const index = masterDataList.findIndex(d => d.id == editingMasterId); if(index !== -1) { masterDataList[index] = { ...masterDataList[index], nama, additional_fields: additional, items, updated_at: now }; showToast('Data diupdate!'); } editingMasterId = null; document.getElementById('masterFormTitle').innerText = 'TAMBAH DATA'; } else { masterDataList.push({ id: Date.now(), nama, additional_fields: additional, items, created_at: now }); showToast('Data ditambahkan'); } saveMasterDataToLocal(); renderMasterTable(); renderMasterForm(); }
-function renderMasterTable() { const thead = document.getElementById('masterTableHead'); const tbody = document.getElementById('masterTableBody'); if(!thead || !tbody) return; let headerHtml = '<tr><th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th><th>No</th><th>Nama Lengkap</th>'; for(const field of masterDynamicFields) { headerHtml += `<th>${escapeHtml(field.label)}</th>`; } headerHtml += '<th>Item</th><th>Aksi</th><tr>'; thead.innerHTML = headerHtml; if(masterDataList.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>'; return; } let bodyHtml = ''; [...masterDataList].reverse().forEach((item, idx) => { const displayNum = idx + 1; let whatsappValue = ''; const whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp' || f.label.toLowerCase() === 'whatsapp'); if(whatsappField) { whatsappValue = item.additional_fields?.[whatsappField.name] || ''; } bodyHtml += `<tr><td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td><td style="text-align:center;">${displayNum}</td><td><strong>${escapeHtml(item.nama)}</strong></td>`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || '-'; bodyHtml += `<td>${escapeHtml(val)}</td>`; } bodyHtml += `<td>${item.items?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td><td style="white-space:nowrap;"><button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;" title="Edit">✏️</button><button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;" title="Share">💬</button><button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;" title="Hapus">🗑️</button></td></tr>`; }); tbody.innerHTML = bodyHtml; }
+function renderMasterTable() { const thead = document.getElementById('masterTableHead'); const tbody = document.getElementById('masterTableBody'); if(!thead || !tbody) return; let headerHtml = '<tr><th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th><th>No</th><th>Nama Lengkap</th>'; for(const field of masterDynamicFields) { headerHtml += `<th>${escapeHtml(field.label)}</th>`; } headerHtml += '<th>Item</th><th>Aksi</th></tr>'; thead.innerHTML = headerHtml; if(masterDataList.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>'; return; } let bodyHtml = ''; [...masterDataList].reverse().forEach((item, idx) => { const displayNum = idx + 1; let whatsappValue = ''; const whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp' || f.label.toLowerCase() === 'whatsapp'); if(whatsappField) { whatsappValue = item.additional_fields?.[whatsappField.name] || ''; } bodyHtml += `<tr><td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td><td style="text-align:center;">${displayNum}</td><td><strong>${escapeHtml(item.nama)}</strong></td>`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || '-'; bodyHtml += `<td>${escapeHtml(val)}</td>`; } bodyHtml += `<td>${item.items?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td><td style="white-space:nowrap;"><button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;">✏️</button><button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;">💬</button><button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;">🗑️</button></td></tr>`; }); tbody.innerHTML = bodyHtml; }
 function toggleAllMasterCheckboxes(master) { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = master.checked); updateBatchBar(); }
 function updateBatchBar() { const checked = document.querySelectorAll('.master-checkbox:checked'); const bar = document.getElementById('batchFloatingBar'); const countSpan = document.getElementById('batchCount'); if (checked.length > 0) { if (countSpan) countSpan.innerText = `${checked.length} dipilih`; if (bar) bar.style.display = 'flex'; } else { if (bar) bar.style.display = 'none'; } }
 function clearBatchSelection() { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = false); const selectAll = document.getElementById('selectAllMaster'); if (selectAll) selectAll.checked = false; updateBatchBar(); }
@@ -922,7 +1270,7 @@ function confirmDeleteAllMasterData() { if(masterDataList.length === 0) { showTo
 function deleteSelectedMasterData() { const selected = document.querySelectorAll('.master-checkbox:checked'); if(selected.length === 0) { showToast('Pilih data dulu!'); return; } if(confirm(`Hapus ${selected.length} data?`)) { const idsToDelete = []; selected.forEach(cb => { const row = cb.closest('tr'); if(row) { const editBtn = row.querySelector('button[onclick*="editMasterData"]'); if(editBtn) { const match = editBtn.getAttribute('onclick').match(/'(\d+)'/); if(match) idsToDelete.push(parseInt(match[1])); } } }); masterDataList = masterDataList.filter(d => !idsToDelete.includes(d.id)); saveMasterDataToLocal(); renderMasterTable(); clearBatchSelection(); showToast(`✅ ${idsToDelete.length} data dihapus`); } }
 function shareSingleMasterToWA(id) { const item = masterDataList.find(d => d.id == id); if(!item) return; let text = `*${getMasterJudul().toUpperCase()}*\n━━━━━━━━━━━━━━━━━━\n*Nama:* ${item.nama}\n`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || ''; if(val) text += `*${field.label}:* ${val}\n`; } if(item.items && item.items.length) text += `*Item:* ${item.items.join(', ')}\n`; text += `━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
 function shareAllMasterToWA() { if(masterDataList.length === 0) { showToast('Tidak ada data!'); return; } let text = `*${getMasterJudul().toUpperCase()}*\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${masterDataList.length} data*\n━━━━━━━━━━━━━━━━━━\n\n`; masterDataList.forEach((item, i) => { text += `${i+1}. *${item.nama}*\n`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || ''; if(val) text += `   ${field.label}: ${val}\n`; } if(item.items && item.items.length) text += `   Item: ${item.items.join(', ')}\n`; text += `\n`; }); text += `━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
-async function exportMasterPDF() { if(masterDataList.length === 0) { showToast('Tidak ada data!'); return; } showToast('Membuat PDF...'); setTimeout(async () => { try { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }); await applyPDFConfig(doc, { landscape: true }); const judul = getMasterJudul(); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(judul, 148.5, 55, { align: 'center' }); const headers = ['No', 'Nama Lengkap', ...masterDynamicFields.map(f => f.label), 'Item']; const body = masterDataList.map((item, i) => { const row = [i+1, item.nama]; for(const field of masterDynamicFields) row.push(item.additional_fields?.[field.name] || '-'); row.push(item.items?.join(', ') || '-'); return row; }); doc.autoTable({ startY: 70, head: [headers], body: body, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 8, lineWidth: 0.1 } }); doc.save(`${judul.replace(/\s+/g,'_')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e) { showToast('Gagal PDF: '+e.message); } }, 100); }
+async function exportMasterPDF() { if(masterDataList.length === 0) { showToast('Tidak ada data!'); return; } showToast('Membuat PDF...'); setTimeout(async () => { try { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }); await applyPDFConfig(doc, { landscape: true }); const judul = getMasterJudul(); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(judul, 148.5, 65, { align: 'center' }); const headers = ['No', 'Nama Lengkap', ...masterDynamicFields.map(f => f.label), 'Item']; const body = masterDataList.map((item, i) => { const row = [i+1, item.nama]; for(const field of masterDynamicFields) row.push(item.additional_fields?.[field.name] || '-'); row.push(item.items?.join(', ') || '-'); return row; }); doc.autoTable({ startY: 80, head: [headers], body: body, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 8, lineWidth: 0.1 } }); doc.save(`${judul.replace(/\s+/g,'_')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e) { showToast('Gagal PDF: '+e.message); } }, 100); }
 function exportMasterExcel() { if(masterDataList.length === 0) { showToast('Tidak ada data!'); return; } const headers = ['No', 'Nama Lengkap', ...masterDynamicFields.map(f => f.label), 'Item', 'Tanggal Input']; const rows = masterDataList.map((item, i) => [ i+1, item.nama, ...masterDynamicFields.map(f => item.additional_fields?.[f.name] || ''), item.items?.join(', ') || '', item.created_at || '-' ]); const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, getMasterJudul()); XLSX.writeFile(wb, `${getMasterJudul().replace(/\s+/g,'_')}.xlsx`); showToast('Excel berhasil di-export'); }
 function backupMasterData() { if(masterDataList.length === 0 && masterDynamicFields.length === 0) { showToast('Tidak ada data!'); return; } const backup = { app: "Auva - Multi Event", version: "1.0", created: new Date().toISOString(), judul: getMasterJudul(), fields: masterDynamicFields, items: masterItemList, data: masterDataList }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'})); a.download = `Auva_DataMaster_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.json`; a.click(); showToast('Backup berhasil'); }
 function restoreMasterData(input) { const file = input.files[0]; if(!file) return; input.value = ''; if(confirm('Timpa data yang ada?')) { const reader = new FileReader(); reader.onload = e => { try { const backup = JSON.parse(e.target.result); if(backup.data && Array.isArray(backup.data)) { masterDataList = backup.data; if(backup.fields) masterDynamicFields = backup.fields; if(backup.items) masterItemList = backup.items; if(backup.judul && document.getElementById('masterJudul')) document.getElementById('masterJudul').value = backup.judul; saveMasterDataToLocal(); renderMasterForm(); renderMasterTable(); showToast(`Restore ${masterDataList.length} data berhasil`); } else showToast('File tidak valid!'); } catch(err) { showToast('File tidak valid!'); } }; reader.readAsText(file); } }
@@ -979,7 +1327,7 @@ function shareCatatanItem(idx) { const item = catatanList[idx]; const text = `*$
 function closeEntryModal() { document.getElementById('entryModal').classList.remove('show'); editingCatatanIndex = null; }
 function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
 
-// ==================== UPLOAD DOKUMEN (INDEXEDDB FULL) ====================
+// ==================== UPLOAD DOKUMEN (INDEXEDDB) ====================
 let dokumenJenisList = [];
 let dokumenData = {};
 let db = null;
@@ -1361,7 +1709,7 @@ function addJamaahToFolder(folderId) { const select = document.getElementById('a
 function removeJamaahFromFolder(folderId, jamaahId) { if(confirm('Hapus jamaah dari folder ini?')) { const folder = folderList.find(f => f.id == folderId); if(folder) { folder.jamaahIds = folder.jamaahIds.filter(id => id != jamaahId); saveFolderData(); openFolderDetail(folderId); showToast('Jamaah dihapus dari folder'); } } }
 function editFolder(folderId) { const folder = folderList.find(f => f.id == folderId); if(!folder) return; const newName = prompt('Masukkan nama folder baru:', folder.nama); if(newName && newName.trim()) { folder.nama = newName.trim(); saveFolderData(); showToast('Folder diupdate'); } }
 function confirmDeleteFolder(folderId) { if(confirm('Hapus folder ini? Data jamaah di dalam folder tidak akan hilang.')) { folderList = folderList.filter(f => f.id != folderId); saveFolderData(); showToast('Folder dihapus'); } }
-async function exportFolderToPDF(folderId) { const folder = folderList.find(f => f.id == folderId); if(!folder) return; const jamaahInFolder = folder.jamaahIds.map(id => jamaahList.find(j => j.id == id)).filter(j => j); if(jamaahInFolder.length === 0) { showToast('Tidak ada jamaah dalam folder ini'); return; } try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(`Folder: ${folder.nama}`, 105, 55, { align: 'center' }); doc.setFontSize(10); doc.text(`Total Jamaah: ${jamaahInFolder.length} orang`, 105, 65, { align: 'center' }); const tableData = jamaahInFolder.map((j, i) => [i+1, j.nama_lengkap, j.created_at || '-']); doc.autoTable({ startY: 75, head: [['No', 'Nama Lengkap', 'Tanggal Input']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9, lineWidth: 0.1 } }); doc.save(`Folder_${folder.nama.replace(/\s+/g,'_')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e) { showToast('Gagal PDF: ' + e.message); } }
+async function exportFolderToPDF(folderId) { const folder = folderList.find(f => f.id == folderId); if(!folder) return; const jamaahInFolder = folder.jamaahIds.map(id => jamaahList.find(j => j.id == id)).filter(j => j); if(jamaahInFolder.length === 0) { showToast('Tidak ada jamaah dalam folder ini'); return; } try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(`Folder: ${folder.nama}`, 105, 65, { align: 'center' }); doc.setFontSize(10); doc.text(`Total Jamaah: ${jamaahInFolder.length} orang`, 105, 75, { align: 'center' }); const tableData = jamaahInFolder.map((j, i) => [i+1, j.nama_lengkap, j.created_at || '-']); doc.autoTable({ startY: 90, head: [['No', 'Nama Lengkap', 'Tanggal Input']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 9, lineWidth: 0.1 } }); doc.save(`Folder_${folder.nama.replace(/\s+/g,'_')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e) { showToast('Gagal PDF: ' + e.message); } }
 function exportFolderToExcel(folderId) { const folder = folderList.find(f => f.id == folderId); if(!folder) return; const jamaahInFolder = folder.jamaahIds.map(id => jamaahList.find(j => j.id == id)).filter(j => j); if(jamaahInFolder.length === 0) { showToast('Tidak ada jamaah dalam folder ini'); return; } const wsData = jamaahInFolder.map((j, i) => ({ No: i+1, Nama: j.nama_lengkap, 'Tanggal Input': j.created_at || '-' })); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(wsData), folder.nama); XLSX.writeFile(wb, `Folder_${folder.nama.replace(/\s+/g,'_')}.xlsx`); showToast('Excel berhasil di-export'); }
 
 // ==================== PENGINGAT WA ====================
@@ -1401,6 +1749,7 @@ async function initPremium() {
     if(savedAdmin) isAdminModePremium = true;
     const adminSwitch = document.getElementById('adminMode'); if(adminSwitch) adminSwitch.checked = isAdminModePremium;
     renderMenuPremium(); renderMenuSettingsPremium(); renderColorOptionsPremium(); loadThemePremium();
+    initDarkMode();
     updateHomeStats(); loadEstimasiData(); loadKasData(); loadJamaahData(); loadDynamicFieldsJamaah();
     loadJamaahKitaData(); loadDynamicFieldsJamaahKita(); loadPaymentData(); loadMasterData(); loadKonfigurasiPro();
     loadCatatanData(); await loadDokumenData(); loadFolderData(); loadPengingatData();
@@ -1420,4 +1769,4 @@ async function initPremium() {
 document.addEventListener('DOMContentLoaded', initPremium);
 </script>
 </body>
-            </html>
+        </html>
