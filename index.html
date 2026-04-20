@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Auva">
-    <title>Auva Kbihu AU - Premium (Stabil + IndexedDB)</title>
+    <title>Auva Kbihu AU - Premium Final</title>
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Auva%20Kbihu%20AU%22,%22short_name%22:%22Auva%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230D5C4A%22,%22theme_color%22:%22%230D5C4A%22,%22icons%22:[{%22src%22:%22https://img.icons8.com/color/192/kaaba.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22},{%22src%22:%22https://img.icons8.com/color/512/kaaba.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
     <link rel="icon" href="https://img.icons8.com/color/96/kaaba.png">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/kaaba.png">
@@ -18,6 +18,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <!-- PERBAIKAN: Menambahkan library html2canvas yang hilang -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
@@ -260,7 +262,6 @@
 <div id="splashScreen" style="position:fixed; inset:0; background:linear-gradient(135deg, var(--primary) 0%, #0a3d31 100%); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition:opacity 0.5s ease;"><div style="width:120px; height:120px; background:white; border-radius:30px; display:flex; align-items:center; justify-content:center; margin-bottom:30px; animation:pulse 2s infinite;"><div style="font-size:70px;">🕋</div></div><div style="color:white; font-size:28px; font-weight:bold;">Auva</div><div style="color:rgba(255,255,255,0.8); font-size:14px;">Kbihu AU - Mobile</div><div style="width:200px; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; margin-top:40px; overflow:hidden;"><div style="height:100%; width:100%; background:var(--accent); border-radius:2px;"></div></div></div>
 
 <!-- ==================== SEMUA HALAMAN ==================== -->
-
 <!-- HOME PAGE -->
 <div id="page-home" class="page active">
     <div class="header-premium">
@@ -518,7 +519,7 @@
     </div>
 </div>
 
-<!-- HALAMAN UPLOAD DOKUMEN (DENGAN INDEXEDDB & TOMBOL HAPUS) -->
+<!-- HALAMAN UPLOAD DOKUMEN -->
 <div id="page-uploaddokumen" class="page">
     <div class="header-premium header-premium-small">
         <div class="back-header"><i class="fas fa-arrow-left" onclick="showPage('fitur')"></i><h2>📄 Upload Dokumen</h2><div style="width:30px;"></div></div>
@@ -760,7 +761,7 @@ function getKonfigurasiProData() {
     return { instansi1: { nama: 'PT AUVA EQTENA NAHDHA', alamat: 'Jl. Siwalankerto Utara II No. 30, Wonocolo, Surabaya' }, instansi2: { aktif: true, nama: 'KBIH Amanatul Ummah' }, watermark: { enabled: true, text: 'DOKUMEN RESMI', opacity: 0.15, fontsize: 60, position: 'diagonal' }, qr: { enabled: true, text: 'Dokumen Resmi - Divalidasi oleh Sistem Auva', size: 80 }, settings: { header_mode: 'both', ttd_mode: 'both', invoice_prefix: 'INV/AUVA' } };
 }
 
-// ==================== CUAN PLAN (SINGKAT - SAMA PERSIS SEPERTI VERSI STABIL) ====================
+// ==================== CUAN PLAN ====================
 let lastCalculatedText='', lastCalculatedPrice=0, lastCalculatedPaket='', lastCalculatedTotalJam=0;
 function saveEstimasiData() { const estimasiData={ lokasiPaket:document.getElementById('lokasiPaket').value, totJam:document.getElementById('totJam').value, jamGratis:document.getElementById('jamGratis').value, numTL:document.getElementById('numTL').value, cTiket:document.getElementById('cTiket').value, cLA:document.getElementById('cLA').value, cAsuransi:document.getElementById('cAsuransi').value, cHandling:document.getElementById('cHandling').value, cAlat:document.getElementById('cAlat').value, cAplikasi:document.getElementById('cAplikasi').value, cPIC:document.getElementById('cPIC').value, cLain:document.getElementById('cLain').value, profitPct:document.getElementById('profitPct').value }; localStorage.setItem('auva_estimasi_data',JSON.stringify(estimasiData)); }
 function loadEstimasiData() { const saved=localStorage.getItem('auva_estimasi_data'); if(saved){ const data=JSON.parse(saved); if(data.lokasiPaket) document.getElementById('lokasiPaket').value=data.lokasiPaket; if(data.totJam) document.getElementById('totJam').value=data.totJam; if(data.jamGratis) document.getElementById('jamGratis').value=data.jamGratis; if(data.numTL) document.getElementById('numTL').value=data.numTL; if(data.cTiket) document.getElementById('cTiket').value=data.cTiket; if(data.cLA) document.getElementById('cLA').value=data.cLA; if(data.cAsuransi) document.getElementById('cAsuransi').value=data.cAsuransi; if(data.cHandling) document.getElementById('cHandling').value=data.cHandling; if(data.cAlat) document.getElementById('cAlat').value=data.cAlat; if(data.cAplikasi) document.getElementById('cAplikasi').value=data.cAplikasi; if(data.cPIC) document.getElementById('cPIC').value=data.cPIC; if(data.cLain) document.getElementById('cLain').value=data.cLain; if(data.profitPct) document.getElementById('profitPct').value=data.profitPct; } }
@@ -769,7 +770,7 @@ function salinRingkasan() { if(lastCalculatedText) { navigator.clipboard.writeTe
 async function cetakEstimasiPDF() { if(!lastCalculatedPrice) { showToast('Silakan hitung estimasi dulu!'); return; } showToast('Membuat PDF...'); try { const { jsPDF } = window.jspdf; const doc = new jsPDF(); await applyPDFConfig(doc, { landscape: false }); const f=n=>"Rp "+Math.round(n).toLocaleString('id-ID'); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('RINCIAN HARGA PAKET', 105, 55, { align: 'center' }); doc.setFontSize(11); doc.setTextColor(0,0,0); doc.text(`Paket: ${lastCalculatedPaket}`, 20, 75); doc.text(`Total Jamaah: ${lastCalculatedTotalJam} orang`, 20, 85); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(`HARGA PER PAX: ${f(lastCalculatedPrice)}`, 20, 105); doc.save(`Estimasi_Harga_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e){ showToast('Gagal PDF: '+e.message); } }
 function resetEstimasiToDefault() { if(confirm('Reset semua data estimasi ke nilai default?')) { document.getElementById('lokasiPaket').value="Program 9 HARI"; document.getElementById('totJam').value="21"; document.getElementById('jamGratis').value="1"; document.getElementById('numTL').value="1"; document.getElementById('cTiket').value="15.450.000"; document.getElementById('cLA').value="14.450.000"; document.getElementById('cAsuransi').value="60.000"; document.getElementById('cHandling').value="100.000"; document.getElementById('cAlat').value="1.000.000"; document.getElementById('cAplikasi').value="60.000"; document.getElementById('cPIC').value="0"; document.getElementById('cLain').value="0"; document.getElementById('profitPct').value="5"; saveEstimasiData(); showToast('Data estimasi direset ke default'); hitungUmroh(); } }
 
-// ==================== UANG KAS (SINGKAT - SAMA PERSIS) ====================
+// ==================== UANG KAS ====================
 let dataKas=[], lastWAText='';
 function loadKasData() { const saved=localStorage.getItem('auva_kas_data'); dataKas=saved?JSON.parse(saved):[]; renderKasTable(); updateSaldoKas(); const savedKegiatan=localStorage.getItem('auva_kegiatan'); if(savedKegiatan) document.getElementById('kegiatan').value=savedKegiatan; }
 function saveKasData() { localStorage.setItem('auva_kas_data',JSON.stringify(dataKas)); renderKasTable(); updateSaldoKas(); }
@@ -785,7 +786,7 @@ async function exportKasPDF() { if(dataKas.length===0) return showToast("Tidak a
 function exportKasExcel() { if(dataKas.length===0) return showToast("Tidak ada data!"); showToast('Membuat Excel...'); setTimeout(()=>{ try{ const judul=document.getElementById('kegiatan').value.trim()||"Laporan_Kas"; let masuk=0,keluar=0; dataKas.forEach(i=>{ if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom; }); const wsData=dataKas.map(i=>({Tanggal:i.tgl,Kegiatan:i.kegiatan,Keterangan:i.ket,Tipe:i.tipe.toUpperCase(),Nominal:i.nom})); wsData.push({Tanggal:'',Kegiatan:'',Keterangan:'TOTAL PEMASUKAN',Tipe:'',Nominal:masuk}); wsData.push({Tanggal:'',Kegiatan:'',Keterangan:'TOTAL PENGELUARAN',Tipe:'',Nominal:keluar}); wsData.push({Tanggal:'',Kegiatan:'',Keterangan:'SALDO AKHIR',Tipe:'',Nominal:masuk-keluar}); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(wsData),"Transaksi Kas"); XLSX.writeFile(wb,`${judul.replace(/\s+/g,'_')}.xlsx`); showToast('Excel berhasil di-export'); } catch(e){ showToast('Gagal export Excel: '+e.message); } },100); }
 function confirmResetKas() { if(confirm('Kosongkan semua transaksi kas? Data akan hilang!')) { dataKas=[]; saveKasData(); const hasilWA=document.getElementById('hasilWA'); if(hasilWA){ hasilWA.style.display='none'; hasilWA.innerHTML=''; } lastWAText=''; showToast('Buku kas dikosongkan'); } }
 
-// ==================== DATABASE JAMAAH (SINGKAT - SAMA PERSIS) ====================
+// ==================== DATABASE JAMAAH ====================
 let jamaahList=[], dynamicFieldsJamaah=[], editingJamaahId=null, currentJamaahPage=1, perPageJamaah=10, jamaahFilteredList=[], currentSort='urutan_asli', currentSearch='';
 function loadJamaahData() { const saved=localStorage.getItem('auva_jamaah_list'); jamaahList=saved?JSON.parse(saved):[]; applyJamaahFilterAndSort(); }
 function saveJamaahData() { localStorage.setItem('auva_jamaah_list',JSON.stringify(jamaahList)); applyJamaahFilterAndSort(); }
@@ -809,7 +810,7 @@ function closeJamaahModal(){ document.getElementById('jamaahModal').classList.re
 function shareAllJamaahToWA(){ if(jamaahList.length===0) return showToast('Tidak ada database!'); let text=`*DAFTAR JAMAAH*\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${jamaahList.length} Jamaah*\n━━━━━━━━━━━━━━━━━━\n\n`; jamaahList.forEach((j,i)=>{ text+=`${i+1}. *${j.nama_lengkap}*\n`; for(const field of dynamicFieldsJamaah){ const val=j.additional_fields?.[field.name]||''; if(val) text+=`   ${field.label}: ${val}\n`; } text+=`\n`; }); text+=`━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
 function exportJamaahToExcel(){ if(jamaahList.length===0) return showToast('Tidak ada data!'); const headers=['No','Nama Lengkap','Tanggal Input']; for(const f of dynamicFieldsJamaah) headers.push(f.label); const rows=jamaahList.map((j,i)=>{ const row=[i+1,j.nama_lengkap,j.created_at||'-']; for(const f of dynamicFieldsJamaah) row.push(j.additional_fields?.[f.name]||''); return row; }); const ws=XLSX.utils.aoa_to_sheet([headers,...rows]); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'database'); XLSX.writeFile(wb,`Data_Jamaah_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.xlsx`); showToast('Excel berhasil di-export'); }
 function backupJamaahData(){ if(jamaahList.length===0 && dynamicFieldsJamaah.length===0) return showToast("Tidak ada data!"); const backup={app:"Auva Kbihu AU - database", version:"1.0", created:new Date().toISOString(), fields:dynamicFieldsJamaah, data:jamaahList}; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'})); a.download=`Auva_Jamaah_Backup_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.json`; a.click(); showToast('Backup jamaah berhasil'); }
-function restoreJamaahData(input){ const file=input.files[0]; if(!file) return; input.value=''; if(confirm("Timpa database yang ada?")){ const reader=new FileReader(); reader.onload=e=>{ try{ const backup=JSON.parse(e.target.result); if(backup.data&&Array.isArray(backup.data)){ jamaahList=backup.data; if(backup.fields){ dynamicFieldsJamaah=backup.fields; saveDynamicFieldsJamaah(); } saveJamaahData(); showToast(`Restore ${jamaahList.length} data berhasil`); } else showToast("File backup tidak valid!"); } catch(err){ showToast("File backup tidak valid!"); } }; reader.readAsText(file); } }
+function restoreJamaahData(input){ const file=input.files[0]; if(!file) return; input.value=''; if(confirm("Timpa database yang ada?")) { const reader=new FileReader(); reader.onload=e=>{ try{ const backup=JSON.parse(e.target.result); if(backup.data&&Array.isArray(backup.data)){ jamaahList=backup.data; if(backup.fields){ dynamicFieldsJamaah=backup.fields; saveDynamicFieldsJamaah(); } saveJamaahData(); showToast(`Restore ${jamaahList.length} data berhasil`); } else showToast("File backup tidak valid!"); } catch(err){ showToast("File backup tidak valid!"); } }; reader.readAsText(file); } }
 function openManageFieldsModal(){ if(!isAdminModePremium) return showToast('Aktifkan Mode Admin dulu!'); renderFieldsList(); document.getElementById('manageFieldsModal').classList.add('show'); }
 function closeManageFieldsModal(){ document.getElementById('manageFieldsModal').classList.remove('show'); }
 function renderFieldsList(){ const container=document.getElementById('fieldsListContainer'); if(!container) return; if(dynamicFieldsJamaah.length===0){ container.innerHTML='<p>Belum ada field dinamis</p>'; return; } let html=''; dynamicFieldsJamaah.forEach((f,idx)=>{ html+=`<div class="field-item"><div><strong>${escapeHtml(f.label)}</strong><br><small style="font-size:11px;">${f.name} (${f.type})</small></div><button class="btn-danger-small" onclick="confirmDeleteDynamicField(${idx})">Hapus</button></div>`; }); container.innerHTML=html; }
@@ -820,7 +821,7 @@ function confirmDeleteDynamicField(idx){ if(confirm(`Hapus field "${dynamicField
 function confirmDeleteAllJamaah(){ if(jamaahList.length===0){ showToast('Tidak ada data!'); return; } if(confirm(`⚠️ PERINGATAN: Semua ${jamaahList.length} data akan dihapus PERMANEN! Lanjutkan?`)){ jamaahList=[]; saveJamaahData(); showToast('✅ Semua database telah dihapus'); renderJamaahListWithPagination(); } }
 function importJamaahFromExcel(input){ const file=input.files[0]; if(!file) return; if(confirm("Import Excel akan MENAMBAH database baru. Lanjutkan?")){ const reader=new FileReader(); reader.onload=function(e){ const data=new Uint8Array(e.target.result); const workbook=XLSX.read(data,{type:'array'}); const sheet=workbook.Sheets[workbook.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:""}); if(!rows||rows.length<2){ showToast('File Excel kosong!'); input.value=''; return; } const headers=rows[0].map(h=>h?h.toString().trim():''); const namaIndex=headers.findIndex(h=>h&&(h.toLowerCase().includes('nama')||h.toLowerCase()==='name')); if(namaIndex===-1){ showToast('Header "Nama" tidak ditemukan!'); input.value=''; return; } let added=0; const now=new Date().toLocaleDateString('id-ID')+' '+new Date().toLocaleTimeString('id-ID'); for(let i=1;i<rows.length;i++){ const row=rows[i]; if(!row||row.length===0) continue; const nama=row[namaIndex]?row[namaIndex].toString().trim():''; if(!nama) continue; const additional={}; for(const field of dynamicFieldsJamaah){ const fieldIndex=headers.findIndex(h=>h&&(h.toLowerCase()===field.label.toLowerCase()||h.toLowerCase()===field.name.toLowerCase())); if(fieldIndex!==-1&&row[fieldIndex]){ additional[field.name]=row[fieldIndex].toString().trim(); } } jamaahList.push({id:Date.now()+i, nama_lengkap:nama, additional_fields:additional, created_at:now}); added++; } saveJamaahData(); showToast(`✅ Import selesai! ${added} jamaah ditambahkan`); input.value=''; }; reader.readAsArrayBuffer(file); } }
 
-// ==================== JAMAAH ON PROSES (SINGKAT - SAMA PERSIS) ====================
+// ==================== JAMAAH ON PROSES ====================
 let jamaahKitaList=[], dynamicFieldsJamaahKita=[];
 function loadJamaahKitaData(){ const saved=localStorage.getItem('auva_jamaah_kita_list'); jamaahKitaList=saved?JSON.parse(saved):[]; }
 function saveJamaahKitaData(){ localStorage.setItem('auva_jamaah_kita_list',JSON.stringify(jamaahKitaList)); renderJamaahKitaList(); }
@@ -837,7 +838,7 @@ function editJamaahKita(index){ if(!isAdminModePremium) return showToast('Aktifk
 function confirmDeleteJamaahKita(index){ if(confirm('Hapus database kita ini?')){ jamaahKitaList.splice(index,1); saveJamaahKitaData(); renderJamaahKitaList(); showToast('Data dihapus'); } }
 function shareAllJamaahKitaToWA(){ if(jamaahKitaList.length===0) return showToast('Tidak ada database kita!'); let text=`*Jamaah on proses*\n━━━━━━━━━━━━━━━━━━\n📊 *Total: ${jamaahKitaList.length} Jamaah*\n━━━━━━━━━━━━━━━━━━\n\n`; jamaahKitaList.forEach((jk,i)=>{ text+=`${i+1}. *${jk.nama_lengkap}*\n`; for(const field of dynamicFieldsJamaahKita){ const val=jk.additional_fields?.[field.name]||''; if(val) text+=`   ${field.label}: ${val}\n`; } text+=`\n`; }); text+=`━━━━━━━━━━━━━━━━━━\n#AuvaKbihuAU`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); }
 function backupJamaahKitaData(){ if(jamaahKitaList.length===0 && dynamicFieldsJamaahKita.length===0) return showToast("Tidak ada data!"); const backup={app:"Auva Kbihu AU - Jamaah on proses", version:"1.0", created:new Date().toISOString(), fields:dynamicFieldsJamaahKita, data:jamaahKitaList}; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'})); a.download=`Auva_JamaahKita_Backup_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.json`; a.click(); showToast('Backup Jamaah on proses berhasil'); }
-function restoreJamaahKitaData(input){ const file=input.files[0]; if(!file) return; input.value=''; if(confirm("Timpa database kita yang ada?")){ const reader=new FileReader(); reader.onload=e=>{ try{ const backup=JSON.parse(e.target.result); if(backup.data&&Array.isArray(backup.data)){ jamaahKitaList=backup.data; if(backup.fields){ dynamicFieldsJamaahKita=backup.fields; saveDynamicFieldsJamaahKita(); } saveJamaahKitaData(); renderJamaahKitaList(); showToast(`Restore ${jamaahKitaList.length} data berhasil`); } else showToast("File backup tidak valid!"); } catch(err){ showToast("File backup tidak valid!"); } }; reader.readAsText(file); } }
+function restoreJamaahKitaData(input){ const file=input.files[0]; if(!file) return; input.value=''; if(confirm("Timpa database kita yang ada?")) { const reader=new FileReader(); reader.onload=e=>{ try{ const backup=JSON.parse(e.target.result); if(backup.data&&Array.isArray(backup.data)){ jamaahKitaList=backup.data; if(backup.fields){ dynamicFieldsJamaahKita=backup.fields; saveDynamicFieldsJamaahKita(); } saveJamaahKitaData(); renderJamaahKitaList(); showToast(`Restore ${jamaahKitaList.length} data berhasil`); } else showToast("File backup tidak valid!"); } catch(err){ showToast("File backup tidak valid!"); } }; reader.readAsText(file); } }
 function openJamaahKitaFieldModal(){ if(!isAdminModePremium) return showToast('Aktifkan Mode Admin dulu!'); renderJamaahKitaFieldsList(); document.getElementById('jamaahKitaFieldModal').classList.add('show'); }
 function closeJamaahKitaFieldModal(){ document.getElementById('jamaahKitaFieldModal').classList.remove('show'); }
 function renderJamaahKitaFieldsList(){ const container=document.getElementById('jamaahKitaFieldsListContainer'); if(!container) return; if(dynamicFieldsJamaahKita.length===0){ container.innerHTML='<p>Belum ada field dinamis</p>'; return; } let html='<h4 style="margin-top:10px;">Daftar Field Saat Ini:</h4>'; dynamicFieldsJamaahKita.forEach((f,idx)=>{ html+=`<div class="field-item"><div><strong>${escapeHtml(f.label)}</strong><br><small>${f.name} (${f.type})</small></div><button class="btn-danger-small" onclick="confirmDeleteJamaahKitaDynamicField(${idx})">Hapus</button></div>`; }); container.innerHTML=html; }
@@ -848,7 +849,7 @@ function printGroupedPDF(){ if(jamaahKitaList.length===0){ showToast('Tidak ada 
 function closeGroupPrintModal(){ const modal=document.getElementById('groupPrintModal'); if(modal) modal.remove(); }
 async function generateGroupedPDF(){ const fieldName=document.getElementById('groupFieldSelect').value; if(!fieldName){ showToast('Pilih field untuk pengelompokan!'); return; } const reportTitle=document.getElementById('reportTitle').value.trim()||'Daftar Kelompok Jamaah'; closeGroupPrintModal(); showToast('Membuat PDF...'); setTimeout(async()=>{ try{ const groups={}; jamaahKitaList.forEach(jk=>{ let groupValue=jk.additional_fields?.[fieldName]||'Tidak diisi'; groupValue=groupValue.replace(/[^\w\s\d\-]/g,'').trim(); if(!groups[groupValue]) groups[groupValue]=[]; groups[groupValue].push(jk); }); const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}); await applyPDFConfig(doc, { landscape: false }); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text(reportTitle,105,55,{align:'center'}); let y=70; const sortedGroups=Object.keys(groups).sort((a,b)=>{ if(a==='Tidak diisi') return 1; if(b==='Tidak diisi') return -1; return a.localeCompare(b); }); for(const groupName of sortedGroups){ const members=groups[groupName]; if(y>250){ doc.addPage(); y=20; } doc.setFontSize(12); doc.setTextColor(26,93,74); const labelClean=fieldName.replace(/[^\w\s]/g,'').toUpperCase(); const groupClean=groupName.replace(/[^\w\s\d\-]/g,'').trim(); doc.text(`${labelClean}: ${groupClean} (${members.length} orang)`,14,y); y+=8; const tableData=members.map((jk,idx)=>[idx+1, jk.nama_lengkap]); doc.autoTable({startY:y,head:[['No','Nama Lengkap']],body:tableData,theme:'striped',headStyles:{fillColor:[26,93,74],textColor:[255,255,255],fontSize:10},styles:{fontSize:9,cellPadding:3,lineWidth:0.1},margin:{left:14,right:14}}); y=doc.lastAutoTable.finalY+10; } doc.save(`Kelompok_${fieldName}_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF berhasil dibuat'); } catch(e){ showToast('Gagal membuat PDF: '+e.message); } },100); }
 
-// ==================== ZAKAT (SINGKAT - SAMA PERSIS) ====================
+// ==================== ZAKAT ====================
 let sumberHartaList=[];
 let lastZakatText='';
 function tambahSumberHarta(){ const id=Date.now(); sumberHartaList.push({id:id, nama:'', jumlah:0, persen:2.5}); renderSumberHartaList(); }
@@ -859,7 +860,7 @@ function toggleZakatInput(){ const jenis=document.getElementById('jenisZakat').v
 function hitungZakat(){ if(sumberHartaList.length===0) return showToast('Tambah sumber harta terlebih dahulu!'); const jenis=document.getElementById('jenisZakat').value; let nisab=0, nisabGram=0, satuan=''; if(jenis==='pertanian'){ const hargaBeras=parseRupiah(document.getElementById('hargaBeras')?.value||'15000'); nisabGram=653; nisab=nisabGram*hargaBeras; satuan='kg beras'; } else { const hargaEmas=parseRupiah(document.getElementById('hargaEmas')?.value||'1200000'); nisabGram=85; nisab=nisabGram*hargaEmas; satuan='gram emas'; } let totalHarta=0, totalZakat=0; const detailZakat=[]; for(const s of sumberHartaList){ if(s.jumlah>0 && s.persen>0){ const zakat=(s.jumlah*s.persen)/100; totalHarta+=s.jumlah; totalZakat+=zakat; const namaSumber=s.nama||'Sumber'; detailZakat.push(`${namaSumber}: Rp ${s.jumlah.toLocaleString('id-ID')} x ${s.persen}% = Rp ${zakat.toLocaleString('id-ID')}`); } } const status=totalHarta>=nisab?'WAJIB ZAKAT':'TIDAK WAJIB ZAKAT'; const bersih=totalHarta-totalZakat; const f=n=>"Rp "+n.toLocaleString('id-ID'); const garis="━━━━━━━━━━━━━━━━━━"; lastZakatText=`📊 *KALKULATOR ZAKAT*\n${garis}\n📌 *Jenis Zakat:* ${jenis==='mal'?'Zakat Mal':(jenis==='pertanian'?'Zakat Pertanian':'Zakat Perdagangan')}\n💰 *Total Harta:* ${f(totalHarta)}\n⚖️ *Nisab:* ${f(nisab)}\n📋 *Status:* ${status}\n${garis}\n💵 *Total Zakat:* ${f(totalZakat)}\n✨ *Bersih:* ${f(bersih)}\n${garis}\n#AuvaKbihuAU`; let detailHtml=''; for(const d of detailZakat){ detailHtml+=`<div class="res-item"><span>📌</span><span>${d}</span></div>`; } const hasil=document.getElementById('hasilZakat'); hasil.innerHTML=`<div class="res-item"><span>Total Harta</span><b>${f(totalHarta)}</b></div><div class="res-item"><span>Nisab</span><b>${f(nisab)}</b></div><div class="res-item"><span>Status</span><b style="color:${status==='WAJIB ZAKAT'?'#2ecc71':'#e74c3c'}">${status}</b></div><div class="res-item" style="border-top:1px solid rgba(255,255,255,0.2); margin-top:5px; padding-top:10px;"><span>TOTAL ZAKAT</span><span class="highlight">${f(totalZakat)}</span></div><div class="res-item"><span>Bersih</span><b>${f(bersih)}</b></div>${detailHtml.length>0?`<div class="res-item" style="border-top:1px solid rgba(255,255,255,0.2); margin-top:5px; padding-top:10px; flex-direction:column;"><span style="margin-bottom:5px;">📋 DETAIL</span>${detailHtml}</div>`:''}<button class="btn" onclick="salinRingkasanZakat()" style="background:#34495e; margin-top:15px;">SALIN RINGKASAN ZAKAT</button>`; hasil.style.display='block'; hasil.scrollIntoView({behavior:"smooth"}); }
 function salinRingkasanZakat(){ if(lastZakatText){ navigator.clipboard.writeText(lastZakatText).then(()=>showToast("✅ Ringkasan zakat tersalin!")).catch(()=>showToast("❌ Gagal menyalin")); } else { showToast('Silakan hitung zakat dulu!'); } }
 
-// ==================== PEMBAYARAN (SINGKAT - SAMA PERSIS) ====================
+// ==================== PEMBAYARAN ====================
 let paymentTransaksiList = [];
 let currentInvoiceJamaahId = null;
 let currentInvoiceText = '';
@@ -895,7 +896,7 @@ function filterPaymentJamaahList() { currentPaymentFilter = document.getElementB
 function exportPaymentPDF() { if (paymentTransaksiList.length === 0) { showToast('Tidak ada data transaksi!'); return; } showToast('Membuat PDF...'); setTimeout(async () => { try { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }); await applyPDFConfig(doc, { landscape: true }); let totalMasuk = paymentTransaksiList.reduce((s,t)=>s+t.nominal,0); doc.setFontSize(16); doc.setTextColor(26,93,74); doc.text('LAPORAN PEMBAYARAN JAMAAH', 148.5, 55, { align: 'center' }); const tableData = paymentTransaksiList.map((t, i) => [i+1, t.tanggal, t.nama_jamaah, t.keterangan, t.metode, formatRupiah(t.nominal)]); doc.autoTable({ startY: 70, head: [['No', 'Tanggal', 'Jamaah', 'Keterangan', 'Metode', 'Nominal']], body: tableData, theme: 'striped', headStyles: { fillColor: [26,93,74] }, styles: { fontSize: 8, lineWidth: 0.1 } }); let finalY = doc.lastAutoTable.finalY + 10; doc.text(`TOTAL PEMASUKAN: ${formatRupiah(totalMasuk)}`, 14, finalY); doc.save(`Laporan_Pembayaran_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.pdf`); showToast('PDF laporan berhasil dibuat'); } catch(e) { showToast('Gagal PDF: '+e.message); } }, 100); }
 function exportPaymentExcel() { if (paymentTransaksiList.length === 0) { showToast('Tidak ada data transaksi!'); return; } const totalMasuk = paymentTransaksiList.reduce((s,t)=>s+t.nominal,0); const wsData = paymentTransaksiList.map(t => ({ Tanggal: t.tanggal, Jamaah: t.nama_jamaah, Keterangan: t.keterangan, Metode: t.metode, Nominal: t.nominal })); wsData.push({ Tanggal: '', Jamaah: '', Keterangan: 'TOTAL', Metode: '', Nominal: totalMasuk }); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(wsData), "Laporan Pembayaran"); XLSX.writeFile(wb, `Laporan_Pembayaran_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.xlsx`); showToast('Excel berhasil di-export'); }
 
-// ==================== MULTI EVENT (SINGKAT - SAMA PERSIS) ====================
+// ==================== MULTI EVENT ====================
 let masterDataList = [];
 let masterDynamicFields = [];
 let masterItemList = ['Kain Ihram', 'Sendal', 'Obat-obatan', 'Tas', 'Air Zamzam', 'Kopyah'];
@@ -910,7 +911,7 @@ function renderMasterForm() { const container = document.getElementById('masterF
 function getSelectedItems() { const selected = []; document.querySelectorAll('.master-item-cb:checked').forEach(cb => selected.push(cb.value)); return selected; }
 function setSelectedItems(selectedArray) { const selected = selectedArray || []; document.querySelectorAll('.master-item-cb').forEach(cb => { cb.checked = selected.includes(cb.value); }); }
 function saveMasterData() { const nama = document.getElementById('masterNama')?.value.trim(); if(!nama) { showToast('Nama lengkap wajib diisi!'); return; } const additional = {}; for(const field of masterDynamicFields) { const input = document.getElementById(`masterField_${field.name}`); if(input) additional[field.name] = input.value.trim(); } const items = getSelectedItems(); const now = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID'); if(editingMasterId !== null) { const index = masterDataList.findIndex(d => d.id == editingMasterId); if(index !== -1) { masterDataList[index] = { ...masterDataList[index], nama, additional_fields: additional, items, updated_at: now }; showToast('Data diupdate!'); } editingMasterId = null; document.getElementById('masterFormTitle').innerText = 'TAMBAH DATA'; } else { masterDataList.push({ id: Date.now(), nama, additional_fields: additional, items, created_at: now }); showToast('Data ditambahkan'); } saveMasterDataToLocal(); renderMasterTable(); renderMasterForm(); }
-function renderMasterTable() { const thead = document.getElementById('masterTableHead'); const tbody = document.getElementById('masterTableBody'); if(!thead || !tbody) return; let headerHtml = '<tr><th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th><th>No</th><th>Nama Lengkap</th>'; for(const field of masterDynamicFields) { headerHtml += `<th>${escapeHtml(field.label)}</th>`; } headerHtml += '<th>Item</th><th>Aksi</th></tr>'; thead.innerHTML = headerHtml; if(masterDataList.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>'; return; } let bodyHtml = ''; [...masterDataList].reverse().forEach((item, idx) => { const displayNum = idx + 1; let whatsappValue = ''; const whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp' || f.label.toLowerCase() === 'whatsapp'); if(whatsappField) { whatsappValue = item.additional_fields?.[whatsappField.name] || ''; } bodyHtml += `<tr><td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td><td style="text-align:center;">${displayNum}</td><td><strong>${escapeHtml(item.nama)}</strong></td>`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || '-'; bodyHtml += `<td>${escapeHtml(val)}</td>`; } bodyHtml += `<td>${item.items?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td><td style="white-space:nowrap;"><button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;" title="Edit">✏️</button><button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;" title="Share">💬</button><button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;" title="Hapus">🗑️</button></td></tr>`; }); tbody.innerHTML = bodyHtml; }
+function renderMasterTable() { const thead = document.getElementById('masterTableHead'); const tbody = document.getElementById('masterTableBody'); if(!thead || !tbody) return; let headerHtml = '<tr><th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th><th>No</th><th>Nama Lengkap</th>'; for(const field of masterDynamicFields) { headerHtml += `<th>${escapeHtml(field.label)}</th>`; } headerHtml += '<th>Item</th><th>Aksi</th><tr>'; thead.innerHTML = headerHtml; if(masterDataList.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>'; return; } let bodyHtml = ''; [...masterDataList].reverse().forEach((item, idx) => { const displayNum = idx + 1; let whatsappValue = ''; const whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp' || f.label.toLowerCase() === 'whatsapp'); if(whatsappField) { whatsappValue = item.additional_fields?.[whatsappField.name] || ''; } bodyHtml += `<tr><td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td><td style="text-align:center;">${displayNum}</td><td><strong>${escapeHtml(item.nama)}</strong></td>`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || '-'; bodyHtml += `<td>${escapeHtml(val)}</td>`; } bodyHtml += `<td>${item.items?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td><td style="white-space:nowrap;"><button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;" title="Edit">✏️</button><button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;" title="Share">💬</button><button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;" title="Hapus">🗑️</button></td></tr>`; }); tbody.innerHTML = bodyHtml; }
 function toggleAllMasterCheckboxes(master) { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = master.checked); updateBatchBar(); }
 function updateBatchBar() { const checked = document.querySelectorAll('.master-checkbox:checked'); const bar = document.getElementById('batchFloatingBar'); const countSpan = document.getElementById('batchCount'); if (checked.length > 0) { if (countSpan) countSpan.innerText = `${checked.length} dipilih`; if (bar) bar.style.display = 'flex'; } else { if (bar) bar.style.display = 'none'; } }
 function clearBatchSelection() { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = false); const selectAll = document.getElementById('selectAllMaster'); if (selectAll) selectAll.checked = false; updateBatchBar(); }
@@ -950,7 +951,7 @@ function addNewMode() { const newMode = document.getElementById('newModeName').v
 function deleteModeFromList(mode) { if(confirm(`Hapus mode "${mode}"?`)) { availableModes = availableModes.filter(m => m !== mode); activeModes = activeModes.filter(m => m !== mode); saveModesToStorage(); renderModeManagerList(); renderDynamicModeSwitcher(); showToast(`Mode "${mode}" dihapus`); } }
 function saveModes() { saveModesToStorage(); renderDynamicModeSwitcher(); closeModeManager(); showToast('Perubahan mode disimpan'); }
 
-// ==================== KONFIGURASI PRO (SINGKAT - SAMA PERSIS) ====================
+// ==================== KONFIGURASI PRO ====================
 let konfigurasiPro = { instansi1: { nama: '', alamat: '', telp: '', email: '', npwp: '', web: '', pimpinan: '', jabatan: '', logo: '' }, instansi2: { aktif: false, nama: '', alamat: '', telp: '', email: '', izin: '', pimpinan: '', jabatan: '', logo: '' }, watermark: { enabled: true, text: 'KBIHU AMANATUL UMMAH', opacity: 0.15, fontsize: 60, position: 'diagonal' }, qr: { enabled: true, text: 'Dokumen Resmi - Divalidasi oleh Sistem Auva', size: 80 }, settings: { header_mode: 'both', ttd_mode: 'both', invoice_prefix: 'INV/AUVA' }, wa_template: { laporan: '🏢 *LAPORAN KAS KANTOR*\n\n💰 Saldo: [saldo]\n📥 Pemasukan: [masuk]\n📤 Pengeluaran: [keluar]\n\nTerima kasih.' } };
 function loadKonfigurasiPro() { const saved = localStorage.getItem('auva_konfigurasi_pro'); if(saved) { try { const parsed = JSON.parse(saved); konfigurasiPro = { ...konfigurasiPro, ...parsed }; } catch(e) {} } document.getElementById('cfg_nama1').value = konfigurasiPro.instansi1.nama || ''; document.getElementById('cfg_alamat1').value = konfigurasiPro.instansi1.alamat || ''; document.getElementById('cfg_telp1').value = konfigurasiPro.instansi1.telp || ''; document.getElementById('cfg_email1').value = konfigurasiPro.instansi1.email || ''; document.getElementById('cfg_npwp1').value = konfigurasiPro.instansi1.npwp || ''; document.getElementById('cfg_web1').value = konfigurasiPro.instansi1.web || ''; document.getElementById('cfg_pimpinan1').value = konfigurasiPro.instansi1.pimpinan || ''; document.getElementById('cfg_jabatan1').value = konfigurasiPro.instansi1.jabatan || ''; if(konfigurasiPro.instansi1.logo) document.getElementById('previewLogo1').src = konfigurasiPro.instansi1.logo; document.getElementById('cfg_instansi2_aktif').checked = konfigurasiPro.instansi2.aktif || false; document.getElementById('cfg_nama2').value = konfigurasiPro.instansi2.nama || ''; document.getElementById('cfg_alamat2').value = konfigurasiPro.instansi2.alamat || ''; document.getElementById('cfg_telp2').value = konfigurasiPro.instansi2.telp || ''; document.getElementById('cfg_email2').value = konfigurasiPro.instansi2.email || ''; document.getElementById('cfg_izin2').value = konfigurasiPro.instansi2.izin || ''; document.getElementById('cfg_pimpinan2').value = konfigurasiPro.instansi2.pimpinan || ''; document.getElementById('cfg_jabatan2').value = konfigurasiPro.instansi2.jabatan || ''; if(konfigurasiPro.instansi2.logo) document.getElementById('previewLogo2').src = konfigurasiPro.instansi2.logo; document.getElementById('cfg_watermark_enabled').checked = konfigurasiPro.watermark.enabled !== false; document.getElementById('cfg_watermark_text').value = konfigurasiPro.watermark.text || 'KBIHU AMANATUL UMMAH'; document.getElementById('cfg_watermark_opacity').value = konfigurasiPro.watermark.opacity || 0.15; document.getElementById('opacityValue').innerText = (konfigurasiPro.watermark.opacity || 0.15).toFixed(2); document.getElementById('cfg_watermark_fontsize').value = konfigurasiPro.watermark.fontsize || 60; document.getElementById('cfg_watermark_position').value = konfigurasiPro.watermark.position || 'diagonal'; document.getElementById('cfg_qr_enabled').checked = konfigurasiPro.qr.enabled !== false; document.getElementById('cfg_qr_text').value = konfigurasiPro.qr.text || 'Dokumen Resmi - Divalidasi oleh Sistem Auva'; document.getElementById('cfg_qr_size').value = konfigurasiPro.qr.size || 80; document.getElementById('cfg_header_mode').value = konfigurasiPro.settings.header_mode || 'both'; document.getElementById('cfg_ttd_mode').value = konfigurasiPro.settings.ttd_mode || 'both'; document.getElementById('cfg_invoice_prefix').value = konfigurasiPro.settings.invoice_prefix || 'INV/AUVA'; document.getElementById('cfg_wa_laporan').value = konfigurasiPro.wa_template.laporan || ''; }
 function saveKonfigurasiPro() { konfigurasiPro.instansi1 = { nama: document.getElementById('cfg_nama1').value, alamat: document.getElementById('cfg_alamat1').value, telp: document.getElementById('cfg_telp1').value, email: document.getElementById('cfg_email1').value, npwp: document.getElementById('cfg_npwp1').value, web: document.getElementById('cfg_web1').value, pimpinan: document.getElementById('cfg_pimpinan1').value, jabatan: document.getElementById('cfg_jabatan1').value, logo: document.getElementById('previewLogo1').src || '' }; konfigurasiPro.instansi2 = { aktif: document.getElementById('cfg_instansi2_aktif').checked, nama: document.getElementById('cfg_nama2').value, alamat: document.getElementById('cfg_alamat2').value, telp: document.getElementById('cfg_telp2').value, email: document.getElementById('cfg_email2').value, izin: document.getElementById('cfg_izin2').value, pimpinan: document.getElementById('cfg_pimpinan2').value, jabatan: document.getElementById('cfg_jabatan2').value, logo: document.getElementById('previewLogo2').src || '' }; konfigurasiPro.watermark = { enabled: document.getElementById('cfg_watermark_enabled').checked, text: document.getElementById('cfg_watermark_text').value, opacity: parseFloat(document.getElementById('cfg_watermark_opacity').value), fontsize: parseInt(document.getElementById('cfg_watermark_fontsize').value), position: document.getElementById('cfg_watermark_position').value }; konfigurasiPro.qr = { enabled: document.getElementById('cfg_qr_enabled').checked, text: document.getElementById('cfg_qr_text').value, size: parseInt(document.getElementById('cfg_qr_size').value) }; konfigurasiPro.settings = { header_mode: document.getElementById('cfg_header_mode').value, ttd_mode: document.getElementById('cfg_ttd_mode').value, invoice_prefix: document.getElementById('cfg_invoice_prefix').value }; konfigurasiPro.wa_template = { laporan: document.getElementById('cfg_wa_laporan').value }; localStorage.setItem('auva_konfigurasi_pro', JSON.stringify(konfigurasiPro)); showToast('✅ Konfigurasi berhasil disimpan!'); }
@@ -961,7 +962,7 @@ function previewLogo(input, previewId) { if(input.files && input.files[0]) { con
 function previewWatermark() { const canvas = document.createElement('canvas'); canvas.width = 400; canvas.height = 300; const ctx = canvas.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,400,300); ctx.strokeStyle = '#1a5d4a'; ctx.lineWidth = 2; ctx.strokeRect(2,2,396,296); ctx.save(); ctx.globalAlpha = parseFloat(document.getElementById('cfg_watermark_opacity').value); const fontSize = parseInt(document.getElementById('cfg_watermark_fontsize').value); ctx.font = `bold ${fontSize}px "Segoe UI"`; ctx.fillStyle = '#888'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; const position = document.getElementById('cfg_watermark_position').value; const text = document.getElementById('cfg_watermark_text').value; if(position === 'diagonal') { ctx.translate(200,150); ctx.rotate(-45 * Math.PI/180); ctx.fillText(text,0,0); } else if(position === 'center') { ctx.fillText(text,200,150); } else if(position === 'tile') { ctx.font = `bold ${fontSize * 0.6}px "Segoe UI"`; for(let x=0;x<400;x+=100) { for(let y=0;y<300;y+=60) { ctx.fillText(text,x,y); } } } ctx.restore(); const modal = document.createElement('div'); modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;'; modal.innerHTML = `<div style="background:white; padding:24px; border-radius:24px; max-width:90%;"><h3 style="margin-bottom:16px;">Preview Watermark</h3><img src="${canvas.toDataURL()}" style="max-width:100%; border-radius:12px;"><button onclick="this.closest('div').parentElement.remove()" style="margin-top:20px; padding:12px 24px; background:var(--primary); color:white; border:none; border-radius:40px; width:100%;">Tutup</button></div>`; document.body.appendChild(modal); }
 async function generateQRPreview() { const text = document.getElementById('cfg_qr_text').value; const size = parseInt(document.getElementById('cfg_qr_size').value); const canvas = document.getElementById('qrPreviewCanvas'); canvas.width = size; canvas.height = size; try { await QRCode.toCanvas(canvas, text, { width: size }); document.getElementById('qrPreviewContainer').classList.remove('hidden'); showToast('✅ QR Code digenerate!'); } catch(e) { showToast('❌ Gagal generate QR'); } }
 
-// ==================== CATATAN (SINGKAT - SAMA PERSIS) ====================
+// ==================== CATATAN ====================
 let catatanList = [];
 let editingCatatanIndex = null;
 let currentDetailIndex = null;
@@ -978,36 +979,376 @@ function shareCatatanItem(idx) { const item = catatanList[idx]; const text = `*$
 function closeEntryModal() { document.getElementById('entryModal').classList.remove('show'); editingCatatanIndex = null; }
 function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
 
-// ==================== UPLOAD DOKUMEN (DENGAN INDEXEDDB & TOMBOL HAPUS) ====================
-let dokumenJenisList = [ { id: 'ktp', nama: 'KTP', icon: '🪪' }, { id: 'paspor', nama: 'Paspor', icon: '📘' }, { id: 'foto', nama: 'Foto', icon: '📷' }, { id: 'vaksin', nama: 'Vaksin', icon: '💉' } ];
+// ==================== UPLOAD DOKUMEN (INDEXEDDB FULL) ====================
+let dokumenJenisList = [];
 let dokumenData = {};
 let db = null;
 const DB_NAME = 'AuvaDokumenDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'dokumen';
+const JENIS_STORE_NAME = 'dokumenJenis';
 
-function openIndexedDB() { return new Promise((resolve, reject) => { if (db) { resolve(db); return; } const request = indexedDB.open(DB_NAME, DB_VERSION); request.onerror = () => reject(request.error); request.onsuccess = () => { db = request.result; resolve(db); }; request.onupgradeneeded = (event) => { const dbEvent = event.target.result; if (!dbEvent.objectStoreNames.contains(STORE_NAME)) { dbEvent.createObjectStore(STORE_NAME, { keyPath: 'id' }); } }; }); }
-async function loadDokumenDataFromIndexedDB() { try { const database = await openIndexedDB(); const transaction = database.transaction([STORE_NAME], 'readonly'); const store = transaction.objectStore(STORE_NAME); const request = store.getAll(); return new Promise((resolve, reject) => { request.onsuccess = () => { const items = request.result || []; dokumenData = {}; items.forEach(item => { dokumenData[item.jamaahId] = item.data; }); resolve(); }; request.onerror = () => reject(request.error); }); } catch(e) { return Promise.resolve(); } }
-async function saveDokumenToIndexedDB(jamaahId, jenisId, base64Data) { try { const database = await openIndexedDB(); const transaction = database.transaction([STORE_NAME], 'readwrite'); const store = transaction.objectStore(STORE_NAME); if (!dokumenData[jamaahId]) dokumenData[jamaahId] = {}; dokumenData[jamaahId][jenisId] = base64Data; const request = store.put({ id: `jamaah_${jamaahId}`, jamaahId: jamaahId, data: dokumenData[jamaahId] }); return new Promise((resolve, reject) => { request.onsuccess = () => resolve(); request.onerror = () => reject(request.error); }); } catch(e) { return Promise.reject(e); } }
-async function deleteDokumenFromIndexedDB(jamaahId, jenisId) { try { if (dokumenData[jamaahId]) { delete dokumenData[jamaahId][jenisId]; } const database = await openIndexedDB(); const transaction = database.transaction([STORE_NAME], 'readwrite'); const store = transaction.objectStore(STORE_NAME); const request = store.put({ id: `jamaah_${jamaahId}`, jamaahId: jamaahId, data: dokumenData[jamaahId] || {} }); return new Promise((resolve, reject) => { request.onsuccess = () => resolve(); request.onerror = () => reject(request.error); }); } catch(e) { return Promise.reject(e); } }
-function loadDokumenData() { loadDokumenDataFromIndexedDB().then(() => { renderDokumenList(); updateDokumenStats(); renderDokumenFieldsList(); }).catch(() => { renderDokumenList(); updateDokumenStats(); renderDokumenFieldsList(); }); }
-function saveDokumenJenis() { localStorage.setItem('auva_dokumen_jenis', JSON.stringify(dokumenJenisList)); renderDokumenFieldsList(); }
-function saveDokumenData() { renderDokumenList(); updateDokumenStats(); }
-function getStatusKelengkapanDokumen(jamaahId) { const docs = dokumenData[jamaahId] || {}; let total = dokumenJenisList.length; let ada = 0; for(const jenis of dokumenJenisList) { if(docs[jenis.id] && docs[jenis.id] !== '') ada++; } return { ada, total, lengkap: ada === total }; }
-function renderDokumenList() { const container = document.getElementById('dokumenListContainer'); if(!container) return; const keyword = document.getElementById('searchDokumenInput')?.value.toLowerCase() || ''; const filterStatus = document.getElementById('filterDokumenStatus')?.value || 'semua'; let filtered = [...jamaahList]; if(keyword) filtered = filtered.filter(j => j.nama_lengkap.toLowerCase().includes(keyword)); if(filterStatus !== 'semua') { filtered = filtered.filter(j => { const status = getStatusKelengkapanDokumen(j.id); if(filterStatus === 'lengkap') return status.lengkap; if(filterStatus === 'kurang') return !status.lengkap; return true; }); } if(filtered.length === 0) { container.innerHTML = '<div class="card-premium" style="margin:0;"><p class="text-center">Tidak ada jamaah</p></div>'; return; } let html = ''; filtered.forEach(j => { const status = getStatusKelengkapanDokumen(j.id); const statusText = status.lengkap ? 'LENGKAP ✓' : `${status.ada}/${status.total} dokumen`; const statusClass = status.lengkap ? 'status-lengkap' : 'status-kurang'; html += `<div class="dokumen-card"><div class="dokumen-header"><div><div class="dokumen-jamaah">👤 ${escapeHtml(j.nama_lengkap)}</div><div style="font-size:11px; color:var(--gray);">📦 ${j.paket || '-'}</div></div><div class="dokumen-status-badge ${statusClass}">${statusText}</div></div><div class="dokumen-grid">`; for(const jenis of dokumenJenisList) { const hasDoc = dokumenData[j.id] && dokumenData[j.id][jenis.id] && dokumenData[j.id][jenis.id] !== ''; html += `<div class="dokumen-item"><div class="dokumen-icon">${jenis.icon}</div><div class="dokumen-label">${escapeHtml(jenis.nama)}</div><div class="${hasDoc ? 'dokumen-status-ada' : 'dokumen-status-belum'}">${hasDoc ? '✅ Ada' : '⏳ Belum'}</div><div>${hasDoc ? `<button class="btn-preview-doc" onclick="previewDokumen(${j.id}, '${jenis.id}')"><i class="fas fa-eye"></i></button><button class="btn-delete-doc" onclick="confirmDeleteDokumen(${j.id}, '${jenis.id}', '${escapeHtml(jenis.nama)}')"><i class="fas fa-trash-alt"></i></button>` : ''}<button class="btn-upload-doc" onclick="uploadDokumen(${j.id}, '${jenis.id}', '${escapeHtml(jenis.nama)}')"><i class="fas fa-upload"></i></button></div></div>`; } html += `</div></div>`; }); container.innerHTML = html; }
-function updateDokumenStats() { let total = jamaahList.length; let lengkap = 0; jamaahList.forEach(j => { if(getStatusKelengkapanDokumen(j.id).lengkap) lengkap++; }); document.getElementById('statTotalDokumen').innerText = total; document.getElementById('statLengkapDokumen').innerText = lengkap; document.getElementById('statKurangDokumen').innerText = total - lengkap; }
-function filterDokumenList() { renderDokumenList(); }
-function uploadDokumen(jamaahId, jenisId, jenisNama) { const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.onchange = async function(e) { const file = e.target.files[0]; if(file) { if (file.size > 2 * 1024 * 1024) { showToast(`⚠️ File terlalu besar (${(file.size/1024/1024).toFixed(1)} MB). Maksimal 2 MB.`); return; } showToast('Mengupload...'); const reader = new FileReader(); reader.onload = async function(event) { try { await saveDokumenToIndexedDB(jamaahId, jenisId, event.target.result); renderDokumenList(); updateDokumenStats(); showToast(`✅ ${jenisNama} berhasil diupload untuk ${jamaahList.find(j=>j.id==jamaahId)?.nama_lengkap}`); } catch(err) { showToast('❌ Gagal menyimpan. Coba lagi.'); } }; reader.readAsDataURL(file); } }; input.click(); }
-function previewDokumen(jamaahId, jenisId) { const data = dokumenData[jamaahId]?.[jenisId]; if(data) { const jamaah = jamaahList.find(j => j.id == jamaahId); const jenis = dokumenJenisList.find(j => j.id === jenisId); document.getElementById('previewDokumenTitle').innerText = `📄 ${jenis?.nama} - ${jamaah?.nama_lengkap}`; document.getElementById('previewDokumenImage').src = data; document.getElementById('previewDokumenModal').classList.add('show'); } }
-function closePreviewDokumenModal() { document.getElementById('previewDokumenModal').classList.remove('show'); }
-function confirmDeleteDokumen(jamaahId, jenisId, jenisNama) { if(confirm(`Hapus dokumen ${jenisNama} untuk jamaah ini?`)) { deleteDokumenFromIndexedDB(jamaahId, jenisId).then(() => { renderDokumenList(); updateDokumenStats(); showToast(`✅ ${jenisNama} dihapus`); }).catch(() => { showToast('❌ Gagal menghapus'); }); } }
-function remindAllKurangDokumen() { const kurang = jamaahList.filter(j => !getStatusKelengkapanDokumen(j.id).lengkap); if(kurang.length === 0) { showToast('✅ Semua jamaah sudah lengkap dokumennya!'); return; } let text = `📋 *PENGINGAT DOKUMEN*\n━━━━━━━━━━━━━━━━━━\nBerikut jamaah yang dokumennya belum lengkap:\n\n`; kurang.forEach((j, i) => { const status = getStatusKelengkapanDokumen(j.id); text += `${i+1}. ${j.nama_lengkap} (${status.ada}/${status.total} dokumen)\n`; }); text += `━━━━━━━━━━━━━━━━━━\nMohon segera melengkapi dokumen.\n#AuvaKbihuAU`; navigator.clipboard.writeText(text); showToast(`✅ Teks reminder untuk ${kurang.length} jamaah tersalin! Bisa paste ke WA`); }
-function openDokumenFieldModal() { if(!isAdminModePremium) return showToast('Aktifkan Mode Admin dulu!'); document.getElementById('newDokumenName').value = ''; document.getElementById('dokumenFieldModal').classList.add('show'); }
-function closeDokumenFieldModal() { document.getElementById('dokumenFieldModal').classList.remove('show'); }
-function addDokumenField() { const nama = document.getElementById('newDokumenName').value.trim(); const icon = document.getElementById('newDokumenIcon').value; if(!nama) return showToast('Nama dokumen harus diisi!'); const id = nama.toLowerCase().replace(/\s+/g, '_'); if(dokumenJenisList.some(j => j.id === id)) return showToast('Jenis dokumen sudah ada!'); dokumenJenisList.push({ id, nama, icon }); saveDokumenJenis(); closeDokumenFieldModal(); renderDokumenList(); showToast(`✅ Jenis dokumen "${nama}" ditambahkan`); }
-function renderDokumenFieldsList() { const container = document.getElementById('dokumenFieldsList'); if(!container) return; if(dokumenJenisList.length === 0) { container.innerHTML = '<p>Belum ada jenis dokumen</p>'; return; } let html = '<h4>Jenis Dokumen Aktif:</h4>'; dokumenJenisList.forEach((jenis, idx) => { html += `<div class="field-item"><div><span style="font-size:20px;">${jenis.icon}</span> <strong>${escapeHtml(jenis.nama)}</strong><br><small>${jenis.id}</small></div><button class="btn-danger-small" onclick="confirmDeleteDokumenField(${idx})">Hapus</button></div>`; }); container.innerHTML = html; }
-function confirmDeleteDokumenField(idx) { if(confirm(`Hapus jenis dokumen "${dokumenJenisList[idx].nama}"? Data dokumen yang sudah diupload akan ikut terhapus.`)) { const idToDelete = dokumenJenisList[idx].id; dokumenJenisList.splice(idx,1); for(const jamaahId in dokumenData) { if(dokumenData[jamaahId][idToDelete]) { delete dokumenData[jamaahId][idToDelete]; } } saveDokumenJenis(); saveDokumenData(); renderDokumenList(); renderDokumenFieldsList(); updateDokumenStats(); showToast('Jenis dokumen dihapus'); } }
-async function downloadAllDokumenZip() { if(jamaahList.length === 0) { showToast('Tidak ada data jamaah!'); return; } showToast('Membuat ZIP...'); const zip = new JSZip(); let totalFiles = 0; for(const j of jamaahList) { const folderName = j.nama_lengkap.replace(/\s+/g, '_'); const folder = zip.folder(folderName); const docs = dokumenData[j.id] || {}; let hasFile = false; for(const jenis of dokumenJenisList) { const data = docs[jenis.id]; if(data && data !== '') { const ext = data.startsWith('data:image/png') ? 'png' : (data.startsWith('data:image/jpeg') ? 'jpg' : 'png'); const base64Data = data.split(',')[1]; folder.file(`${jenis.nama}.${ext}`, base64Data, { base64: true }); hasFile = true; totalFiles++; } } if(!hasFile && folder) { folder.file('info.txt', `Belum ada dokumen untuk ${j.nama_lengkap}`); } } if(totalFiles === 0) { showToast('Belum ada dokumen yang diupload!'); return; } const content = await zip.generateAsync({ type: 'blob' }); saveAs(content, `dokumen_jamaah_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.zip`); showToast(`✅ ZIP berhasil dibuat! ${totalFiles} file tersimpan.`); }
+function openIndexedDB() {
+    return new Promise((resolve, reject) => {
+        if (db) { resolve(db); return; }
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+            db = request.result;
+            resolve(db);
+        };
+        request.onupgradeneeded = (event) => {
+            const dbEvent = event.target.result;
+            if (!dbEvent.objectStoreNames.contains(STORE_NAME)) {
+                dbEvent.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            }
+            if (!dbEvent.objectStoreNames.contains(JENIS_STORE_NAME)) {
+                dbEvent.createObjectStore(JENIS_STORE_NAME, { keyPath: 'id' });
+            }
+        };
+    });
+}
+
+async function loadDokumenJenisFromIndexedDB() {
+    try {
+        const database = await openIndexedDB();
+        const transaction = database.transaction([JENIS_STORE_NAME], 'readonly');
+        const store = transaction.objectStore(JENIS_STORE_NAME);
+        const request = store.get('jenisList');
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => {
+                if (request.result && request.result.data && request.result.data.length > 0) {
+                    dokumenJenisList = request.result.data;
+                } else {
+                    dokumenJenisList = [
+                        { id: 'ktp', nama: 'KTP', icon: '🪪' },
+                        { id: 'paspor', nama: 'Paspor', icon: '📘' },
+                        { id: 'foto', nama: 'Foto', icon: '📷' },
+                        { id: 'vaksin', nama: 'Vaksin', icon: '💉' }
+                    ];
+                }
+                resolve();
+            };
+            request.onerror = () => reject(request.error);
+        });
+    } catch(e) {
+        dokumenJenisList = [
+            { id: 'ktp', nama: 'KTP', icon: '🪪' },
+            { id: 'paspor', nama: 'Paspor', icon: '📘' },
+            { id: 'foto', nama: 'Foto', icon: '📷' },
+            { id: 'vaksin', nama: 'Vaksin', icon: '💉' }
+        ];
+        return Promise.resolve();
+    }
+}
+
+async function saveDokumenJenisToIndexedDB() {
+    try {
+        const database = await openIndexedDB();
+        const transaction = database.transaction([JENIS_STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(JENIS_STORE_NAME);
+        store.put({ id: 'jenisList', data: dokumenJenisList });
+    } catch(e) {
+        console.error('Save jenis error:', e);
+    }
+}
+
+async function loadDokumenDataFromIndexedDB() {
+    try {
+        const database = await openIndexedDB();
+        const transaction = database.transaction([STORE_NAME], 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.getAll();
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => {
+                const items = request.result || [];
+                dokumenData = {};
+                items.forEach(item => {
+                    dokumenData[item.jamaahId] = item.data;
+                });
+                resolve();
+            };
+            request.onerror = () => reject(request.error);
+        });
+    } catch(e) {
+        return Promise.resolve();
+    }
+}
+
+async function saveDokumenToIndexedDB(jamaahId, jenisId, base64Data) {
+    try {
+        const database = await openIndexedDB();
+        const transaction = database.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        if (!dokumenData[jamaahId]) dokumenData[jamaahId] = {};
+        dokumenData[jamaahId][jenisId] = base64Data;
+        const request = store.put({ id: `jamaah_${jamaahId}`, jamaahId: jamaahId, data: dokumenData[jamaahId] });
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    } catch(e) {
+        return Promise.reject(e);
+    }
+}
+
+async function deleteDokumenFromIndexedDB(jamaahId, jenisId) {
+    try {
+        if (dokumenData[jamaahId]) {
+            delete dokumenData[jamaahId][jenisId];
+        }
+        const database = await openIndexedDB();
+        const transaction = database.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.put({ id: `jamaah_${jamaahId}`, jamaahId: jamaahId, data: dokumenData[jamaahId] || {} });
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    } catch(e) {
+        return Promise.reject(e);
+    }
+}
+
+async function loadDokumenData() {
+    await loadDokumenJenisFromIndexedDB();
+    await loadDokumenDataFromIndexedDB();
+    renderDokumenList();
+    updateDokumenStats();
+    renderDokumenFieldsList();
+}
+
+function saveDokumenJenis() {
+    saveDokumenJenisToIndexedDB();
+    renderDokumenFieldsList();
+}
+
+function saveDokumenData() {
+    renderDokumenList();
+    updateDokumenStats();
+}
+
+function getStatusKelengkapanDokumen(jamaahId) {
+    const docs = dokumenData[jamaahId] || {};
+    let total = dokumenJenisList.length;
+    let ada = 0;
+    for(const jenis of dokumenJenisList) {
+        if(docs[jenis.id] && docs[jenis.id] !== '') ada++;
+    }
+    return { ada, total, lengkap: ada === total };
+}
+
+function renderDokumenList() {
+    const container = document.getElementById('dokumenListContainer');
+    if(!container) return;
+    const keyword = document.getElementById('searchDokumenInput')?.value.toLowerCase() || '';
+    const filterStatus = document.getElementById('filterDokumenStatus')?.value || 'semua';
+    let filtered = [...jamaahList];
+    if(keyword) filtered = filtered.filter(j => j.nama_lengkap.toLowerCase().includes(keyword));
+    if(filterStatus !== 'semua') {
+        filtered = filtered.filter(j => {
+            const status = getStatusKelengkapanDokumen(j.id);
+            if(filterStatus === 'lengkap') return status.lengkap;
+            if(filterStatus === 'kurang') return !status.lengkap;
+            return true;
+        });
+    }
+    if(filtered.length === 0) {
+        container.innerHTML = '<div class="card-premium" style="margin:0;"><p class="text-center">Tidak ada jamaah</p></div>';
+        return;
+    }
+    let html = '';
+    filtered.forEach(j => {
+        const status = getStatusKelengkapanDokumen(j.id);
+        const statusText = status.lengkap ? 'LENGKAP ✓' : `${status.ada}/${status.total} dokumen`;
+        const statusClass = status.lengkap ? 'status-lengkap' : 'status-kurang';
+        html += `<div class="dokumen-card"><div class="dokumen-header"><div><div class="dokumen-jamaah">👤 ${escapeHtml(j.nama_lengkap)}</div><div style="font-size:11px; color:var(--gray);">📦 ${j.paket || '-'}</div></div><div class="dokumen-status-badge ${statusClass}">${statusText}</div></div><div class="dokumen-grid">`;
+        for(const jenis of dokumenJenisList) {
+            const hasDoc = dokumenData[j.id] && dokumenData[j.id][jenis.id] && dokumenData[j.id][jenis.id] !== '';
+            html += `<div class="dokumen-item"><div class="dokumen-icon">${jenis.icon}</div><div class="dokumen-label">${escapeHtml(jenis.nama)}</div><div class="${hasDoc ? 'dokumen-status-ada' : 'dokumen-status-belum'}">${hasDoc ? '✅ Ada' : '⏳ Belum'}</div><div>${hasDoc ? `<button class="btn-preview-doc" onclick="previewDokumen(${j.id}, '${jenis.id}')"><i class="fas fa-eye"></i></button><button class="btn-delete-doc" onclick="confirmDeleteDokumen(${j.id}, '${jenis.id}', '${escapeHtml(jenis.nama)}')"><i class="fas fa-trash-alt"></i></button>` : ''}<button class="btn-upload-doc" onclick="uploadDokumen(${j.id}, '${jenis.id}', '${escapeHtml(jenis.nama)}')"><i class="fas fa-upload"></i></button></div></div>`;
+        }
+        html += `</div></div>`;
+    });
+    container.innerHTML = html;
+}
+
+function updateDokumenStats() {
+    let total = jamaahList.length;
+    let lengkap = 0;
+    jamaahList.forEach(j => {
+        if(getStatusKelengkapanDokumen(j.id).lengkap) lengkap++;
+    });
+    document.getElementById('statTotalDokumen').innerText = total;
+    document.getElementById('statLengkapDokumen').innerText = lengkap;
+    document.getElementById('statKurangDokumen').innerText = total - lengkap;
+}
+
+function filterDokumenList() {
+    renderDokumenList();
+}
+
+function uploadDokumen(jamaahId, jenisId, jenisNama) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async function(e) {
+        const file = e.target.files[0];
+        if(file) {
+            if (file.size > 2 * 1024 * 1024) {
+                showToast(`⚠️ File terlalu besar (${(file.size/1024/1024).toFixed(1)} MB). Maksimal 2 MB.`);
+                return;
+            }
+            showToast('Mengupload...');
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                try {
+                    await saveDokumenToIndexedDB(jamaahId, jenisId, event.target.result);
+                    renderDokumenList();
+                    updateDokumenStats();
+                    showToast(`✅ ${jenisNama} berhasil diupload untuk ${jamaahList.find(j=>j.id==jamaahId)?.nama_lengkap}`);
+                } catch(err) {
+                    showToast('❌ Gagal menyimpan. Coba lagi.');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    input.click();
+}
+
+function previewDokumen(jamaahId, jenisId) {
+    const data = dokumenData[jamaahId]?.[jenisId];
+    if(data) {
+        const jamaah = jamaahList.find(j => j.id == jamaahId);
+        const jenis = dokumenJenisList.find(j => j.id === jenisId);
+        document.getElementById('previewDokumenTitle').innerText = `📄 ${jenis?.nama} - ${jamaah?.nama_lengkap}`;
+        document.getElementById('previewDokumenImage').src = data;
+        document.getElementById('previewDokumenModal').classList.add('show');
+    }
+}
+
+function closePreviewDokumenModal() {
+    document.getElementById('previewDokumenModal').classList.remove('show');
+}
+
+function confirmDeleteDokumen(jamaahId, jenisId, jenisNama) {
+    if(confirm(`Hapus dokumen ${jenisNama} untuk jamaah ini?`)) {
+        deleteDokumenFromIndexedDB(jamaahId, jenisId).then(() => {
+            renderDokumenList();
+            updateDokumenStats();
+            showToast(`✅ ${jenisNama} dihapus`);
+        }).catch(() => {
+            showToast('❌ Gagal menghapus');
+        });
+    }
+}
+
+function remindAllKurangDokumen() {
+    const kurang = jamaahList.filter(j => !getStatusKelengkapanDokumen(j.id).lengkap);
+    if(kurang.length === 0) {
+        showToast('✅ Semua jamaah sudah lengkap dokumennya!');
+        return;
+    }
+    let text = `📋 *PENGINGAT DOKUMEN*\n━━━━━━━━━━━━━━━━━━\nBerikut jamaah yang dokumennya belum lengkap:\n\n`;
+    kurang.forEach((j, i) => {
+        const status = getStatusKelengkapanDokumen(j.id);
+        text += `${i+1}. ${j.nama_lengkap} (${status.ada}/${status.total} dokumen)\n`;
+    });
+    text += `━━━━━━━━━━━━━━━━━━\nMohon segera melengkapi dokumen.\n#AuvaKbihuAU`;
+    navigator.clipboard.writeText(text);
+    showToast(`✅ Teks reminder untuk ${kurang.length} jamaah tersalin! Bisa paste ke WA`);
+}
+
+function openDokumenFieldModal() {
+    if(!isAdminModePremium) return showToast('Aktifkan Mode Admin dulu!');
+    document.getElementById('newDokumenName').value = '';
+    document.getElementById('dokumenFieldModal').classList.add('show');
+}
+
+function closeDokumenFieldModal() {
+    document.getElementById('dokumenFieldModal').classList.remove('show');
+}
+
+async function addDokumenField() {
+    const nama = document.getElementById('newDokumenName').value.trim();
+    const icon = document.getElementById('newDokumenIcon').value;
+    if(!nama) return showToast('Nama dokumen harus diisi!');
+    const id = nama.toLowerCase().replace(/\s+/g, '_');
+    if(dokumenJenisList.some(j => j.id === id)) return showToast('Jenis dokumen sudah ada!');
+    dokumenJenisList.push({ id, nama, icon });
+    await saveDokumenJenisToIndexedDB();
+    closeDokumenFieldModal();
+    renderDokumenList();
+    renderDokumenFieldsList();
+    showToast(`✅ Jenis dokumen "${nama}" ditambahkan`);
+}
+
+function renderDokumenFieldsList() {
+    const container = document.getElementById('dokumenFieldsList');
+    if(!container) return;
+    if(dokumenJenisList.length === 0) {
+        container.innerHTML = '<p>Belum ada jenis dokumen</p>';
+        return;
+    }
+    let html = '<h4>Jenis Dokumen Aktif:</h4>';
+    dokumenJenisList.forEach((jenis, idx) => {
+        html += `<div class="field-item"><div><span style="font-size:20px;">${jenis.icon}</span> <strong>${escapeHtml(jenis.nama)}</strong><br><small>${jenis.id}</small></div><button class="btn-danger-small" onclick="confirmDeleteDokumenField(${idx})">Hapus</button></div>`;
+    });
+    container.innerHTML = html;
+}
+
+async function confirmDeleteDokumenField(idx) {
+    if(confirm(`Hapus jenis dokumen "${dokumenJenisList[idx].nama}"? Data dokumen yang sudah diupload akan ikut terhapus.`)) {
+        const idToDelete = dokumenJenisList[idx].id;
+        dokumenJenisList.splice(idx,1);
+        for(const jamaahId in dokumenData) {
+            if(dokumenData[jamaahId][idToDelete]) {
+                delete dokumenData[jamaahId][idToDelete];
+            }
+        }
+        await saveDokumenJenisToIndexedDB();
+        renderDokumenList();
+        renderDokumenFieldsList();
+        updateDokumenStats();
+        showToast('Jenis dokumen dihapus');
+    }
+}
+
+async function downloadAllDokumenZip() {
+    if(jamaahList.length === 0) {
+        showToast('Tidak ada data jamaah!');
+        return;
+    }
+    showToast('Membuat ZIP...');
+    const zip = new JSZip();
+    let totalFiles = 0;
+    for(const j of jamaahList) {
+        const folderName = j.nama_lengkap.replace(/\s+/g, '_');
+        const folder = zip.folder(folderName);
+        const docs = dokumenData[j.id] || {};
+        let hasFile = false;
+        for(const jenis of dokumenJenisList) {
+            const data = docs[jenis.id];
+            if(data && data !== '') {
+                const ext = data.startsWith('data:image/png') ? 'png' : (data.startsWith('data:image/jpeg') ? 'jpg' : 'png');
+                const base64Data = data.split(',')[1];
+                folder.file(`${jenis.nama}.${ext}`, base64Data, { base64: true });
+                hasFile = true;
+                totalFiles++;
+            }
+        }
+        if(!hasFile && folder) {
+            folder.file('info.txt', `Belum ada dokumen untuk ${j.nama_lengkap}`);
+        }
+    }
+    if(totalFiles === 0) {
+        showToast('Belum ada dokumen yang diupload!');
+        return;
+    }
+    const content = await zip.generateAsync({ type: 'blob' });
+    saveAs(content, `dokumen_jamaah_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}.zip`);
+    showToast(`✅ ZIP berhasil dibuat! ${totalFiles} file tersimpan.`);
+}
 
 // ==================== FOLDER VIRTUAL ====================
 let folderList = [];
@@ -1055,14 +1396,14 @@ async function backupToGoogleSheets() { const scriptUrl = document.getElementByI
 function confirmResetAllData() { if(confirm('⚠️ RESET SEMUA DATA? Semua akan hilang!')) { localStorage.clear(); showToast('Data direset, reload halaman'); setTimeout(()=>location.reload(),1500); } }
 
 // ==================== INIT ====================
-function initPremium() {
+async function initPremium() {
     const savedAdmin = localStorage.getItem('premium_admin_mode') === 'true';
     if(savedAdmin) isAdminModePremium = true;
     const adminSwitch = document.getElementById('adminMode'); if(adminSwitch) adminSwitch.checked = isAdminModePremium;
     renderMenuPremium(); renderMenuSettingsPremium(); renderColorOptionsPremium(); loadThemePremium();
     updateHomeStats(); loadEstimasiData(); loadKasData(); loadJamaahData(); loadDynamicFieldsJamaah();
     loadJamaahKitaData(); loadDynamicFieldsJamaahKita(); loadPaymentData(); loadMasterData(); loadKonfigurasiPro();
-    loadCatatanData(); loadDokumenData(); loadFolderData(); loadPengingatData();
+    loadCatatanData(); await loadDokumenData(); loadFolderData(); loadPengingatData();
     if(sumberHartaList.length===0) tambahSumberHarta();
     document.getElementById('adminModeToggleBtn')?.addEventListener('click', (e) => { e.preventDefault(); toggleAdminMode(); });
     document.getElementById('paymentFabOpen')?.addEventListener('click', () => openPaymentModal());
