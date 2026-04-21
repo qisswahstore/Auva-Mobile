@@ -90,80 +90,9 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Safe area untuk iPhone notch */
-        .header-premium, .header-premium-small {
-            padding-top: max(20px, env(safe-area-inset-top));
-            padding-left: max(16px, env(safe-area-inset-left));
-            padding-right: max(16px, env(safe-area-inset-right));
-        }
-        
-        /* Layout greeting yang responsif */
-        .greeting {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        
-        .greeting > div:first-child {
-            flex: 1;
-        }
-        
-        .greeting h2 {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 4px;
-            color: white;
-        }
-        
-        .greeting p {
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.6);
-        }
-        
-        .greeting-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        /* Di layar sempit (≤400px), tombol pindah ke baris baru */
-        @media (max-width: 400px) {
-            .greeting {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .greeting-actions {
-                align-self: flex-end;
-                margin-top: 4px;
-            }
-        }
-        
-        /* CSS Print untuk Cetak Label - HANYA label yang muncul */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #labelPreview, #labelPreview * {
-                visibility: visible;
-            }
-            #labelPreview {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                margin: 0;
-                padding: 20px;
-            }
-            .btn, .back-header, .header-premium, .bottom-nav-premium, .card-premium > *:not(#labelPreview) {
-                display: none !important;
-            }
-        }
-        
         .header-premium {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 28px 24px 48px 24px;
             border-radius: 0 0 32px 32px;
             margin-bottom: -20px;
             position: relative;
@@ -171,7 +100,7 @@
             transition: background 0.3s ease;
         }
         .header-premium::before { content: ""; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: rgba(212, 175, 55, 0.08); border-radius: 50%; }
-        .header-premium-small { margin-bottom: 0; }
+        .header-premium-small { padding: 20px 24px; margin-bottom: 0; }
         .header-premium-small::before { display: none; }
         
         .dark-mode-toggle {
@@ -210,6 +139,21 @@
         .logo-icon { font-size: 42px; background: rgba(255,255,255,0.12); width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 20px; backdrop-filter: blur(4px); }
         .logo-text h1 { color: white; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
         .logo-text p { color: rgba(255,255,255,0.7); font-size: 0.7rem; font-weight: 500; }
+        .greeting { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap;
+            position: relative; 
+            z-index: 2; 
+        }
+        .greeting h2 { color: white; font-size: 1rem; font-weight: 500; margin-bottom: 4px; }
+        .greeting p { color: rgba(255,255,255,0.6); font-size: 0.7rem; }
+        .greeting-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
         
         .back-header { display: flex; align-items: center; gap: 12px; position: relative; z-index: 2; }
         .back-header i { color: white; font-size: 20px; cursor: pointer; }
@@ -223,7 +167,6 @@
         
         .menu-container { padding: 0 16px; }
         
-        /* SECTION TITLE - BOLD DENGAN GARIS BAWAH EMAS */
         .section-title {
             display: flex;
             align-items: center;
@@ -243,7 +186,6 @@
             display: inline-block;
         }
         
-        /* LABEL INPUT JADI BOLD */
         .input-group label,
         label {
             font-weight: 700;
@@ -561,6 +503,27 @@
         
         .reminder-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; }
         .reminder-jamaah { font-weight: bold; margin-bottom: 8px; }
+        
+        /* CSS Print untuk Cetak Label - HANYA label yang muncul */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #labelPreview, #labelPreview * {
+                visibility: visible;
+            }
+            #labelPreview {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px;
+            }
+            .btn, .back-header, .header-premium, .bottom-nav-premium, .card-premium > *:not(#labelPreview) {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -571,14 +534,14 @@
 <!-- HOME PAGE -->
 <div id="page-home" class="page active">
     <div class="header-premium">
-        <div class="logo-area"><div class="logo-icon">🕋</div><div class="logo-text"><h1>PT AUVA EQTENA NAHDHA</h1><p>KBIHU AMANATUL UMMAH</p></div></div>
+        <div class="logo-area"><div class="logo-icon">🕋</div><div class="logo-text"><h1>KHOPI PHAHIT</h1><p>SIAP DITES</p></div></div>
         <div class="greeting">
             <div>
                 <h2>Selamat datang, kang Mas</h2>
                 <p id="homeDate">Memuat...</p>
             </div>
             <div class="greeting-actions">
-                <button id="darkModeToggle" class="dark-mode-toggle" style="background: rgba(255,255,255,0.15); border: none; width: 40px; height: 40px; border-radius: 20px; cursor: pointer; font-size: 20px;">🌙</button>
+                <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
                 <a href="#" id="adminModeToggleBtn" class="admin-toggle-link"><i class="fas fa-shield-alt"></i> Mode Admin</a>
             </div>
         </div>
@@ -679,7 +642,7 @@
 
 <!-- CATATAN PAGE -->
 <div id="page-catatan" class="page">
-    <div class="header-premium header-premium-small"><div class="back-header"><i class="fas fa-arrow-left" onclick="showPage('home')"></i><h2>Catatan</h2><i class="fas fa-plus" onclick="openTambahCatatan()" style="color:white; font-size:20px; cursor:pointer; margin-right: env(safe-area-inset-right);"></i></div></div>
+    <div class="header-premium header-premium-small"><div class="back-header"><i class="fas fa-arrow-left" onclick="showPage('home')"></i><h2>Catatan</h2><i class="fas fa-plus" onclick="openTambahCatatan()" style="color:white; font-size:20px; cursor:pointer;"></i></div></div>
     <div class="container" id="catatanListContainer"></div>
 </div>
 
@@ -737,7 +700,7 @@
 <!-- MULTI EVENT PAGE -->
 <div id="page-datamaster" class="page">
     <div class="header-premium header-premium-small">
-        <div class="back-header"><i class="fas fa-arrow-left" onclick="showPage('home')"></i><h2 id="masterJudulHeader">Multi Event</h2><i class="fas fa-cog" onclick="openMasterSetting()" style="color:white; font-size:18px; cursor:pointer; margin-right: env(safe-area-inset-right);"></i></div>
+        <div class="back-header"><i class="fas fa-arrow-left" onclick="showPage('home')"></i><h2 id="masterJudulHeader">Multi Event</h2><i class="fas fa-cog" onclick="openMasterSetting()" style="color:white; font-size:18px; cursor:pointer;"></i></div>
     </div>
     <div class="card-premium">
         <div id="masterAdminPanel" style="display:none; background:var(--gray-light); padding:15px; border-radius:20px; margin-bottom:15px;">
@@ -916,7 +879,7 @@
     <div class="nav-item-premium" data-page="setting" onclick="showPage('setting')"><i class="fas fa-sliders-h"></i><span>Setting</span></div>
 </div>
 
-<!-- MODALS (singkat karena sudah lengkap di kode asli, saya pertahankan) -->
+<!-- MODALS - singkat karena sudah lengkap -->
 <div id="jamaahModal" class="modal"><div class="modal-content"><h3 id="jamaahModalTitle">Tambah database</h3><div id="jamaahFormContainer"></div><button class="btn btn-primary" onclick="saveJamaah()">💾 SIMPAN</button><button class="btn btn-danger mt-2" onclick="closeJamaahModal()">BATAL</button></div></div>
 <div id="fieldModal" class="modal"><div class="modal-content"><h3>Tambah Field Dinamis</h3><div class="dynamic-field"><label>Nama Field</label><input type="text" id="newFieldName" placeholder="Contoh: tanggal_lahir"><div class="error-message">Hanya huruf kecil, angka, underscore</div></div><div class="dynamic-field"><label>Label Field</label><input type="text" id="newFieldLabel" placeholder="Contoh: Tanggal Lahir"></div><div class="dynamic-field"><label>Tipe Field</label><select id="newFieldType"><option value="text">Text</option><option value="date">Tanggal</option><option value="tel">Telepon</option><option value="textarea">Text Area</option></select></div><button class="btn btn-primary" onclick="addDynamicFieldJamaah()">➕ TAMBAH FIELD</button><button class="btn btn-danger mt-2" onclick="closeFieldModal()">BATAL</button></div></div>
 <div id="manageFieldsModal" class="modal"><div class="modal-content"><h3>Kelola Field Dinamis</h3><button class="btn btn-primary btn-small" style="margin-bottom:15px;" onclick="closeManageFieldsModal(); openFieldModal();">+ Tambah Field Baru</button><div id="fieldsListContainer"></div><button class="btn btn-primary mt-2" onclick="closeManageFieldsModal()">TUTUP</button></div></div>
@@ -1134,7 +1097,7 @@ function resetEstimasiToDefault() { if(confirm('Reset semua data estimasi ke nil
 let dataKas=[], lastWAText='';
 function loadKasData() { const saved=localStorage.getItem('auva_kas_data'); dataKas=saved?JSON.parse(saved):[]; renderKasTable(); updateSaldoKas(); const savedKegiatan=localStorage.getItem('auva_kegiatan'); if(savedKegiatan) document.getElementById('kegiatan').value=savedKegiatan; }
 function saveKasData() { localStorage.setItem('auva_kas_data',JSON.stringify(dataKas)); renderKasTable(); updateSaldoKas(); }
-function renderKasTable() { const body=document.getElementById('bodyKas'); if(!body) return; body.innerHTML=""; let masuk=0,keluar=0; dataKas.forEach(i=>{ if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom; body.innerHTML+=`<tr><td style="vertical-align:middle; padding:10px 5px;">${i.tgl}</td><td style="vertical-align:middle; padding:10px 5px;"><span style="background:var(--teal); color:white; padding:2px 8px; border-radius:12px; font-size:10px;">${escapeHtml(i.kegiatan)}</span></td><td style="vertical-align:middle; padding:10px 5px;">${escapeHtml(i.ket)}</td><td class="${i.tipe==='masuk'?'txt-in':'txt-out'}" style="vertical-align:middle; padding:10px 5px;">Rp ${i.nom.toLocaleString('id-ID')}</td><td style="vertical-align:middle; padding:10px 5px;"><button class="btn-del" onclick="confirmHapusTransaksi(${i.id})">🗑️</button></td></tr>`; }); updateSaldoKas(); }
+function renderKasTable() { const body=document.getElementById('bodyKas'); if(!body) return; body.innerHTML=""; let masuk=0,keluar=0; dataKas.forEach(i=>{ if(i.tipe==='masuk') masuk+=i.nom; else keluar+=i.nom; body.innerHTML+=`<table><td style="vertical-align:middle; padding:10px 5px;">${i.tgl}</td><td style="vertical-align:middle; padding:10px 5px;"><span style="background:var(--teal); color:white; padding:2px 8px; border-radius:12px; font-size:10px;">${escapeHtml(i.kegiatan)}</span></td><td style="vertical-align:middle; padding:10px 5px;">${escapeHtml(i.ket)}</td><td class="${i.tipe==='masuk'?'txt-in':'txt-out'}" style="vertical-align:middle; padding:10px 5px;">Rp ${i.nom.toLocaleString('id-ID')}</td><td style="vertical-align:middle; padding:10px 5px;"><button class="btn-del" onclick="confirmHapusTransaksi(${i.id})">🗑️</button></td></tr>`; }); updateSaldoKas(); }
 function updateSaldoKas() { const total=dataKas.reduce((s,i)=>s+(i.tipe==='masuk'?i.nom:-i.nom),0); const summary=document.getElementById('summaryKas'); if(summary) summary.innerHTML=`<b>Saldo Akhir: Rp ${total.toLocaleString('id-ID')}</b>`; }
 function tambahTransaksi() { const kegiatan=document.getElementById('kegiatan').value.trim()||"-"; const ket=document.getElementById('ketReal').value.trim(); const nom=parseRupiah(document.getElementById('nomReal').value); const tipe=document.getElementById('tipeReal').value; if(!ket||nom<=0) return showToast("Isi keterangan dan nominal!"); dataKas.unshift({id:Date.now(), tgl:new Date().toLocaleDateString('id-ID'), kegiatan, ket, nom, tipe}); saveKasData(); document.getElementById('ketReal').value=""; document.getElementById('nomReal').value=""; localStorage.setItem('auva_kegiatan',kegiatan); showToast('Transaksi ditambahkan'); }
 function confirmHapusTransaksi(id) { if(confirm('Hapus transaksi ini?')) { dataKas=dataKas.filter(x=>x.id!==id); saveKasData(); showToast('Transaksi dihapus'); } }
@@ -1271,7 +1234,7 @@ function renderMasterForm() { const container = document.getElementById('masterF
 function getSelectedItems() { const selected = []; document.querySelectorAll('.master-item-cb:checked').forEach(cb => selected.push(cb.value)); return selected; }
 function setSelectedItems(selectedArray) { const selected = selectedArray || []; document.querySelectorAll('.master-item-cb').forEach(cb => { cb.checked = selected.includes(cb.value); }); }
 function saveMasterData() { const nama = document.getElementById('masterNama')?.value.trim(); if(!nama) { showToast('Nama lengkap wajib diisi!'); return; } const additional = {}; for(const field of masterDynamicFields) { const input = document.getElementById(`masterField_${field.name}`); if(input) additional[field.name] = input.value.trim(); } const items = getSelectedItems(); const now = new Date().toLocaleDateString('id-ID') + ' ' + new Date().toLocaleTimeString('id-ID'); if(editingMasterId !== null) { const index = masterDataList.findIndex(d => d.id == editingMasterId); if(index !== -1) { masterDataList[index] = { ...masterDataList[index], nama, additional_fields: additional, items, updated_at: now }; showToast('Data diupdate!'); } editingMasterId = null; document.getElementById('masterFormTitle').innerText = 'TAMBAH DATA'; } else { masterDataList.push({ id: Date.now(), nama, additional_fields: additional, items, created_at: now }); showToast('Data ditambahkan'); } saveMasterDataToLocal(); renderMasterTable(); renderMasterForm(); }
-function renderMasterTable() { const thead = document.getElementById('masterTableHead'); const tbody = document.getElementById('masterTableBody'); if(!thead || !tbody) return; let headerHtml = '<tr><th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th><th>No</th><th>Nama Lengkap</th>'; for(const field of masterDynamicFields) { headerHtml += `<th>${escapeHtml(field.label)}</th>`; } headerHtml += '<th>Item</th><th>Aksi</th></tr>'; thead.innerHTML = headerHtml; if(masterDataList.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>'; return; } let bodyHtml = ''; [...masterDataList].reverse().forEach((item, idx) => { const displayNum = idx + 1; let whatsappValue = ''; const whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp' || f.label.toLowerCase() === 'whatsapp'); if(whatsappField) { whatsappValue = item.additional_fields?.[whatsappField.name] || ''; } bodyHtml += `<tr><td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td><td style="text-align:center;">${displayNum}</td><td><strong>${escapeHtml(item.nama)}</strong></td>`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || '-'; bodyHtml += `<td>${escapeHtml(val)}</td>`; } bodyHtml += `<td>${item.items?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td><td style="white-space:nowrap;"><button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;">✏️</button><button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;">💬</button><button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;">🗑️</button></td></tr>`; }); tbody.innerHTML = bodyHtml; }
+function renderMasterTable() { const thead = document.getElementById('masterTableHead'); const tbody = document.getElementById('masterTableBody'); if(!thead || !tbody) return; let headerHtml = '<table><th class="checkbox-col"><input type="checkbox" id="selectAllMaster" onchange="toggleAllMasterCheckboxes(this)"></th><th>No</th><th>Nama Lengkap</th>'; for(const field of masterDynamicFields) { headerHtml += `<th>${escapeHtml(field.label)}</th>`; } headerHtml += '<th>Item</th><th>Aksi</th></tr>'; thead.innerHTML = headerHtml; if(masterDataList.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px;">Belum ada Data</td></tr>'; return; } let bodyHtml = ''; [...masterDataList].reverse().forEach((item, idx) => { const displayNum = idx + 1; let whatsappValue = ''; const whatsappField = masterDynamicFields.find(f => f.name.toLowerCase() === 'whatsapp' || f.label.toLowerCase() === 'whatsapp'); if(whatsappField) { whatsappValue = item.additional_fields?.[whatsappField.name] || ''; } bodyHtml += `<tr><td class="checkbox-col"><input type="checkbox" class="master-checkbox" data-nama="${escapeHtml(item.nama)}" data-wa="${escapeHtml(whatsappValue)}" onchange="updateBatchBar()"></td><td style="text-align:center;">${displayNum}</td><td><strong>${escapeHtml(item.nama)}</strong></td>`; for(const field of masterDynamicFields) { const val = item.additional_fields?.[field.name] || '-'; bodyHtml += `<td>${escapeHtml(val)}</td>`; } bodyHtml += `<td>${item.items?.map(p => `<span class="master-badge">${escapeHtml(p)}</span>`).join('') || '-'}</td><td style="white-space:nowrap;"><button onclick="editMasterData('${item.id}')" style="background:none; border:none; color:var(--blue); font-size:1.1rem; cursor:pointer;">✏️</button><button onclick="shareSingleMasterToWA('${item.id}')" style="background:none; border:none; color:var(--wa); font-size:1.1rem; cursor:pointer;">💬</button><button onclick="confirmDeleteMasterData('${item.id}')" style="background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer;">🗑️</button></td></tr>`; }); tbody.innerHTML = bodyHtml; }
 function toggleAllMasterCheckboxes(master) { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = master.checked); updateBatchBar(); }
 function updateBatchBar() { const checked = document.querySelectorAll('.master-checkbox:checked'); const bar = document.getElementById('batchFloatingBar'); const countSpan = document.getElementById('batchCount'); if (checked.length > 0) { if (countSpan) countSpan.innerText = `${checked.length} dipilih`; if (bar) bar.style.display = 'flex'; } else { if (bar) bar.style.display = 'none'; } }
 function clearBatchSelection() { document.querySelectorAll('.master-checkbox').forEach(cb => cb.checked = false); const selectAll = document.getElementById('selectAllMaster'); if (selectAll) selectAll.checked = false; updateBatchBar(); }
@@ -1910,4 +1873,4 @@ async function initPremium() {
 document.addEventListener('DOMContentLoaded', initPremium);
 </script>
 </body>
-    </html>
+                                                                                                                              </html>
